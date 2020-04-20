@@ -1,15 +1,18 @@
 import React from 'react';
 import './App.css';
+import Main from "./components/Main/Main";
+import { BrowserRouter } from "react-router-dom";
+import { Provider } from 'react-redux';
+import store from "./store";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-          Learn React
-      </header>
+    <div>
+      <Provider store={store}>
+        <BrowserRouter>
+          <Main />
+        </BrowserRouter>
+      </Provider>
     </div>
   );
 }
