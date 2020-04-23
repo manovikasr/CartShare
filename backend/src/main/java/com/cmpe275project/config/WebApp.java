@@ -1,4 +1,4 @@
-package com.cmpe275Lab2.config;
+package com.cmpe275project.config;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 public class WebApp extends SpringBootServletInitializer{ //Note we initialize the Servlet context required by Tomcat by implementing the SpringBootServletInitializer interface
 
 	public static void main(String[] args) {
- 
+		
 		SpringApplication.run(WebApp.class, args);
 	}
 
