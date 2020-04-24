@@ -48,8 +48,6 @@ public class Store {
 	private String state;
 	
 	@NotNull(message = "Zip is Mandatory")
-	@NotEmpty(message = "Zip is Mandatory")
-	@NotBlank(message = "Zip is Mandatory")
 	@Column(name = "zip")
 	private int zip;
 	
