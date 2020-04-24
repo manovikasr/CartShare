@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 @Table(name="Pool")
 public class Pool {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
 	
 	@NotNull(message = "Pool Name is Mandatory")
@@ -36,15 +36,11 @@ public class Pool {
 	@Column(name = "pool_desc")
 	private String pooldesc;
 	
-	@NotNull(message = "Pool Description is Mandatory")
-	@NotEmpty(message = "Pool Description is Mandatory")
-	@NotBlank(message = "Pool Description is Mandatory")
+	@NotNull(message = "Pool Zip is Mandatory")
 	@Column(name = "pool_zip")
-	private Integer poolzip;
+	private int poolzip;
 	
 	@NotNull(message = "Pool Leader is Mandatory")
-	@NotEmpty(message = "Pool Leader is Mandatory")
-	@NotBlank(message = "Pool Leader is Mandatory")
 	@Column(name = "pool_leader_id")
 	private long poolleaderid;
 	
@@ -89,11 +85,11 @@ public class Pool {
 		this.pooldesc = pooldesc;
 	}
 
-	public Integer getPoolzip() {
+	public int getPoolzip() {
 		return poolzip;
 	}
 
-	public void setPoolzip(Integer poolzip) {
+	public void setPoolzip(int poolzip) {
 		this.poolzip = poolzip;
 	}
 

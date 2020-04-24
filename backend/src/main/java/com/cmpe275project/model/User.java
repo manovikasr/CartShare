@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class User {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
 	
 	@NotNull(message = "Screen Name is Mandatory")
@@ -56,8 +56,6 @@ public class User {
 	private String role;
 	
 	@NotNull(message = "verified is Mandatory")
-	@NotEmpty(message = "verified is Mandatory")
-	@NotBlank(message = "verified is Mandatory")
 	@Column(name = "verified")
 	private boolean verified;
 	
@@ -67,9 +65,11 @@ public class User {
 	@Column(name = "access_code")
 	private String accesscode;
 	
-	@Column(name = "pool_id",nullable=false,insertable=true,updatable=true)
-	@JsonIgnore
-	private Long poolid;
+	/*
+	 * @Column(name = "pool_id",nullable=true,insertable=true,updatable=true)
+	 * 
+	 * @JsonIgnore private Long poolid;
+	 */
 	
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinTable(name = "member_pool", 
@@ -155,14 +155,11 @@ public class User {
 		this.accesscode = accesscode;
 	}
 
-	public Long getPoolid() {
-		return poolid;
-	}
-
-	public void setPoolid(Long poolid) {
-		this.poolid = poolid;
-	}
-
+	/*
+	 * public Long getPoolid() { return poolid; }
+	 * 
+	 * public void setPoolid(Long poolid) { this.poolid = poolid; }
+	 */
 	public Pool getPool() {
 		return pool;
 	}

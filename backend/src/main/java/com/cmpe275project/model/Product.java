@@ -13,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+
 @Entity
 @Table(name="Product")
 public class Product {
@@ -60,8 +61,6 @@ public class Product {
 	private String unittype;
 	
 	@NotNull(message = "Price is Mandatory")
-	@NotEmpty(message = "Price is Mandatory")
-	@NotBlank(message = "Price is Mandatory")
 	@Column(name = "price")
 	private int price;
 	
