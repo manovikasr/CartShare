@@ -3,7 +3,8 @@ package com.cmpe275project.requestObjects;
 import com.cmpe275project.model.Pool;
 
 public class UserRequest {
-
+	
+	private long id;
 	private String screenname;
 	private String nickname;
 	private String email;
@@ -14,6 +15,15 @@ public class UserRequest {
 	private Pool pool;
 	private String contributionCredits;
 	private String contributionStatus;
+	
+	
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
+	}
+	
 	public String getScreenname() {
 		return screenname;
 	}

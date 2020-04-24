@@ -2,6 +2,7 @@ package com.cmpe275project.model;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -51,7 +52,7 @@ public class Store {
 	@Column(name = "zip")
 	private int zip;
 	
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(
 	  name = "store_product", 
 	  joinColumns = @JoinColumn(name = "store_id"), 
