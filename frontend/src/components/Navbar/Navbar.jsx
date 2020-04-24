@@ -6,6 +6,8 @@ import { logoutUser } from "../../redux/actions/authActions";
 import { Navbar, Nav } from 'react-bootstrap';
 import cartLogo from "../../images/cart.png";
 
+import firebase from "firebase";
+
 class Navigationbar extends Component {
   constructor(props) {
     super(props);
@@ -58,7 +60,12 @@ class Navigationbar extends Component {
       );;
     }
     else {
-      menuButtons = loginButton;
+      menuButtons = (
+        <>
+          <Link className="nav-link text-dark t-font-size-14" to="/" onClick={() => { firebase.auth().signOut() }}>Logout</Link>
+          {loginButton}
+        </>
+      )
     }
 
     return (

@@ -1,5 +1,6 @@
 import axios from "axios";
 import setAuthToken from "../../config/setAuthToken";
+import { signout } from "../../config/firebase";
 import jwt_decode from "jwt-decode";
 
 import {
@@ -12,48 +13,13 @@ import {
   CURRENT_USER_INFO
 } from "./action-types";
 
-// Register User
-export const signup = (userData, history) => dispatch => {
-  axios
-    .post("user/signup", userData)
-    .then(res => {
-                  
-                   let  dispatchType = GET_ERRORS;
-
-                    if(res.data)
-                          dispatchType = GET_SUCCESS_MSG;
-
-                  dispatch({
-                    type: dispatchType,
-                    payload: res.data
-                  })
-
-                  if(res.data)
-                       history.push("/login");
-
-                }
-         ) // re-direct to login on successful register
-    .catch(err => 
-      {
-        dispatch({
-          type: RESET_ERROR_STATE
-        });
-        dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
-      })}
-    );
-};
-
-
 // Login - get user token
 axios.defaults.withCredentials = true;
 export const loginUser = userData => dispatch => {
   dispatch({
     type: RESET_ALL_STATE
   });
-  axios
-    .post("user/login", userData)
+  axios.post("user/login", userData)
     .then(res => {
        
       /*if(res.data.success)
@@ -67,7 +33,7 @@ export const loginUser = userData => dispatch => {
           // Decode token to get user data
           const decoded = jwt_decode(token);
           // Set current user
-          dispatch(setCurrentUser(decoded));
+          dispatch(setCurrentUser(res.data));
       
       
     })
@@ -164,8 +130,10 @@ export const logoutUser = (history) => dispatch => {
     type: RESET_ALL_STATE
   });
 
+  signout();
+
   history.push({
-    pathname: "/login",
+    pathname: "/",
     comingFrom: "logout"
   });
 };
