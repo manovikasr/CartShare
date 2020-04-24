@@ -17,36 +17,7 @@ import com.cmpe275project.model.User;
 public class UserDaoImpl implements UserDao{
 
 	@PersistenceContext
-    private EntityManager entityManager;
-
-//	@Override
-//	public Boolean registerUser(Long playerId, Long opponentId){
-//		
-//        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-//
-//		CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
-//		Root<Opponent> root = criteriaQuery.from( Opponent.class );
-//		criteriaQuery.select(builder.count(root));
-//		
-//		criteriaQuery.where(
-//				                           builder.equal(
-//				                                                 root.get( "player_id" ),playerId
-//				                                                ),
-//				                           builder.equal(
-//	                                                 root.get( "opponent_id" ),opponentId
-//	                                                )
-//				                       );
-//		
-//		
-//		TypedQuery<Long> query = entityManager.createQuery(criteriaQuery); 
-//		Long count = (Long) query.getSingleResult();
-//		
-//		if(count>0)
-//			  return true;
-//		
-//		return false;
-//		
-//	}
+	private EntityManager entityManager;
 
 	@Override
 	public void registerUser(User user) {
