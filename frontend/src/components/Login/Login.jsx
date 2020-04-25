@@ -18,9 +18,11 @@ class Login extends Component {
     componentDidMount() {
         firebase.auth().onAuthStateChanged(user => {
             this.setState({ isSignedIn: !!user })
-            console.log(user);
+            
             if (!!user) {
-                this.props.loginUser(user);
+                
+                const userData = { email: user.email};
+                this.props.loginUser(userData);
             }
         })
     }

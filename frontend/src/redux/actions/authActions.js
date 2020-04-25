@@ -19,26 +19,26 @@ export const loginUser = userData => dispatch => {
   dispatch({
     type: RESET_ALL_STATE
   });
-  axios.post("user/login", userData)
+  axios.post("login", userData)
     .then(res => {
-       
-      /*if(res.data.success)
-       {*/
+       console.log("Response ",res);
+      if(res.data.token.length>0)
+       {
           // Save to localStorage// Set token to localStorage
           //console.log("Response ",res);
-          const token  = res.data.substring(4);
+          const token  = res.data.token;
           localStorage.setItem("jwtToken", token);
           // Set token to Auth header
           setAuthToken(token);
           // Decode token to get user data
           const decoded = jwt_decode(token);
           // Set current user
-          dispatch(setCurrentUser(res.data));
-      
+          dispatch(setCurrentUser(decoded));
+       }
       
     })
     .catch(err =>
-      {
+      {console.log("Errors Resp ",err.response);
         dispatch({
         type: GET_ERRORS,
         payload: err.response.data
