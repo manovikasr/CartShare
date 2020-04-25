@@ -17,24 +17,24 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name="User")
+@Table(name="users")
 public class User {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
 	
 	@NotNull(message = "Screen Name is Mandatory")
 	@NotEmpty(message = "Screen Name is Mandatory")
 	@NotBlank(message = "Screen Name is Mandatory")
-	@Column(name = "screen_name")
-	private String screenname;
+	@Column(name = "screen_name",updatable=false)
+	private String screen_name;
 	
 	@NotNull(message = "Nick Name is Mandatory")
 	@NotEmpty(message = "Nick Name is Mandatory")
 	@NotBlank(message = "Nick Name is Mandatory")
 	@Column(name = "nick_name")
-	private String nickname;
+	private String nick_name;
 	
 	@NotNull(message = "Email is Mandatory")
 	@NotEmpty(message = "Email is Mandatory")
@@ -47,23 +47,23 @@ public class User {
 	@NotEmpty(message = "Auth mode is Mandatory")
 	@NotBlank(message = "Auth mode is Mandatory")
 	@Column(name = "auth_mode")
-	private String authmode;
+	private String auth_mode;
 	
 	@NotNull(message = "Role is Mandatory")
 	@NotEmpty(message = "Role is Mandatory")
 	@NotBlank(message = "Role is Mandatory")
 	@Column(name = "role")
-	private String role;
+	private String role="pooler";
+	
+	@Column(name = "email_verified")
+	private boolean email_verified=false;
 	
 	@NotNull(message = "verified is Mandatory")
-	@Column(name = "verified")
-	private boolean verified;
+	@Column(name = "is_active")
+	private boolean is_active=false;
 	
-	@NotNull(message = "access_code is Mandatory")
-	@NotEmpty(message = "access_code is Mandatory")
-	@NotBlank(message = "access_code is Mandatory")
 	@Column(name = "access_code")
-	private String accesscode;
+	private Integer access_code;
 	
 	/*
 	 * @Column(name = "pool_id",nullable=true,insertable=true,updatable=true)
@@ -78,19 +78,12 @@ public class User {
 	@JsonIgnore
     private Pool pool;
 	
-	@NotNull(message = "contribution_credits mode is Mandatory")
-	@NotEmpty(message = "contribution_credits mode is Mandatory")
-	@NotBlank(message = "contribution_credits mode is Mandatory")
 	@Column(name = "contribution_credits")
-	private String contributioncredits;
+	private Integer contribution_credits;
 	
-	@NotNull(message = "contribution_status mode is Mandatory")
-	@NotEmpty(message = "contribution_status mode is Mandatory")
-	@NotBlank(message = "contribution_status mode is Mandatory")
 	@Column(name = "contribution_status")
-	private String contributionstatus;
-	
-	
+	private String contribution_status;
+
 	public long getId() {
 		return id;
 	}
@@ -99,20 +92,20 @@ public class User {
 		this.id = id;
 	}
 
-	public String getScreenname() {
-		return screenname;
+	public String getScreen_name() {
+		return screen_name;
 	}
 
-	public void setScreenname(String screenname) {
-		this.screenname = screenname;
+	public void setScreen_name(String screen_name) {
+		this.screen_name = screen_name;
 	}
 
-	public String getNickname() {
-		return nickname;
+	public String getNick_name() {
+		return nick_name;
 	}
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
+	public void setNick_name(String nick_name) {
+		this.nick_name = nick_name;
 	}
 
 	public String getEmail() {
@@ -123,12 +116,12 @@ public class User {
 		this.email = email;
 	}
 
-	public String getAuthmode() {
-		return authmode;
+	public String getAuth_mode() {
+		return auth_mode;
 	}
 
-	public void setAuthmode(String authmode) {
-		this.authmode = authmode;
+	public void setAuth_mode(String auth_mode) {
+		this.auth_mode = auth_mode;
 	}
 
 	public String getRole() {
@@ -139,27 +132,30 @@ public class User {
 		this.role = role;
 	}
 
-	public boolean isVerified() {
-		return verified;
+	public boolean isEmail_verified() {
+		return email_verified;
 	}
 
-	public void setVerified(boolean verified) {
-		this.verified = verified;
+	public void setEmail_verified(boolean email_verified) {
+		this.email_verified = email_verified;
 	}
 
-	public String getAccesscode() {
-		return accesscode;
+	public boolean isIs_active() {
+		return is_active;
 	}
 
-	public void setAccesscode(String accesscode) {
-		this.accesscode = accesscode;
+	public void setIs_active(boolean is_active) {
+		this.is_active = is_active;
 	}
 
-	/*
-	 * public Long getPoolid() { return poolid; }
-	 * 
-	 * public void setPoolid(Long poolid) { this.poolid = poolid; }
-	 */
+	public Integer getAccess_code() {
+		return access_code;
+	}
+
+	public void setAccess_code(Integer access_code) {
+		this.access_code = access_code;
+	}
+
 	public Pool getPool() {
 		return pool;
 	}
@@ -168,23 +164,22 @@ public class User {
 		this.pool = pool;
 	}
 
-	public String getContributioncredits() {
-		return contributioncredits;
+	public Integer getContribution_credits() {
+		return contribution_credits;
 	}
 
-	public void setContributioncredits(String contributioncredits) {
-		this.contributioncredits = contributioncredits;
+	public void setContribution_credits(Integer contribution_credits) {
+		this.contribution_credits = contribution_credits;
 	}
 
-	public String getContributionstatus() {
-		return contributionstatus;
+	public String getContribution_status() {
+		return contribution_status;
 	}
 
-	public void setContributionstatus(String contributionstatus) {
-		this.contributionstatus = contributionstatus;
+	public void setContribution_status(String contribution_status) {
+		this.contribution_status = contribution_status;
 	}
-
 	
 	
-	
+		
 }

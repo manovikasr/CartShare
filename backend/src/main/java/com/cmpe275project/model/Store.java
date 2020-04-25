@@ -17,7 +17,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name="Store")
+@Table(name="stores")
 public class Store {
 
 	@Id
