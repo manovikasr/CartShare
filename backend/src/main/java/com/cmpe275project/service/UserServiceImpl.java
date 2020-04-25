@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService{
 		  p.setPoolleaderid(0); p.setPoolname("pool aish"); p.setPoolrating("w");
 		  p.setPoolzip(98);
 		  
+		  
 		  user.setPool(p);
 		 
 		userDao.registerUser(user);
