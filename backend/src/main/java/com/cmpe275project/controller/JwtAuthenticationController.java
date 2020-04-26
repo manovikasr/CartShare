@@ -176,6 +176,8 @@ public class JwtAuthenticationController {
                     
             status = HttpStatus.OK;
 			
+		}else {
+			result.setMessage("Invalid Email");
 		}
 		
 		return new ResponseEntity<>(result,status);

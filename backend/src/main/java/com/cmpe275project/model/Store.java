@@ -1,16 +1,25 @@
 package com.cmpe275project.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.Range;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name="stores")
@@ -47,6 +56,14 @@ public class Store {
 	@Range(min=5, message="Zip code is Manadatory(Min 5 Digits)")
 	@Column(name = "zip")
 	private Integer zip;
+	
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "store_products", 
+    joinColumns = { @JoinColumn(name = "store_id") }, 
+    inverseJoinColumns = { @JoinColumn(name = "product_id") })
+	@JsonIgnore
+	private List<Product> store_products;
+
 	
 	public Store() {
 		super();
@@ -98,6 +115,14 @@ public class Store {
 
 	public void setZip(Integer zip) {
 		this.zip = zip;
+	}
+
+	public List<Product> getStore_products() {
+		return store_products;
+	}
+
+	public void setStore_products(List<Product> store_products) {
+		this.store_products = store_products;
 	}
 	
 	

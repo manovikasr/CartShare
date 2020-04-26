@@ -1,20 +1,16 @@
 package com.cmpe275project.responseObjects;
 
-import java.util.List;
 import java.util.Map;
 
-import com.cmpe275project.model.Store;
 import com.cmpe275project.model.Product;
 
-public class StoreResponse {
+public class ProductResponse {
 
 	private String message;
     
 	private Map<String, String> errors; 
 	
-	private Store store;
-	
-	private List<Product> storeProducts;
+	private Product product;
 	
 	public Map<String, String> getErrors() {
 		return errors;
@@ -32,20 +28,12 @@ public class StoreResponse {
 		this.message = message;
 	}
 
-	public Store getStore() {
-		return store;
+	public Product getProduct() {
+		return product;
 	}
 
-	public void setStore(Store store) {
-		this.store = store;
-	}
-
-	public List<Product> getStoreProducts() {
-		return storeProducts;
-	}
-
-	public void setStoreProducts(List<Product> storeProducts) {
-		this.storeProducts = storeProducts;
+	public void setStore(Product product) {
+		this.product = product;
 	}
 	
 	

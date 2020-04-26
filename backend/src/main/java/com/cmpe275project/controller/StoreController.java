@@ -63,7 +63,7 @@ public class StoreController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updatePlayer(@PathVariable Long id, @Valid @RequestBody Store storeRequest, Errors errors)
+	public ResponseEntity<?> updateStore(@PathVariable Long id, @Valid @RequestBody Store storeRequest, Errors errors)
 	{
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		StoreResponse response = new StoreResponse();
@@ -99,7 +99,7 @@ public class StoreController {
 			
 			storeService.edit(store);
 			status         = HttpStatus.OK;
-			response.setMessage("User Successfully Edited");
+			response.setMessage("Store Successfully Edited");
 	        response.setStore(store);		
 			
 		}else {
@@ -122,6 +122,7 @@ public class StoreController {
 			store = storeService.getStoreInfoById(id);
 			response.setMessage("Store Details");
 			response.setStore(store);
+			response.setStoreProducts(store.getStore_products());
 		    status = HttpStatus.OK;
 		}else {
 			response.setMessage("Store Details Not Available");
