@@ -1,6 +1,9 @@
 package com.cmpe275project.dao;
 
+import java.util.List;
+
 import com.cmpe275project.model.Store;
+import com.cmpe275project.model.StoreProduct;
 
 public interface StoreDao {
 
@@ -18,4 +21,11 @@ public interface StoreDao {
 	
 	public Store getStoreInfoById(Long id);
 	
+	public List<StoreProduct> getStoreProductList(Long store_id);
+	
+	public Boolean chkStoreProductExists(Long store_id,Long product_id);
+	
+	public void addStoreProduct(StoreProduct storeProduct);
+	
+	public void deleteStoreProduct(StoreProduct storeProduct);
 }
