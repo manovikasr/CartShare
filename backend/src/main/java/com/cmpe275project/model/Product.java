@@ -64,8 +64,8 @@ public class Product {
 	@Column(name = "price")
 	private int price;
 	
-	@ManyToMany(mappedBy = "products")
-	Set<Store> stores;
+	/*@ManyToMany(mappedBy = "products")
+	Set<Store> stores;*/
 
 	public long getId() {
 		return id;
@@ -131,13 +131,13 @@ public class Product {
 		this.price = price;
 	}
 
-	public Set<Store> getStores() {
+	/*public Set<Store> getStores() {
 		return stores;
 	}
 
 	public void setStores(Set<Store> stores) {
 		this.stores = stores;
-	}
+	}*/
 	
 	
 }
