@@ -4,13 +4,14 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { verifyEmail } from "../../redux/actions/authActions";
 import firebase from "firebase";
-import { Col, Form, Button, ButtonGroup } from 'react-bootstrap';
+import { Col, Form, Button, ButtonGroup, Alert } from 'react-bootstrap';
 
 class VerifyUser extends Component {
   constructor() {
     super();
     this.state = {
-      access_code: ""
+      access_code: "",
+      error_message: ""
     };
   }
 
@@ -34,9 +35,22 @@ class VerifyUser extends Component {
   }
 
   componentWillReceiveProps(props) {
-    if (props.auth.user.id && props.auth.user.email_verified) {
-      this.props.history.push("/home");
+    if (props.auth.isAuthenticated) {
+      if (props.auth.user.email_verified) {
+        this.props.history.push("/home");
+      }
+      else {
+        this.setState({
+          error_message: "Email address could not be verified."
+        });
+      }
     }
+  }
+
+  componentWillUnmount(){
+    this.setState({ 
+      error_message: ""
+    });
   }
 
   onChange = e => {
@@ -57,6 +71,12 @@ class VerifyUser extends Component {
   };
 
   render() {
+    var errorMessage;
+    if(this.state.error_message){
+      errorMessage = (
+        <Alert variant="warning">{this.state.error_message}</Alert>
+      );
+    }
     return (
       <React.Fragment>
         <div className="container p-4">
@@ -68,11 +88,11 @@ class VerifyUser extends Component {
                   <h3>Please enter the access code sent to your registered email address</h3>
                 </center>
                 <br />
-                <h5 className="p-2" id="signup-msg-box" style={{ display: 'none' }}> </h5>
+                {errorMessage}
 
                 <Form onSubmit={this.onSubmit} autoComplete="off">
 
-                <Form.Row>
+                  <Form.Row>
                     <Form.Group as={Col} controlId="email">
                       <Form.Label><b>Registered Email Id</b></Form.Label>
                       <Form.Control name="email"

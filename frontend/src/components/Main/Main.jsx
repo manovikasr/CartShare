@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import Navbar from '../Navbar/Navbar';
 import LandingPage from '../LandingPage/LandingPage';
 import Home from '../Home/Home';
+import Profile from '../Profile/Profile';
 import Login from '../Login/Login';
 import Register from '../Register/Register';
 import VerifyUser from '../Register/VerifyUser';
@@ -50,6 +51,7 @@ class Main extends React.Component {
                     <Route exact path="/home" component={Home} />
                     <Route exact path="/register" component={Register} />
                     <Route exact path="/verify" component={VerifyUser} />
+                    <Route exact path="/profile" component={Profile} />
                 </Switch>
             </React.Fragment>
         )

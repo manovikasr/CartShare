@@ -1,6 +1,5 @@
 import axios from "axios";
 import setAuthToken from "../../config/setAuthToken";
-import { signout } from "../../config/firebase";
 import jwt_decode from "jwt-decode";
 
 import {
@@ -188,15 +187,13 @@ export const logoutUser = (history) => dispatch => {
     type: RESET_ALL_STATE
   });
 
-  signout();
-
   history.push({
     pathname: "/",
     comingFrom: "logout"
   });
 };
 
-export const saveManagerProfile = userInfo => async dispatch => {
+export const updateUser = userInfo => async dispatch => {
   console.log(userInfo);
   await axios
     .post("http://localhost:3001/user/profile", userInfo)

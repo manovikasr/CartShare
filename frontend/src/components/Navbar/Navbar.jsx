@@ -3,9 +3,8 @@ import { Link, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { logoutUser } from "../../redux/actions/authActions";
-import { Navbar, Nav } from 'react-bootstrap';
+import { Navbar, Nav, Dropdown } from 'react-bootstrap';
 import cartLogo from "../../images/cart.png";
-
 import firebase from "firebase";
 
 class Navigationbar extends Component {
@@ -16,16 +15,17 @@ class Navigationbar extends Component {
 
   onLogoutClick = e => {
     e.preventDefault();
+    firebase.auth().signOut()
     this.props.logoutUser(this.props.history);
   };
 
   render() {
     const { user, isAuthenticated } = this.props.auth;
 
-    var menuButtons;
-    var loginButton, logoutButton;
+    var menu, menuOptions;
+    var login, logout, userDropdown;
 
-    loginButton = (
+    login = (
       <div class="collapse navbar-collapse navbar-right" id="navbarNav">
         <Nav className="mr-auto">
         </Nav>
@@ -33,39 +33,68 @@ class Navigationbar extends Component {
       </div>
     );
 
-    logoutButton = (
-      <div class="collapse navbar-collapse navbar-right" id="navbarNav">
-        <Nav className="mr-auto">
-        </Nav>
-        <Link className="nav-link text-dark t-font-size-14" to="/" onClick={this.onLogoutClick}><i className="fas fa-sign-out-alt pr-2"></i>Logout</Link>
-      </div>
+    logout = (
+      <Link className="nav-link text-dark t-font-size-14" to="/" onClick={this.onLogoutClick}><i className="fas fa-sign-out-alt pr-2"></i>Logout</Link>
     );
 
-    if (isAuthenticated && user.role !== 'admin') {
-      menuButtons = (
-        <div class="collapse navbar-collapse navbar-right" id="navbarNav">
-          <Nav className="mr-auto">
-          </Nav>
-          {/* <Nav.Link>{projects}</Nav.Link> */}
-        </div>
-      );
+    userDropdown = (
+      <Dropdown>
+        <Dropdown.Toggle variant="link" className="nav-link text-dark t-font-size-14" id="dropdown-basic">
+          Hi, {user.screen_name}!
+        </Dropdown.Toggle>
+        <Dropdown.Menu>
+          <Dropdown.Item><Link to="/profile" className="nav-link text-dark t-font-size-14"><i className="far fa-address-card pr-2"></i>Profile</Link></Dropdown.Item>
+          <Dropdown.Item>{logout}</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    );
+
+    if (isAuthenticated && user.email_verified) {
+      if (user.role === "pooler") {
+        menuOptions = (
+          <div class="collapse navbar-collapse navbar-right" id="navbarNav">
+            <Nav className="mr-auto">
+            </Nav>
+            <Nav.Link>
+              <Link className="nav-link text-dark t-font-size-14" to="/pools"><i className="fas fa-users pr-2"></i>Pool</Link>
+            </Nav.Link>
+            <Nav.Link>
+              <Link className="nav-link text-dark t-font-size-14" to="/orders"><i className="fas fa-clipboard pr-2"></i>Orders</Link>
+            </Nav.Link>
+            <Nav.Link>
+              <Link className="nav-link text-dark t-font-size-14" to="/cart"><i className="fas fa-shopping-cart pr-2"></i>Cart</Link>
+            </Nav.Link>
+          </div>
+        );
+      } else if (user.role === "admin") {
+        menuOptions = (
+          <div class="collapse navbar-collapse navbar-right" id="navbarNav">
+            <Nav className="mr-auto">
+            </Nav>
+            <Nav.Link>
+              <Link className="nav-link text-dark t-font-size-14" to="/stores"><i className="fas fa-store pr-2"></i>Stores</Link>
+            </Nav.Link>
+          </div>
+        );
+      }
     }
-    else if (isAuthenticated && user.role === 'admin') {
-      menuButtons = (
+
+    if (isAuthenticated) {
+      menu = (
         <div class="collapse navbar-collapse navbar-right" id="navbarNav">
           <Nav className="mr-auto">
           </Nav>
-          <Nav.Link>{logoutButton}</Nav.Link>
+          {menuOptions}
+          <Nav.Link>{userDropdown}</Nav.Link>
         </div>
       );;
     }
     else {
-      menuButtons = (
+      menu = (
         <>
-          <Link className="nav-link text-dark t-font-size-14" to="/" onClick={() => { firebase.auth().signOut() }}>Logout</Link>
-          {loginButton}
+          {login}
         </>
-      )
+      );
     }
 
     return (
@@ -77,7 +106,7 @@ class Navigationbar extends Component {
             <font color="red"><b>Cart Share</b></font>
             </Link>
           </Navbar.Brand>
-          {menuButtons}
+          {menu}
         </nav>
       </div>
     );

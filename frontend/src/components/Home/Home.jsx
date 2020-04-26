@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import AdminHome from "./AdminHome";
+import PoolerHome from "./PoolerHome";
 
 class Home extends Component {
   constructor(props) {
@@ -13,12 +15,26 @@ class Home extends Component {
     if (!this.props.auth.isAuthenticated) {
       this.props.history.push("/");
     }
+    else {
+      if (!this.props.auth.user.email_verified) {
+        this.props.history.push("/verify");
+      } 
+    }
   }
 
   render() {
+    const {user} = this.props.auth;
+    var homeComponent;
+
+    if(user.role === "admin"){
+      homeComponent = <AdminHome />
+    } else {
+      homeComponent = <PoolerHome />
+    }
+
     return (
       <div>
-        Home
+        {homeComponent}
       </div>
     );
   }
