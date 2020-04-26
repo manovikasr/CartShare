@@ -6,6 +6,8 @@ import Navbar from '../Navbar/Navbar';
 import LandingPage from '../LandingPage/LandingPage';
 import Home from '../Home/Home';
 import Login from '../Login/Login';
+import Register from '../Register/Register';
+import VerifyUser from '../Register/VerifyUser';
 import jwt_decode from "jwt-decode";
 import setAuthToken from "../../config/setAuthToken";
 import { setCurrentUser, logoutUser } from "../../redux/actions/authActions";
@@ -46,6 +48,8 @@ class Main extends React.Component {
                     <Route exact path="/" component={LandingPage} />
                     <Route exact path="/login" component={Login} />
                     <Route exact path="/home" component={Home} />
+                    <Route exact path="/register" component={Register} />
+                    <Route exact path="/verify" component={VerifyUser} />
                 </Switch>
             </React.Fragment>
         )
