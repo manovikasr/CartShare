@@ -14,6 +14,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.Range;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -72,11 +74,10 @@ public class User {
 	@Column(name = "state")
 	private String state;
 	
-	@NotNull(message = "Zip is Mandatory")
-	@NotEmpty(message = "Zip is Mandatory")
-	@NotBlank(message = "Zip is Mandatory")
-	@Column(name = "zip")
-	private String zip;
+	@NotNull(message = "Zip Code is Mandatory")
+	@Range(min=5, message="Zip code is Manadatory(Min 5 Digits)")
+	@Column(name = "zip",nullable=false)
+	private Integer zip;
 	
 	/*
 	 * @Column(name = "pool_id",nullable=true,insertable=true,updatable=true)
@@ -201,11 +202,11 @@ public class User {
 		this.state = state;
 	}
 	
-	public String getZip() {
+	public Integer getZip() {
 		return zip;
 	}
 	
-	public void setZip(String zip) {
+	public void setZip(Integer zip) {
 		this.zip = zip;
 	}
 		

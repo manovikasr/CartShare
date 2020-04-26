@@ -1,5 +1,7 @@
 package com.cmpe275project.service;
 
+import java.util.Random;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +106,21 @@ public class UserServiceImpl implements UserService{
 	public User getUserInfoByEmail(String email) {
 		
 		return userDao.getUserInfoByEmail(email);
+	}
+
+	@Override
+	public Integer generateAccessCode() {
+		// TODO Auto-generated method stub
+		
+		Random r = new Random( System.currentTimeMillis() );
+	 
+		return 10000 + r.nextInt(20000); 
+	}
+
+	@Override
+	public boolean isAccessCodeExists(String email, Integer access_code) {
+		// TODO Auto-generated method stub
+		return userDao.isAccessCodeExists(email,access_code);
 	}
 
 	

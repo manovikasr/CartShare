@@ -33,5 +33,8 @@ public interface UserService {
 	
 	public User getUserInfoByEmail(String email);
 
+	public Integer generateAccessCode();
+	
+	public  boolean isAccessCodeExists(String email, Integer access_code);
 	
 }
