@@ -19,6 +19,7 @@ import com.cmpe275project.model.User;
 import com.cmpe275project.requestObjects.JwtRequest;
 import com.cmpe275project.responseObjects.JwtResponse;
 import com.cmpe275project.responseObjects.UserAuthResult;
+import com.cmpe275project.service.EmailService;
 import com.cmpe275project.service.UserService;
 
 import org.springframework.validation.Errors;
@@ -35,6 +36,9 @@ public class JwtAuthenticationController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	//@Autowired
 	//private PasswordEncoder bcryptEncoder;
@@ -126,6 +130,13 @@ public class JwtAuthenticationController {
 					
                     result.setToken(token);
                     result.setUserExists(true);
+                    
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("screen_name", user.getScreen_name());
+                    map.put("access_code", user.getAccess_code().toString());
+                    
+                    String subject = "CartShare - Verify your email address";
+                    emailService.sendVerificationEmail(user.getEmail(), subject, map);
                     
 				    status = HttpStatus.OK;
 			}
