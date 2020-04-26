@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import com.cmpe275project.model.User;
 import com.cmpe275project.requestObjects.JwtRequest;
 import com.cmpe275project.responseObjects.JwtResponse;
 import com.cmpe275project.responseObjects.UserAuthResult;
+import com.cmpe275project.service.EmailService;
 import com.cmpe275project.service.UserService;
 
 import org.springframework.validation.Errors;
@@ -34,6 +36,9 @@ public class JwtAuthenticationController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private EmailService emailService;
 	
 	//@Autowired
 	//private PasswordEncoder bcryptEncoder;
@@ -60,20 +65,8 @@ public class JwtAuthenticationController {
 		}
 		
 		if(!userService.isEmailExists(authenticationRequest.getEmail())) {
-			result.setMessage("User does not exists");
+			status = HttpStatus.NOT_FOUND;
 			result.setUserExists(false);
-			return new ResponseEntity<>(result, status);
-		}
-		
-		if(!userService.isEmailVerified(authenticationRequest.getEmail())) {
-			result.setMessage("User Email Not Verified");
-			result.setUserExists(true);
-			return new ResponseEntity<>(result, status);
-		}
-		
-		if(!userService.isUserActive(authenticationRequest.getEmail())) {
-			result.setMessage("User Account is Not Active");
-			result.setUserExists(true);
 			return new ResponseEntity<>(result, status);
 		}
 		
@@ -89,7 +82,7 @@ public class JwtAuthenticationController {
 		return new ResponseEntity<>(result, status);
 	}
 	
-	@PostMapping("/signUp")
+	@PostMapping("/register")
 	public ResponseEntity<?> saveUser(@Valid @RequestBody User user, Errors errors) throws Exception {
 		
 		HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -127,20 +120,64 @@ public class JwtAuthenticationController {
 				   else
 					    user.setRole("pooler");
 				  
+				   	user.setAccess_code(userService.generateAccessCode());
 				    userService.add(user);
-				    result.setMessage("User Successfully Added");
+				    result.setMessage("User Added Successfully");
 				    
 				    User userDetails = userService.getUserInfoByEmail(user.getEmail());
 
 					String token = jwtTokenUtil.generateToken(userDetails);
+					
                     result.setToken(token);
                     result.setUserExists(true);
+                    
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("screen_name", user.getScreen_name());
+                    map.put("access_code", user.getAccess_code().toString());
+                    
+                    emailService.sendVerificationEmail(user.getEmail(), map);
+                    
 				    status = HttpStatus.OK;
 			}
 			
 		}else {
 			status = HttpStatus.CONFLICT;
 			result.setMessage("Email Already In Use");
+		}
+		
+		return new ResponseEntity<>(result,status);
+	}
+	
+	@PostMapping("/verify/{email}/{access_code}")
+	public ResponseEntity<?> verifyEmail(@PathVariable String email,@PathVariable Integer access_code ) throws Exception {
+		
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		UserAuthResult result = new UserAuthResult();
+		
+		if(userService.isEmailExists(email.trim())) {
+			String trimmedEmail = email.trim();
+			
+			User userDetails = userService.getUserInfoByEmail(trimmedEmail);
+			
+			if(userService.isAccessCodeMatches(trimmedEmail, access_code)) {
+				
+				userDetails.setAccess_code(null);
+	            userDetails.setEmail_verified(true);
+	            userService.edit(userDetails);
+	            
+				result.setMessage("Email Verified Successfully");
+			}
+			else {
+				result.setMessage("Email address could not be verified");
+			}
+            
+			String token = jwtTokenUtil.generateToken(userDetails);
+					
+            result.setToken(token);
+            result.setUserExists(true);
+                    
+            status = HttpStatus.OK;
+			
 		}
 		
 		return new ResponseEntity<>(result,status);

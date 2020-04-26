@@ -26,10 +26,10 @@ public class InventoryServiceImpl implements InventoryService{
 		store.setAddress("Alameda");
 		store.setCity("San Jose");
 		store.setState("CA");
-		store.setStorename("SAFEWAY");
+		store.setStore_name("SAFEWAY");
 		store.setZip(0);
 		
-		Set<Product> set = new HashSet<Product>();
+		/*Set<Product> set = new HashSet<Product>();
 		Product p1 = new Product();
 		p1.setDesc("food");
 		p1.setPrice(23);
@@ -41,7 +41,6 @@ public class InventoryServiceImpl implements InventoryService{
 		//p1.setStores(stores);
 		set.add(p1);
 		store.setProducts(set);
-		inventoryDao.createStore(store);
+		inventoryDao.createStore(store);*/
 	}
-
 }

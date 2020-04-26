@@ -1,5 +1,7 @@
 package com.cmpe275project.service;
 
+import java.util.Random;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,28 +20,6 @@ public class UserServiceImpl implements UserService{
 	
 	@Autowired 
 	private UserDao userDao;
-	
-	@Override
-	public void registerUser(UserRequest userReq) {
-		User user = new User();
-		user.setAccess_code(100);
-		user.setAuth_mode("b");
-		user.setContribution_credits(1);
-		user.setContribution_status("d");
-		user.setEmail("a@gmail");
-		user.setNick_name("aish");
-		user.setScreen_name("Aishwarya");
-		user.setRole("r");
-		
-		  Pool p =new Pool(); p.setNeighbourhoodname("dd"); p.setPooldesc("desc");
-		  p.setPoolleaderid(0); p.setPoolname("pool aish"); p.setPoolrating("w");
-		  p.setPoolzip(98);
-		  
-		  
-		  user.setPool(p);
-		 
-		userDao.registerUser(user);
-	}
 	
 	@Override
 	public Boolean isEmailExists(String email) {
@@ -126,6 +106,21 @@ public class UserServiceImpl implements UserService{
 	public User getUserInfoByEmail(String email) {
 		
 		return userDao.getUserInfoByEmail(email);
+	}
+
+	@Override
+	public Integer generateAccessCode() {
+		// TODO Auto-generated method stub
+		
+		Random r = new Random( System.currentTimeMillis() );
+	 
+		return 10000 + r.nextInt(20000); 
+	}
+
+	@Override
+	public boolean isAccessCodeMatches(String email, Integer access_code) {
+		// TODO Auto-generated method stub
+		return userDao.isAccessCodeMatches(email,access_code);
 	}
 
 	

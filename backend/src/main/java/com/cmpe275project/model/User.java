@@ -14,6 +14,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.Range;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -42,13 +44,6 @@ public class User {
 	@Column(name = "email")
 	private String email;
 	
-	
-	@NotNull(message = "Auth mode is Mandatory")
-	@NotEmpty(message = "Auth mode is Mandatory")
-	@NotBlank(message = "Auth mode is Mandatory")
-	@Column(name = "auth_mode")
-	private String auth_mode;
-	
 	@NotNull(message = "Role is Mandatory")
 	@NotEmpty(message = "Role is Mandatory")
 	@NotBlank(message = "Role is Mandatory")
@@ -58,12 +53,31 @@ public class User {
 	@Column(name = "email_verified")
 	private boolean email_verified=false;
 	
-	@NotNull(message = "verified is Mandatory")
-	@Column(name = "is_active")
-	private boolean is_active=false;
-	
 	@Column(name = "access_code")
 	private Integer access_code;
+	
+	@NotNull(message = "Address is Mandatory")
+	@NotEmpty(message = "Address is Mandatory")
+	@NotBlank(message = "Address is Mandatory")
+	@Column(name = "address")
+	private String address;
+	
+	@NotNull(message = "City is Mandatory")
+	@NotEmpty(message = "City is Mandatory")
+	@NotBlank(message = "City is Mandatory")
+	@Column(name = "city")
+	private String city;
+	
+	@NotNull(message = "State is Mandatory")
+	@NotEmpty(message = "State is Mandatory")
+	@NotBlank(message = "State is Mandatory")
+	@Column(name = "state")
+	private String state;
+	
+	@NotNull(message = "Zip Code is Mandatory")
+	@Range(min=5, message="Zip code is Manadatory(Min 5 Digits)")
+	@Column(name = "zip",nullable=false)
+	private Integer zip;
 	
 	/*
 	 * @Column(name = "pool_id",nullable=true,insertable=true,updatable=true)
@@ -79,7 +93,7 @@ public class User {
     private Pool pool;
 	
 	@Column(name = "contribution_credits")
-	private Integer contribution_credits;
+	private Integer contribution_credits = 0;
 	
 	@Column(name = "contribution_status")
 	private String contribution_status;
@@ -116,14 +130,6 @@ public class User {
 		this.email = email;
 	}
 
-	public String getAuth_mode() {
-		return auth_mode;
-	}
-
-	public void setAuth_mode(String auth_mode) {
-		this.auth_mode = auth_mode;
-	}
-
 	public String getRole() {
 		return role;
 	}
@@ -138,14 +144,6 @@ public class User {
 
 	public void setEmail_verified(boolean email_verified) {
 		this.email_verified = email_verified;
-	}
-
-	public boolean isIs_active() {
-		return is_active;
-	}
-
-	public void setIs_active(boolean is_active) {
-		this.is_active = is_active;
 	}
 
 	public Integer getAccess_code() {
@@ -180,6 +178,36 @@ public class User {
 		this.contribution_status = contribution_status;
 	}
 	
+	public String getAddress() {
+		return address;
+	}
 	
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	
+	public String getCity() {
+		return city;
+	}
+	
+	public void setCity(String city) {
+		this.city = city;
+	}
+	
+	public String getState() {
+		return state;
+	}
+	
+	public void setState(String state) {
+		this.state = state;
+	}
+	
+	public Integer getZip() {
+		return zip;
+	}
+	
+	public void setZip(Integer zip) {
+		this.zip = zip;
+	}
 		
 }

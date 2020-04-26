@@ -16,30 +16,36 @@ class Login extends Component {
     }
 
     componentDidMount() {
+        if (this.props.auth.isAuthenticated) {
+            if (this.props.auth.user.email_verified) {
+              this.props.history.push("/home");
+            } else {
+              this.props.history.push("/verify");
+            }
+          }
         firebase.auth().onAuthStateChanged(user => {
             this.setState({ isSignedIn: !!user })
-            
             if (!!user) {
-                
-                const userData = { email: user.email};
+                const userData = { email: user.email };
                 this.props.loginUser(userData);
             }
         })
     }
 
+    componentWillReceiveProps(props) {
+        if (!props.auth.isAuthenticated && !props.errors.userExists) {
+            this.props.history.push("/register");
+        } else if(props.auth.user.id && !props.auth.user.email_verified){
+            this.props.history.push("/verify");
+        } else {
+            this.props.history.push("/home");
+        }
+    }
+
     render() {
         var loginComponent;
 
-        if (this.state.isSignedIn) {
-            loginComponent = (
-                <div>
-                    <h1>
-                        {firebase.auth().currentUser.displayName}
-                    </h1>
-                    <button onClick={() => firebase.auth().signOut()}>Sign out!</button>
-                </div>
-            );
-        } else {
+        if (!this.state.isSignedIn) {
             loginComponent = (
                 <div className="container p-4">
                     <div className="row justify-content-center align-items-center h-100">

@@ -15,7 +15,6 @@ public class UserController {
 	@RequestMapping("/user")
 	public String index()
 	{
-		userService.registerUser(null);
-		return "CartShare";
+		return "Cart Share";
 	}
 }

@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import AdminHome from "./AdminHome";
-import PoolerHome from "./PoolerHome";
+import AdminStores from "./AdminStores";
+import PoolerStores from "./PoolerStores";
 
-class Home extends Component {
+class Stores extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -24,23 +24,23 @@ class Home extends Component {
 
   render() {
     const {user} = this.props.auth;
-    var homeComponent;
+    var storesComponent;
 
     if(user.role === "admin"){
-      homeComponent = <AdminHome />
-    } else {
-      homeComponent = <PoolerHome />
-    }
+        storesComponent = <AdminStores />
+      } else {
+        storesComponent = <PoolerStores />
+      }
 
     return (
       <div>
-        {homeComponent}
+        {storesComponent}
       </div>
     );
   }
 }
 
-Home.propTypes = {
+Stores.propTypes = {
   auth: PropTypes.object.isRequired
 };
 
@@ -49,4 +49,4 @@ const mapStateToProps = state => ({
 });
 
 
-export default connect(mapStateToProps, {})(withRouter(Home));
+export default connect(mapStateToProps, {})(withRouter(Stores));

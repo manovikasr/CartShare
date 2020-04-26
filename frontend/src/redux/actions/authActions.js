@@ -1,6 +1,5 @@
 import axios from "axios";
 import setAuthToken from "../../config/setAuthToken";
-import { signout } from "../../config/firebase";
 import jwt_decode from "jwt-decode";
 
 import {
@@ -21,11 +20,9 @@ export const loginUser = userData => dispatch => {
   });
   axios.post("login", userData)
     .then(res => {
-       console.log("Response ",res);
       if(res.data.token.length>0)
        {
-          // Save to localStorage// Set token to localStorage
-          //console.log("Response ",res);
+          // Set token to localStorage
           const token  = res.data.token;
           localStorage.setItem("jwtToken", token);
           // Set token to Auth header
@@ -38,7 +35,65 @@ export const loginUser = userData => dispatch => {
       
     })
     .catch(err =>
-      {console.log("Errors Resp ",err.response);
+      {
+        dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })}
+    );
+};
+
+export const registerUser = userData => dispatch => {
+  dispatch({
+    type: RESET_ALL_STATE
+  });
+  axios.post("register", userData)
+    .then(res => {
+      if(res.data.token.length>0)
+       {
+          // Set token to localStorage
+          const token  = res.data.token;
+          localStorage.setItem("jwtToken", token);
+          // Set token to Auth header
+          setAuthToken(token);
+          // Decode token to get user data
+          const decoded = jwt_decode(token);
+          // Set current user
+          dispatch(setCurrentUser(decoded));
+       }
+      
+    })
+    .catch(err =>
+      {
+        dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })}
+    );
+};
+
+export const verifyEmail = userData => dispatch => {
+  dispatch({
+    type: RESET_ALL_STATE
+  });
+  axios.post(`verify/${userData.email}/${userData.access_code}`)
+    .then(res => {
+      if(res.data.token.length>0)
+       {
+          // Set token to localStorage
+          const token  = res.data.token;
+          localStorage.setItem("jwtToken", token);
+          // Set token to Auth header
+          setAuthToken(token);
+          // Decode token to get user data
+          const decoded = jwt_decode(token);
+          // Set current user
+          dispatch(setCurrentUser(decoded));
+       }
+      
+    })
+    .catch(err =>
+      {
         dispatch({
         type: GET_ERRORS,
         payload: err.response.data
@@ -59,14 +114,12 @@ export const updateProfile = (userData) => {
      
       axios.post("user/profile",userData)
       .then(resp => {
-        console.log(resp);
           if(resp.data) {
            return true;
           } else {
               
           }
       }, err => {
-        console.log("sjjsjs sjsjjs");
          // dispatch(stopLoader());
           
       });
@@ -79,9 +132,7 @@ export const updateProfile1 = userData =>dispatch=> {
   
   axios
     .post("user/profile", userData)
-    .then(res => {
-       console.log("upfdted profile");
-        
+    .then(res => {        
        dispatch(setUserInfo({name:"Namanananan"}))
      
       
@@ -103,7 +154,6 @@ export const setCurrentUser = decoded => {
 };
 
 export const setUserInfo = data => {
-  console.log("data is "+data)
   return {
     type: CURRENT_USER_INFO,
     payload: data
@@ -130,16 +180,13 @@ export const logoutUser = (history) => dispatch => {
     type: RESET_ALL_STATE
   });
 
-  signout();
-
   history.push({
     pathname: "/",
     comingFrom: "logout"
   });
 };
 
-export const saveManagerProfile = userInfo => async dispatch => {
-  console.log(userInfo);
+export const updateUser = userInfo => async dispatch => {
   await axios
     .post("http://localhost:3001/user/profile", userInfo)
     .then(response => {
@@ -154,7 +201,6 @@ export const saveManagerProfile = userInfo => async dispatch => {
 };
 
 export const fetchManagerProfile = userId => async dispatch => {
-  console.log(userId)
   await axios
     .get(`http://localhost:3001/user/profile/${userId}`)
     .then(response => {
@@ -168,7 +214,6 @@ export const fetchManagerProfile = userId => async dispatch => {
     });
 };
 export const startLoading = ()=>async dispatch=>{
-  console.log("coming here in action")
   dispatch({ type: '_REQUEST' })
 
 }
@@ -176,7 +221,6 @@ export const endLoading = ()=>async dispatch=>{
   dispatch({ type: '_SUCCESS' })
 }
 export const fetchTesterprojects = testerId => async dispatch => {
-  console.log(testerId)
   
   await axios
     .get(`/project/tester/${testerId}`)

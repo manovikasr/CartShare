@@ -3,8 +3,6 @@ package com.cmpe275project.dao;
 import com.cmpe275project.model.User;
 
 public interface UserDao {
-
-	public void registerUser(User user);
 	
    public Boolean isEmailExists(String email);
 	
@@ -34,4 +32,5 @@ public interface UserDao {
 	
 	public User getUserInfoByEmail(String email);
 	
+	public boolean isAccessCodeMatches(String email, Integer access_code);
 }

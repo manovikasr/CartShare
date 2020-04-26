@@ -2,15 +2,15 @@ package com.cmpe275project.responseObjects;
 
 import java.util.Map;
 
-public class UserAuthResult {
+import com.cmpe275project.model.Store;
+
+public class StoreResponse {
 
 	private String message;
     
 	private Map<String, String> errors; 
 	
-	private boolean userExists=false;
-	
-	private String token;
+	private Store store;
 	
 	public Map<String, String> getErrors() {
 		return errors;
@@ -27,21 +27,15 @@ public class UserAuthResult {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
-	public boolean isUserExists() {
-		return userExists;
+
+	public Store getStore() {
+		return store;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
 	}
 	
-	public void setUserExists(boolean userExists) {
-		this.userExists = userExists;
-	}
 	
-	public String getToken() {
-		return token;
-	}
-	
-	public void setToken(String token) {
-		this.token = token;
-	}
 	
 }

@@ -15,7 +15,9 @@ class LandingPage extends Component {
 
     componentDidMount() {
         if (this.props.auth.isAuthenticated) {
-            this.props.history.push("/home");
+            if (this.props.auth.user.email_verified) {
+                this.props.history.push("/home");
+            }
         }
     }
 
@@ -23,32 +25,32 @@ class LandingPage extends Component {
         return (
             <div className="container valign-wrapper">
                 <center>
-                        <Carousel>
-                            <Carousel.Item>
-                                <img
-                                    className="d-block w-100"
-                                    src={image1}
-                                    height={700}
-                                    alt="Cart Share"
-                                />
-                            </Carousel.Item>
-                            <Carousel.Item>
-                                <img
-                                    className="d-block w-100"
-                                    src={image2}
-                                    height={700}
-                                    alt="Cart Share"
-                                />
-                            </Carousel.Item>
-                            <Carousel.Item>
-                                <img
-                                    className="d-block w-100"
-                                    src={image3}
-                                    alt="Cart Share"
-                                />
-                            </Carousel.Item>
-                        </Carousel>
-                    </center>
+                    <Carousel>
+                        <Carousel.Item>
+                            <img
+                                className="d-block w-100"
+                                src={image1}
+                                height={700}
+                                alt="Cart Share"
+                            />
+                        </Carousel.Item>
+                        <Carousel.Item>
+                            <img
+                                className="d-block w-100"
+                                src={image2}
+                                height={700}
+                                alt="Cart Share"
+                            />
+                        </Carousel.Item>
+                        <Carousel.Item>
+                            <img
+                                className="d-block w-100"
+                                src={image3}
+                                alt="Cart Share"
+                            />
+                        </Carousel.Item>
+                    </Carousel>
+                </center>
             </div>
         );
     }

@@ -20,11 +20,6 @@ public class UserDaoImpl implements UserDao{
 	private EntityManager entityManager;
 
 	@Override
-	public void registerUser(User user) {
-		entityManager.unwrap(Session.class).save(user);
-	}
-	
-	@Override
 	public Boolean isEmailExists(String email) {
 		
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -329,6 +324,35 @@ public class UserDaoImpl implements UserDao{
 		
 		return  user;
 		
+	}
+
+	@Override
+	public boolean isAccessCodeMatches(String email, Integer access_code) {
+		// TODO Auto-generated method stub
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+		CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+		Root<User> root = criteriaQuery.from( User.class );
+		criteriaQuery.select(builder.count(root));
+		
+		criteriaQuery.where(
+				                           builder.equal(
+				                                                 root.get( "email" ),email
+				                                                ),
+				                           builder.and(
+					               		                        builder.equal(root.get( "access_code" ), access_code)
+					               		                     )
+				                       );
+		
+		
+		TypedQuery<Long> query = entityManager.createQuery(criteriaQuery); 
+		Long count = (Long) query.getSingleResult();
+		
+		if(count>0)
+			  return true;
+		
+		return false;
+
 	}
 	
 }
