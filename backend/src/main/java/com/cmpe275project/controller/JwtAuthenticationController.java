@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -116,6 +117,7 @@ public class JwtAuthenticationController {
 				   else
 					    user.setRole("pooler");
 				  
+				   user.setAccess_code(userService.generateAccessCode());
 				    userService.add(user);
 				    result.setMessage("User Added Successfully");
 				    
@@ -137,45 +139,43 @@ public class JwtAuthenticationController {
 		return new ResponseEntity<>(result,status);
 	}
 	
-	@PostMapping("/verify")
-	public ResponseEntity<?> verifyEmail(@Valid @RequestBody User user, Errors errors) throws Exception {
+	@PostMapping("/verify/{email}/{access_code}")
+	public ResponseEntity<?> verifyEmail(@PathVariable String email,@PathVariable Integer access_code ) throws Exception {
 		
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		UserAuthResult result = new UserAuthResult();
 		
-		if(errors.hasErrors()) {
-			
-			Map<String,String> errorMap = new HashMap<String,String>();
-			
-			 for (ObjectError error : errors.getAllErrors()) {
-			       String fieldError = ((FieldError) error).getField();
-			       errorMap.put(fieldError, error.getDefaultMessage());
-			   }
-			result.setErrors(errorMap);
-			result.setMessage("Unable to verify email");
-			
-			return new ResponseEntity<>(result, status);
-		}
+		boolean verificationSuccessfull=false;
 		
-		if(!userService.isEmailExists(user.getEmail())) {
-			
+		if(userService.isEmailExists(email.trim())) {
+			String trimmedEmail = email.trim();
 			// TODO compare access_code in database
 			// TODO if access_code matches send token else send same old token
-			if(true) {
+			if(userService.isAccessCodeExists(trimmedEmail, access_code)) {
+				verificationSuccessfull = true;
 				result.setMessage("Email Verified Successfully");
 			}
 			else {
 				result.setMessage("Email Verification Failed");
 			}
+		   
+			User userDetails = userService.getUserInfoByEmail(trimmedEmail);
 			
-			User userDetails = userService.getUserInfoByEmail(user.getEmail());
-
+			if(verificationSuccessfull)
+			{
+				userDetails.setAccess_code(null);
+	            userDetails.setEmail_verified(true);
+	            userService.edit(userDetails);
+	            	
+			}
+            
 			String token = jwtTokenUtil.generateToken(userDetails);
 					
             result.setToken(token);
             result.setUserExists(true);
                     
             status = HttpStatus.OK;
+			
 		}
 		
 		return new ResponseEntity<>(result,status);

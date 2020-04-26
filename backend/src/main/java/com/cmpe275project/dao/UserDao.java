@@ -32,4 +32,5 @@ public interface UserDao {
 	
 	public User getUserInfoByEmail(String email);
 	
+	public  boolean isAccessCodeExists(String email, Integer access_code);
 }
