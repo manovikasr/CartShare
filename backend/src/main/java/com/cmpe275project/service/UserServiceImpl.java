@@ -20,28 +20,6 @@ public class UserServiceImpl implements UserService{
 	private UserDao userDao;
 	
 	@Override
-	public void registerUser(UserRequest userReq) {
-		User user = new User();
-		user.setAccess_code(100);
-		user.setAuth_mode("b");
-		user.setContribution_credits(1);
-		user.setContribution_status("d");
-		user.setEmail("a@gmail");
-		user.setNick_name("aish");
-		user.setScreen_name("Aishwarya");
-		user.setRole("r");
-		
-		  Pool p =new Pool(); p.setNeighbourhoodname("dd"); p.setPooldesc("desc");
-		  p.setPoolleaderid(0); p.setPoolname("pool aish"); p.setPoolrating("w");
-		  p.setPoolzip(98);
-		  
-		  
-		  user.setPool(p);
-		 
-		userDao.registerUser(user);
-	}
-	
-	@Override
 	public Boolean isEmailExists(String email) {
 		
 		  return userDao.isEmailExists(email);

@@ -60,20 +60,9 @@ public class JwtAuthenticationController {
 		}
 		
 		if(!userService.isEmailExists(authenticationRequest.getEmail())) {
+			status = HttpStatus.NOT_FOUND;
 			result.setMessage("User does not exists");
 			result.setUserExists(false);
-			return new ResponseEntity<>(result, status);
-		}
-		
-		if(!userService.isEmailVerified(authenticationRequest.getEmail())) {
-			result.setMessage("User Email Not Verified");
-			result.setUserExists(true);
-			return new ResponseEntity<>(result, status);
-		}
-		
-		if(!userService.isUserActive(authenticationRequest.getEmail())) {
-			result.setMessage("User Account is Not Active");
-			result.setUserExists(true);
 			return new ResponseEntity<>(result, status);
 		}
 		
@@ -89,7 +78,7 @@ public class JwtAuthenticationController {
 		return new ResponseEntity<>(result, status);
 	}
 	
-	@PostMapping("/signUp")
+	@PostMapping("/register")
 	public ResponseEntity<?> saveUser(@Valid @RequestBody User user, Errors errors) throws Exception {
 		
 		HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -128,19 +117,65 @@ public class JwtAuthenticationController {
 					    user.setRole("pooler");
 				  
 				    userService.add(user);
-				    result.setMessage("User Successfully Added");
+				    result.setMessage("User Added Successfully");
 				    
 				    User userDetails = userService.getUserInfoByEmail(user.getEmail());
 
 					String token = jwtTokenUtil.generateToken(userDetails);
+					
                     result.setToken(token);
                     result.setUserExists(true);
+                    
 				    status = HttpStatus.OK;
 			}
 			
 		}else {
 			status = HttpStatus.CONFLICT;
 			result.setMessage("Email Already In Use");
+		}
+		
+		return new ResponseEntity<>(result,status);
+	}
+	
+	@PostMapping("/verify")
+	public ResponseEntity<?> verifyEmail(@Valid @RequestBody User user, Errors errors) throws Exception {
+		
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		UserAuthResult result = new UserAuthResult();
+		
+		if(errors.hasErrors()) {
+			
+			Map<String,String> errorMap = new HashMap<String,String>();
+			
+			 for (ObjectError error : errors.getAllErrors()) {
+			       String fieldError = ((FieldError) error).getField();
+			       errorMap.put(fieldError, error.getDefaultMessage());
+			   }
+			result.setErrors(errorMap);
+			result.setMessage("Unable to verify email");
+			
+			return new ResponseEntity<>(result, status);
+		}
+		
+		if(!userService.isEmailExists(user.getEmail())) {
+			
+			// TODO compare access_code in database
+			// TODO if access_code matches send token else send same old token
+			if(true) {
+				result.setMessage("Email Verified Successfully");
+			}
+			else {
+				result.setMessage("Email Verification Failed");
+			}
+			
+			User userDetails = userService.getUserInfoByEmail(user.getEmail());
+
+			String token = jwtTokenUtil.generateToken(userDetails);
+					
+            result.setToken(token);
+            result.setUserExists(true);
+                    
+            status = HttpStatus.OK;
 		}
 		
 		return new ResponseEntity<>(result,status);

@@ -21,11 +21,9 @@ export const loginUser = userData => dispatch => {
   });
   axios.post("login", userData)
     .then(res => {
-       console.log("Response ",res);
       if(res.data.token.length>0)
        {
-          // Save to localStorage// Set token to localStorage
-          //console.log("Response ",res);
+          // Set token to localStorage
           const token  = res.data.token;
           localStorage.setItem("jwtToken", token);
           // Set token to Auth header
@@ -39,6 +37,66 @@ export const loginUser = userData => dispatch => {
     })
     .catch(err =>
       {console.log("Errors Resp ",err.response);
+        dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })}
+    );
+};
+
+export const registerUser = userData => dispatch => {
+  dispatch({
+    type: RESET_ALL_STATE
+  });
+  axios.post("register", userData)
+    .then(res => {
+      if(res.data.token.length>0)
+       {
+          // Set token to localStorage
+          //console.log("Response ",res);
+          const token  = res.data.token;
+          localStorage.setItem("jwtToken", token);
+          // Set token to Auth header
+          setAuthToken(token);
+          // Decode token to get user data
+          const decoded = jwt_decode(token);
+          // Set current user
+          dispatch(setCurrentUser(decoded));
+       }
+      
+    })
+    .catch(err =>
+      {
+        dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })}
+    );
+};
+
+export const verifyEmail = userData => dispatch => {
+  dispatch({
+    type: RESET_ALL_STATE
+  });
+  axios.post("verify", userData)
+    .then(res => {
+      if(res.data.token.length>0)
+       {
+          // Set token to localStorage
+          //console.log("Response ",res);
+          const token  = res.data.token;
+          localStorage.setItem("jwtToken", token);
+          // Set token to Auth header
+          setAuthToken(token);
+          // Decode token to get user data
+          const decoded = jwt_decode(token);
+          // Set current user
+          dispatch(setCurrentUser(decoded));
+       }
+      
+    })
+    .catch(err =>
+      {
         dispatch({
         type: GET_ERRORS,
         payload: err.response.data

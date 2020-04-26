@@ -8,13 +8,17 @@ public class UserRequest {
 	private String screenname;
 	private String nickname;
 	private String email;
-	private String authmode;
 	private String role;
-	private boolean verified;
+	private boolean email_verified;
+	private Integer access_code;
 	private Long pool_id;
 	private Pool pool;
 	private String contributionCredits;
 	private String contributionStatus;
+	private String address;
+	private String city;
+	private String state;
+	private String zip;
 	
 	
 	public long getId() {
@@ -42,23 +46,23 @@ public class UserRequest {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getAuthmode() {
-		return authmode;
-	}
-	public void setAuthmode(String authmode) {
-		this.authmode = authmode;
-	}
 	public String getRole() {
 		return role;
 	}
 	public void setRole(String role) {
 		this.role = role;
 	}
-	public boolean isVerified() {
-		return verified;
+	public boolean isEmail_verified() {
+		return email_verified;
 	}
-	public void setVerified(boolean verified) {
-		this.verified = verified;
+	public void setVerified(boolean email_verified) {
+		this.email_verified = email_verified;
+	}
+	public Integer getAccess_code() {
+		return access_code;
+	}
+	public void setAccess_code(Integer access_code) {
+		this.access_code = access_code;
 	}
 	public Long getPool_id() {
 		return pool_id;
@@ -84,6 +88,28 @@ public class UserRequest {
 	public void setContributionStatus(String contributionStatus) {
 		this.contributionStatus = contributionStatus;
 	}
-	
-	
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getState() {
+		return state;
+	}
+	public void setState(String state) {
+		this.state = state;
+	}
+	public String getZip() {
+		return zip;
+	}
+	public void setZip(String zip) {
+		this.zip = zip;
+	}
 }

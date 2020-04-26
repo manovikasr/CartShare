@@ -4,8 +4,6 @@ import com.cmpe275project.model.User;
 import com.cmpe275project.requestObjects.UserRequest;
 
 public interface UserService {
-
-	public void registerUser(UserRequest user); 
 	
     public Boolean isEmailExists(String email);
 	

@@ -20,11 +20,6 @@ public class UserDaoImpl implements UserDao{
 	private EntityManager entityManager;
 
 	@Override
-	public void registerUser(User user) {
-		entityManager.unwrap(Session.class).save(user);
-	}
-	
-	@Override
 	public Boolean isEmailExists(String email) {
 		
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();

@@ -36,8 +36,6 @@ public class UserAuthResult {
 		this.userExists = userExists;
 	}
 	
-	
-	
 	public String getToken() {
 		return token;
 	}
