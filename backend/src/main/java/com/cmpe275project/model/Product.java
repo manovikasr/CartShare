@@ -1,17 +1,26 @@
 package com.cmpe275project.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -26,47 +35,40 @@ public class Product {
 	@NotEmpty(message = "Product Name is Mandatory")
 	@NotBlank(message = "Product Name is Mandatory")
 	@Column(name = "product_name")
-	private String productname;
+	private String product_name;
 	
 	@NotNull(message = "SKU is Mandatory")
 	@NotEmpty(message = "SKU is Mandatory")
 	@NotBlank(message = "SKU is Mandatory")
-	@Column(name = "SKU")
-	private String SKU;
+	@Column(name = "sku")
+	private String sku;
 	
 	@NotNull(message = "Product Desc")
 	@NotEmpty(message = "Product Desc is Mandatory")
 	@NotBlank(message = "Product Desc is Mandatory")
 	@Column(name = "product_desc")
-	private String desc;
+	private String product_desc;
 	
-	/*
-	 * @NotNull(message = "Product Image")
-	 * 
-	 * @NotEmpty(message = "Product Image is Mandatory")
-	 * 
-	 * @NotBlank(message = "Product Image is Mandatory")
-	 */
 	@Column(name = "product_img")
-	private String productimg;
+	private String product_img;
 	
 	
 	@Column(name = "product_brand")
-	private String productbrand;
+	private String product_brand;
 	
 	@NotNull(message = "Unit type is Mandatory")
 	@NotEmpty(message = "Unit type is Mandatory")
 	@NotBlank(message = "Unit Type is Mandatory")
 	@Column(name = "unit_type")
-	private String unittype;
+	private String unit_type;
 	
 	@NotNull(message = "Price is Mandatory")
 	@Column(name = "price")
-	private int price;
+	private Double price;
 	
 	/*@ManyToMany(mappedBy = "products")
 	Set<Store> stores;*/
-
+	
 	public long getId() {
 		return id;
 	}
@@ -75,62 +77,63 @@ public class Product {
 		this.id = id;
 	}
 
-	public String getProductname() {
-		return productname;
+	public String getProduct_name() {
+		return product_name;
 	}
 
-	public void setProductname(String productname) {
-		this.productname = productname;
+	public void setProduct_name(String product_name) {
+		this.product_name = product_name;
 	}
 
-	public String getSKU() {
-		return SKU;
+	public String getSku() {
+		return sku;
 	}
 
-	public void setSKU(String sKU) {
-		SKU = sKU;
+	public void setSku(String sku) {
+		this.sku = sku;
 	}
 
-	public String getDesc() {
-		return desc;
+	public String getProduct_desc() {
+		return product_desc;
 	}
 
-	public void setDesc(String desc) {
-		this.desc = desc;
+	public void setProduct_desc(String product_desc) {
+		this.product_desc = product_desc;
 	}
 
-	public String getProductimg() {
-		return productimg;
+	public String getProduct_img() {
+		return product_img;
 	}
 
-	public void setProductimg(String productimg) {
-		this.productimg = productimg;
+	public void setProduct_img(String product_img) {
+		this.product_img = product_img;
 	}
 
-	public String getProductbrand() {
-		return productbrand;
+	public String getProduct_brand() {
+		return product_brand;
 	}
 
-	public void setProductbrand(String productbrand) {
-		this.productbrand = productbrand;
+	public void setProduct_brand(String product_brand) {
+		this.product_brand = product_brand;
 	}
 
-	public String getUnittype() {
-		return unittype;
+	public String getUnit_type() {
+		return unit_type;
 	}
 
-	public void setUnittype(String unittype) {
-		this.unittype = unittype;
+	public void setUnit_type(String unit_type) {
+		this.unit_type = unit_type;
 	}
 
-	public int getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(int price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 
+	
 	/*public Set<Store> getStores() {
 		return stores;
 	}
