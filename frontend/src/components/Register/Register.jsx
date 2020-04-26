@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { registerUser } from "../../redux/actions/authActions";
 import firebase from "firebase";
-import { Col, Form, Button, ButtonGroup } from 'react-bootstrap';
+import { Col, Form, Button, ButtonGroup, Alert } from 'react-bootstrap';
 
 class Register extends Component {
   constructor() {
@@ -16,7 +16,8 @@ class Register extends Component {
       address: "",
       city: "",
       state: "",
-      zip: ""
+      zip: "",
+      error_message: ""
     };
   }
 
@@ -43,6 +44,17 @@ class Register extends Component {
     if (props.auth.user.id && !props.auth.user.email_verified) {
       this.props.history.push("/verify");
     }
+    if (props.errors) {
+      this.setState({
+        error_message: props.errors.message
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    this.setState({
+      error_message: ""
+    });
   }
 
   onChange = e => {
@@ -50,6 +62,10 @@ class Register extends Component {
       [e.target.id]: e.target.value
     });
   };
+
+  cancelRegistration = e => {
+    firebase.auth().signOut();
+  }
 
   onSubmit = e => {
     e.preventDefault();
@@ -68,6 +84,12 @@ class Register extends Component {
   };
 
   render() {
+    var errorMessage;
+    if (this.state.error_message) {
+      errorMessage = (
+        <Alert variant="warning">{this.state.error_message}</Alert>
+      );
+    }
     return (
       <React.Fragment>
         <div className="container p-4">
@@ -79,7 +101,7 @@ class Register extends Component {
                   <h3>Please register your details</h3>
                 </center>
                 <br />
-                <h5 className="p-2" id="signup-msg-box" style={{ display: 'none' }}> </h5>
+                {errorMessage}
 
                 <Form onSubmit={this.onSubmit} autoComplete="off">
                   <Form.Row>
@@ -165,7 +187,8 @@ class Register extends Component {
                   <div className="row">
                     <div className="col-md-12 text-center p-2">
                       <ButtonGroup aria-label="Third group">
-                        <Button type="submit" variant="success">Register</Button>
+                        <Button type="submit" variant="success">Register</Button>&nbsp;&nbsp;
+                        <Button variant="secondary" onClick={this.cancelRegistration}>Cancel</Button>
                       </ButtonGroup>
                     </div>
                   </div>
