@@ -35,7 +35,7 @@ export const loginUser = userData => dispatch => {
       
     })
     .catch(err =>
-      {console.log("Errors Resp ",err.response);
+      {
         dispatch({
         type: GET_ERRORS,
         payload: err.response.data
@@ -52,7 +52,6 @@ export const registerUser = userData => dispatch => {
       if(res.data.token.length>0)
        {
           // Set token to localStorage
-          //console.log("Response ",res);
           const token  = res.data.token;
           localStorage.setItem("jwtToken", token);
           // Set token to Auth header
@@ -82,7 +81,6 @@ export const verifyEmail = userData => dispatch => {
       if(res.data.token.length>0)
        {
           // Set token to localStorage
-          //console.log("Response ",res);
           const token  = res.data.token;
           localStorage.setItem("jwtToken", token);
           // Set token to Auth header
@@ -116,14 +114,12 @@ export const updateProfile = (userData) => {
      
       axios.post("user/profile",userData)
       .then(resp => {
-        console.log(resp);
           if(resp.data) {
            return true;
           } else {
               
           }
       }, err => {
-        console.log("sjjsjs sjsjjs");
          // dispatch(stopLoader());
           
       });
@@ -136,9 +132,7 @@ export const updateProfile1 = userData =>dispatch=> {
   
   axios
     .post("user/profile", userData)
-    .then(res => {
-       console.log("upfdted profile");
-        
+    .then(res => {        
        dispatch(setUserInfo({name:"Namanananan"}))
      
       
@@ -160,7 +154,6 @@ export const setCurrentUser = decoded => {
 };
 
 export const setUserInfo = data => {
-  console.log("data is "+data)
   return {
     type: CURRENT_USER_INFO,
     payload: data
@@ -194,7 +187,6 @@ export const logoutUser = (history) => dispatch => {
 };
 
 export const updateUser = userInfo => async dispatch => {
-  console.log(userInfo);
   await axios
     .post("http://localhost:3001/user/profile", userInfo)
     .then(response => {
@@ -209,7 +201,6 @@ export const updateUser = userInfo => async dispatch => {
 };
 
 export const fetchManagerProfile = userId => async dispatch => {
-  console.log(userId)
   await axios
     .get(`http://localhost:3001/user/profile/${userId}`)
     .then(response => {
@@ -223,7 +214,6 @@ export const fetchManagerProfile = userId => async dispatch => {
     });
 };
 export const startLoading = ()=>async dispatch=>{
-  console.log("coming here in action")
   dispatch({ type: '_REQUEST' })
 
 }
@@ -231,7 +221,6 @@ export const endLoading = ()=>async dispatch=>{
   dispatch({ type: '_SUCCESS' })
 }
 export const fetchTesterprojects = testerId => async dispatch => {
-  console.log(testerId)
   
   await axios
     .get(`/project/tester/${testerId}`)

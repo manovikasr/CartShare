@@ -135,8 +135,7 @@ public class JwtAuthenticationController {
                     map.put("screen_name", user.getScreen_name());
                     map.put("access_code", user.getAccess_code().toString());
                     
-                    String subject = "CartShare - Verify your email address";
-                    emailService.sendVerificationEmail(user.getEmail(), subject, map);
+                    emailService.sendVerificationEmail(user.getEmail(), map);
                     
 				    status = HttpStatus.OK;
 			}

@@ -56,6 +56,9 @@ class Navigationbar extends Component {
             <Nav className="mr-auto">
             </Nav>
             <Nav.Link>
+              <Link className="nav-link text-dark t-font-size-14" to="/stores"><i className="fas fa-store pr-2"></i>Stores</Link>
+            </Nav.Link>
+            <Nav.Link>
               <Link className="nav-link text-dark t-font-size-14" to="/pools"><i className="fas fa-users pr-2"></i>Pool</Link>
             </Nav.Link>
             <Nav.Link>

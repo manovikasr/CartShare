@@ -56,7 +56,7 @@ public class EmailServiceImpl implements EmailService{
 	}
 	
 	@Override
-	public void sendVerificationEmail(String to, String subject, Map<String, Object> map) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
+	public void sendVerificationEmail(String to, Map<String, Object> map) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
 		// TODO Auto-generated method stub
 		try {
 			MimeMessage message = emailSender.createMimeMessage();
@@ -65,6 +65,7 @@ public class EmailServiceImpl implements EmailService{
 			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
 			
 			Template t = freeMarkerConfig.getTemplate("EmailVerification.ftl");
+            String subject = "Cart Share - Verify your email address";
 			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
 			
 			helper.setTo(to);
