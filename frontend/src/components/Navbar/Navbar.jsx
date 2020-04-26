@@ -40,7 +40,7 @@ class Navigationbar extends Component {
     userDropdown = (
       <Dropdown>
         <Dropdown.Toggle variant="link" className="nav-link text-dark t-font-size-14" id="dropdown-basic">
-          Hi, {user.screen_name}!
+          Hi, {user.screen_name}
         </Dropdown.Toggle>
         <Dropdown.Menu>
           <Dropdown.Item><Link to="/profile" className="nav-link text-dark t-font-size-14"><i className="far fa-address-card pr-2"></i>Profile</Link></Dropdown.Item>

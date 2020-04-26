@@ -35,6 +35,6 @@ public interface UserService {
 
 	public Integer generateAccessCode();
 	
-	public  boolean isAccessCodeExists(String email, Integer access_code);
+	public  boolean isAccessCodeMatches(String email, Integer access_code);
 	
 }

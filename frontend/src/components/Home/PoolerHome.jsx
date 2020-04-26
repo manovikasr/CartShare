@@ -16,7 +16,7 @@ class PoolerHome extends Component {
   render() {
     return (
       <div>
-        Pooler Home
+        <b>Pooler Home</b>
       </div>
     );
   }

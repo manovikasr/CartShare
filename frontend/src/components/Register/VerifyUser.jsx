@@ -11,6 +11,7 @@ class VerifyUser extends Component {
     super();
     this.state = {
       access_code: "",
+      submitted: false,
       error_message: ""
     };
   }
@@ -39,16 +40,18 @@ class VerifyUser extends Component {
       if (props.auth.user.email_verified) {
         this.props.history.push("/home");
       }
-      else {
+      else if (this.state.submitted) {
         this.setState({
-          error_message: "Email address could not be verified."
+          error_message: "User could not be verified. Try again."
         });
       }
     }
+    console.log(props);
   }
 
-  componentWillUnmount(){
-    this.setState({ 
+  componentWillUnmount() {
+    this.setState({
+      submitted: false,
       error_message: ""
     });
   }
@@ -67,12 +70,15 @@ class VerifyUser extends Component {
       access_code: this.state.access_code
     };
 
+    this.setState({
+      submitted: true
+    });
     this.props.verifyEmail(userData);
   };
 
   render() {
     var errorMessage;
-    if(this.state.error_message){
+    if (this.state.error_message) {
       errorMessage = (
         <Alert variant="warning">{this.state.error_message}</Alert>
       );

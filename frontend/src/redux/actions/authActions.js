@@ -77,7 +77,7 @@ export const verifyEmail = userData => dispatch => {
   dispatch({
     type: RESET_ALL_STATE
   });
-  axios.post("verify", userData)
+  axios.post(`verify/${userData.email}/${userData.access_code}`)
     .then(res => {
       if(res.data.token.length>0)
        {

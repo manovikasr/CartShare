@@ -62,7 +62,6 @@ public class JwtAuthenticationController {
 		
 		if(!userService.isEmailExists(authenticationRequest.getEmail())) {
 			status = HttpStatus.NOT_FOUND;
-			result.setMessage("User does not exists");
 			result.setUserExists(false);
 			return new ResponseEntity<>(result, status);
 		}
@@ -117,7 +116,7 @@ public class JwtAuthenticationController {
 				   else
 					    user.setRole("pooler");
 				  
-				   user.setAccess_code(userService.generateAccessCode());
+				   	user.setAccess_code(userService.generateAccessCode());
 				    userService.add(user);
 				    result.setMessage("User Added Successfully");
 				    
@@ -145,28 +144,21 @@ public class JwtAuthenticationController {
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		UserAuthResult result = new UserAuthResult();
 		
-		boolean verificationSuccessfull=false;
-		
 		if(userService.isEmailExists(email.trim())) {
 			String trimmedEmail = email.trim();
-			// TODO compare access_code in database
-			// TODO if access_code matches send token else send same old token
-			if(userService.isAccessCodeExists(trimmedEmail, access_code)) {
-				verificationSuccessfull = true;
-				result.setMessage("Email Verified Successfully");
-			}
-			else {
-				result.setMessage("Email Verification Failed");
-			}
-		   
+			
 			User userDetails = userService.getUserInfoByEmail(trimmedEmail);
 			
-			if(verificationSuccessfull)
-			{
+			if(userService.isAccessCodeMatches(trimmedEmail, access_code)) {
+				
 				userDetails.setAccess_code(null);
 	            userDetails.setEmail_verified(true);
 	            userService.edit(userDetails);
-	            	
+	            
+				result.setMessage("Email Verified Successfully");
+			}
+			else {
+				result.setMessage("Email address could not be verified");
 			}
             
 			String token = jwtTokenUtil.generateToken(userDetails);

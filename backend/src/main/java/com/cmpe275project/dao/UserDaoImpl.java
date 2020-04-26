@@ -327,7 +327,7 @@ public class UserDaoImpl implements UserDao{
 	}
 
 	@Override
-	public boolean isAccessCodeExists(String email, Integer access_code) {
+	public boolean isAccessCodeMatches(String email, Integer access_code) {
 		// TODO Auto-generated method stub
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
