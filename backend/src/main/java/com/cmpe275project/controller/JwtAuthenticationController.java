@@ -66,6 +66,7 @@ public class JwtAuthenticationController {
 		
 		if(!userService.isEmailExists(authenticationRequest.getEmail())) {
 			status = HttpStatus.NOT_FOUND;
+			result.setMessage("User Not Found");
 			result.setUserExists(false);
 			return new ResponseEntity<>(result, status);
 		}
