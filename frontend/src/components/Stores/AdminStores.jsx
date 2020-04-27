@@ -47,9 +47,9 @@ class AdminStores extends Component {
   getStores = () => {
     axios.get("store")
       .then(res => {
-        if (res.data.length) {
+        if (res.data) {
           this.setState({
-            stores: res.data
+            stores: res.data.stores
           });
         }
       })
