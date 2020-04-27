@@ -87,5 +87,11 @@ public class StoreServiceImpl implements StoreService{
 		}
 		
 	}
+
+	@Override
+	public List<Store> getAllStores() {
+		// TODO Auto-generated method stub
+		return storeDao.getAllStores();
+	}
 	
 }

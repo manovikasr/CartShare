@@ -28,4 +28,6 @@ public interface StoreService {
 	public void addAllStoreProducts(List<StoreProduct> storeProductsList);
 	
 	public void deleteAllStoreProducts(List<StoreProduct> existingStoreProducts);
+	
+	public List<Store> getAllStores();
 }
