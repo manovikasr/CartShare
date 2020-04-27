@@ -354,5 +354,14 @@ public class UserDaoImpl implements UserDao{
 		return false;
 
 	}
+
+	@Override
+	public boolean checkHasPool(Long userid) {
+		User user = entityManager.find(User.class,userid);
+		if(user.getPool()==null)
+			return false;
+		else
+			return true;
+	}
 	
 }

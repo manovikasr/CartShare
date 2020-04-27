@@ -123,6 +123,12 @@ public class UserServiceImpl implements UserService{
 		return userDao.isAccessCodeMatches(email,access_code);
 	}
 
+	@Override
+	public boolean checkHasPool(Long userid) {
+		// TODO Auto-generated method stub
+		return userDao.checkHasPool(userid);
+	}
+
 	
 
 }

@@ -33,4 +33,6 @@ public interface UserDao {
 	public User getUserInfoByEmail(String email);
 	
 	public boolean isAccessCodeMatches(String email, Integer access_code);
+
+	public boolean checkHasPool(Long userid);
 }
