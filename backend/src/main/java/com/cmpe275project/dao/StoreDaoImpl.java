@@ -195,4 +195,25 @@ public class StoreDaoImpl implements StoreDao{
 	public void deleteStoreProduct(StoreProduct storeProduct) {
 		entityManager.unwrap(Session.class).delete(storeProduct);
 	}
+	
+	@Override
+	public List<Store> getAllStores() {
+
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Store> criteriaQuery = builder.createQuery(Store.class);
+		Root<Store> root = criteriaQuery.from( Store.class);
+		criteriaQuery.select(root);
+		TypedQuery<Store> query = entityManager.createQuery(criteriaQuery);
+		List<Store> stores = null;
+		
+		try {
+			stores = query.getResultList();
+		}catch(Exception ex) {
+			System.out.println("Error in Store Dao List of Stores "+ex.getMessage());
+		}
+		
+		return  stores;
+		
+	}
+	
 }

@@ -1,6 +1,7 @@
 package com.cmpe275project.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cmpe275project.model.Store;
+import com.cmpe275project.responseObjects.StoreListResponse;
 import com.cmpe275project.responseObjects.StoreResponse;
 import com.cmpe275project.service.StoreService;
 
@@ -123,8 +125,25 @@ public class StoreController {
 			store = storeService.getStoreInfoById(id);
 			response.setMessage("Store Details");
 			response.setStore(store);
-			response.setStoreProducts(store.getStore_products());
-		    status = HttpStatus.OK;
+			status = HttpStatus.OK;
+		}else {
+			response.setMessage("Store Details Not Available");
+		}
+		
+		return new ResponseEntity<>(response,status);
+	}
+	
+	@GetMapping("")
+	public ResponseEntity<?> getAllStores()
+	{
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		List<Store> stores = null;
+		StoreListResponse response = new StoreListResponse();
+		stores = storeService.getAllStores();
+		if(stores!=null) {
+			response.setMessage("All Stores Details");
+			response.setStore(stores);
+			status = HttpStatus.OK;
 		}else {
 			response.setMessage("Store Details Not Available");
 		}

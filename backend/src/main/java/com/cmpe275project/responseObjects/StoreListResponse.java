@@ -6,15 +6,15 @@ import java.util.Map;
 import com.cmpe275project.model.Store;
 import com.cmpe275project.model.Product;
 
-public class StoreResponse {
+public class StoreListResponse {
 
 	private String message;
     
 	private Map<String, String> errors; 
 	
-	private Store store;
+	private List<Store> stores;
 	
-	//private List<Product> storeProducts;
+	private List<Product> storeProducts;
 	
 	public Map<String, String> getErrors() {
 		return errors;
@@ -32,12 +32,12 @@ public class StoreResponse {
 		this.message = message;
 	}
 
-	public Store getStore() {
-		return store;
+	public List<Store> getStores() {
+		return stores;
 	}
 
-	public void setStore(Store store) {
-		this.store = store;
+	public void setStore(List<Store> stores) {
+		this.stores = stores;
 	}
 
 	/*public List<Product> getStoreProducts() {

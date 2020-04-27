@@ -21,6 +21,8 @@ public interface StoreDao {
 	
 	public Store getStoreInfoById(Long id);
 	
+	public List<Store> getAllStores();
+	
 	public List<StoreProduct> getStoreProductList(Long store_id);
 	
 	public Boolean chkStoreProductExists(Long store_id,Long product_id);

@@ -61,7 +61,7 @@ public class Store {
 	@JoinTable(name = "store_products", 
     joinColumns = { @JoinColumn(name = "store_id") }, 
     inverseJoinColumns = { @JoinColumn(name = "product_id") })
-	@JsonIgnore
+	//@JsonIgnore
 	private List<Product> store_products;
 
 	
