@@ -1,15 +1,17 @@
 import React, { Component } from "react";
-import { Button, Modal, Form, Col } from "react-bootstrap";
+import { Button, Modal, Form, Col, Alert } from "react-bootstrap";
+import axios from "axios";
 
 class AddEditStoreModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "",
+            store_name: "",
             address: "",
             city: "",
             state: "",
-            zip: ""
+            zip: "",
+            error_message: ""
         };
     }
 
@@ -19,24 +21,80 @@ class AddEditStoreModal extends Component {
         });
     }
 
-    onSubmit = (e) => {
+    addStore = (e) => {
         e.preventDefault();
 
         const storeData = {
-            name: this.state.name,
+            store_name: this.state.store_name,
             address: this.state.address,
             city: this.state.city,
             state: this.state.state,
             zip: this.state.zip
         };
+
+        axios.post("store", storeData)
+            .then(res => {
+                this.props.onHide();
+                this.props.getStores();
+            })
+            .catch(e => {
+                console.log(e.response);
+                if (e.response && e.response.data)
+                    this.setState({
+                        error_message: e.response.data.message
+                    });
+            })
+    }
+
+    updateStore = (e) => {
+        e.preventDefault();
+        var store_id, store_name, address, city, state, zip;
+        if (this.props.store) {
+            store_id = this.props.store.id;
+            store_name = this.state.store_name || this.props.store.store_name;
+            address = this.state.address || this.props.store.address;
+            city = this.state.city || this.props.store.city;
+            state = this.state.state || this.props.store.state;
+            zip = this.state.zip || this.props.store.zip;
+        }
+        const storeData = {
+            store_name, address, city, state, zip
+        };
+
+        axios.put(`store/${store_id}`, storeData)
+            .then(res => {
+                if (res.status === 200) {
+                    this.props.onHide();
+                    this.props.getStores();
+                }
+            })
+            .catch(e => {
+                console.log(e.response);
+                if (e.response && e.response.data)
+                    this.setState({
+                        error_message: e.response.data.message
+                    });
+            })
+
     }
 
     render() {
-        var title = "Add Store";
+        var title = "Add Store", onSubmit = this.addStore;
+        var errorMessage, store_name, address, city, state, zip;
+        if (this.state.error_message) {
+            errorMessage = (
+                <Alert variant="warning">{this.state.error_message}</Alert>
+            );
+        }
 
         if (this.props.store) {
             title = "Update Store";
-
+            onSubmit = this.updateStore;
+            store_name = this.props.store.store_name;
+            address = this.props.store.address;
+            city = this.props.store.city;
+            state = this.props.store.state;
+            zip = this.props.store.zip;
         }
         return (
             <Modal show={this.props.showModal} onHide={this.props.onHide}>
@@ -44,15 +102,15 @@ class AddEditStoreModal extends Component {
                     <Modal.Title><b>{title}</b></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={this.onSubmit}>
-
+                    <Form onSubmit={onSubmit}>
+                        {errorMessage}
                         <Form.Row>
-                            <Form.Group as={Col} controlId="name">
+                            <Form.Group as={Col} controlId="store_name">
                                 <Form.Label><b>Store Name</b></Form.Label>
-                                <Form.Control name="name"
+                                <Form.Control name="store_name"
                                     type="text"
                                     onChange={this.onChange}
-                                    defaultValue={this.state.name}
+                                    defaultValue={store_name}
                                     placeholder="Enter the store name"
                                     pattern="^[A-Za-z0-9 ]+$"
                                     required />
@@ -65,9 +123,9 @@ class AddEditStoreModal extends Component {
                                 <Form.Control name="address"
                                     type="text"
                                     onChange={this.onChange}
-                                    defaultValue={this.state.address}
+                                    defaultValue={address}
                                     placeholder="Enter the street address"
-                                    pattern="^[A-Za-z0-9 ]+$"
+                                    pattern="^[A-Za-z0-9,# ]+$"
                                     required />
                             </Form.Group>
                         </Form.Row>
@@ -78,7 +136,7 @@ class AddEditStoreModal extends Component {
                                 <Form.Control name="city"
                                     type="text"
                                     onChange={this.onChange}
-                                    defaultValue={this.state.city}
+                                    defaultValue={city}
                                     placeholder="Enter the city"
                                     pattern="^[A-Za-z ]+$"
                                     required />
@@ -89,7 +147,7 @@ class AddEditStoreModal extends Component {
                                 <Form.Control name="state"
                                     type="text"
                                     onChange={this.onChange}
-                                    defaultValue={this.state.state}
+                                    defaultValue={state}
                                     placeholder="Enter the state"
                                     pattern="^[A-Za-z ]+$"
                                     required />
@@ -102,7 +160,7 @@ class AddEditStoreModal extends Component {
                                 <Form.Control name="zip"
                                     type="text"
                                     onChange={this.onChange}
-                                    defaultValue={this.state.zip}
+                                    defaultValue={zip}
                                     placeholder="Enter the zip code"
                                     pattern="^[0-9 ]+$"
                                     required />

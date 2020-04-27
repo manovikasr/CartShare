@@ -53,6 +53,7 @@ public class StoreController {
         if(!storeService.chkStoreNameExists(storeRequest.getStore_name())){
         	storeService.add(storeRequest);
         	response.setMessage("Store Successfully Added");
+        	status = HttpStatus.OK;
         	response.setStore(storeRequest);
         }else {
         	status = HttpStatus.CONFLICT;

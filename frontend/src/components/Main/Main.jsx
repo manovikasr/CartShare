@@ -10,6 +10,8 @@ import Login from '../Login/Login';
 import Register from '../Register/Register';
 import VerifyUser from '../Register/VerifyUser';
 import Stores from '../Stores/Stores';
+import Products from '../Products/Products';
+import StoreProducts from "../StoreProducts/StoreProducts";
 import jwt_decode from "jwt-decode";
 import setAuthToken from "../../config/setAuthToken";
 import { setCurrentUser, logoutUser } from "../../redux/actions/authActions";
@@ -54,6 +56,8 @@ class Main extends React.Component {
                     <Route exact path="/verify" component={VerifyUser} />
                     <Route exact path="/profile" component={Profile} />
                     <Route exact path="/stores" component={Stores} />
+                    <Route exact path="/products" component={Products} />
+                    <Route exact path="/store/inventory" component={StoreProducts} />
                 </Switch>
             </React.Fragment>
         )

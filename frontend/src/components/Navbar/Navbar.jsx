@@ -26,10 +26,10 @@ class Navigationbar extends Component {
     var login, logout, userDropdown;
 
     login = (
-      <div class="collapse navbar-collapse navbar-right" id="navbarNav">
+      <div className="collapse navbar-collapse navbar-right" id="navbarNav">
         <Nav className="mr-auto">
         </Nav>
-        <Link to="/login" class="nav-link text-dark t-font-size-14"><i class="fas fa-user"></i>&nbsp;Login</Link>
+        <Link to="/login" className="nav-link text-dark t-font-size-14"><i className="fas fa-user"></i>&nbsp;Login</Link>
       </div>
     );
 
@@ -52,7 +52,7 @@ class Navigationbar extends Component {
     if (isAuthenticated && user.email_verified) {
       if (user.role === "pooler") {
         menuOptions = (
-          <div class="collapse navbar-collapse navbar-right" id="navbarNav">
+          <div className="collapse navbar-collapse navbar-right" id="navbarNav">
             <Nav className="mr-auto">
             </Nav>
             <Nav.Link>
@@ -71,11 +71,14 @@ class Navigationbar extends Component {
         );
       } else if (user.role === "admin") {
         menuOptions = (
-          <div class="collapse navbar-collapse navbar-right" id="navbarNav">
+          <div className="collapse navbar-collapse navbar-right" id="navbarNav">
             <Nav className="mr-auto">
             </Nav>
             <Nav.Link>
               <Link className="nav-link text-dark t-font-size-14" to="/stores"><i className="fas fa-store pr-2"></i>Stores</Link>
+            </Nav.Link>
+            <Nav.Link>
+              <Link className="nav-link text-dark t-font-size-14" to="/products"><i className="fas fa-box-open pr-2"></i>Products</Link>
             </Nav.Link>
           </div>
         );
@@ -84,7 +87,7 @@ class Navigationbar extends Component {
 
     if (isAuthenticated) {
       menu = (
-        <div class="collapse navbar-collapse navbar-right" id="navbarNav">
+        <div className="collapse navbar-collapse navbar-right" id="navbarNav">
           <Nav className="mr-auto">
           </Nav>
           {menuOptions}
