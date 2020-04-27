@@ -36,5 +36,7 @@ public interface UserService {
 	public Integer generateAccessCode();
 	
 	public  boolean isAccessCodeMatches(String email, Integer access_code);
+
+	public boolean checkHasPool(Long userid);
 	
 }
