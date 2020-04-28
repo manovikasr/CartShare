@@ -38,19 +38,20 @@ public class UserController {
 	}
 	
 	@PostMapping("/message")
-	public ResponseEntity<?> sendMessage(@RequestParam String from, @RequestParam String to, @RequestParam String text) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
+	public ResponseEntity<?> sendMessage(@RequestParam String from_email, @RequestParam String to_screen_name, @RequestParam String text) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
 		HttpStatus status;
 		UserResponse response = new UserResponse();
-		if(userService.isEmailExists(from) && userService.isEmailExists(to)) {
-			User user1 = userService.getUserInfoByEmail(from);
-			User user2 = userService.getUserInfoByEmail(to);
-			String user1ScreenName = user1.getScreen_name();
+		if(userService.isEmailExists(from_email)) {
+			User user1 = userService.getUserInfoByEmail(from_email);
+			User user2 = userService.getUserInfoByScreenName(to_screen_name);
+			String user1_screen_name = user1.getScreen_name();
+			String to_email = user2.getEmail();
 			Map<String, Object> map = new HashMap<>();
-			map.put("from_screen_name", user1ScreenName);
-			map.put("to_screen_name", user2.getScreen_name());
+			map.put("from_screen_name", user1_screen_name);
+			map.put("to_screen_name", to_screen_name);
 			map.put("text", text);
 			
-			emailService.sendMessageEmail(user1ScreenName, to, map);
+			emailService.sendMessageEmail(user1_screen_name, to_email, map);
 			status = HttpStatus.OK;
 			response.setMessage("Message sent succesfully");
 		}
