@@ -33,7 +33,6 @@ class ProductCard extends Component {
                     <Col>
                         <Card.Img style={{ width: "12rem", height: "12rem" }} alt="" src={product.product_img} />
                     </Col>
-                    <Col>
                         <Card.Body>
                             <Card.Title>{product.product_name}</Card.Title>
                             <Card.Text>
@@ -44,10 +43,9 @@ class ProductCard extends Component {
                                 <b>Description:</b>{product.product_desc}
                             </Card.Text>
                         </Card.Body>
-                    </Col>
                     <Col align="right">
-                        <br /><br />
-                        <Button variant="link" onClick={this.updateStore}>Update</Button>&nbsp;&nbsp;&nbsp;
+                        <br/><br/><br/>
+                        <Button variant="link" onClick={this.updateStore}>Update</Button><br/>
                         <Button variant="link" onClick={this.deleteStore}>Delete</Button>
                     </Col>
                 </Row>

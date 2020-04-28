@@ -12,6 +12,9 @@ import VerifyUser from '../Register/VerifyUser';
 import Stores from '../Stores/Stores';
 import Products from '../Products/Products';
 import StoreProducts from "../StoreProducts/StoreProducts";
+import Message from '../Message/Message';
+import Cart from '../Cart/Cart';
+import Pools from '../Pools/Pools';
 import jwt_decode from "jwt-decode";
 import setAuthToken from "../../config/setAuthToken";
 import { setCurrentUser, logoutUser } from "../../redux/actions/authActions";
@@ -55,9 +58,12 @@ class Main extends React.Component {
                     <Route exact path="/register" component={Register} />
                     <Route exact path="/verify" component={VerifyUser} />
                     <Route exact path="/profile" component={Profile} />
+                    <Route exact path="/message" component={Message} />
+                    <Route exact path="/cart" component={Cart} />
                     <Route exact path="/stores" component={Stores} />
                     <Route exact path="/products" component={Products} />
-                    <Route exact path="/store/inventory" component={StoreProducts} />
+                    <Route path="/pools" component={Pools} />
+                    <Route exact path="/store/products" component={StoreProducts} />
                 </Switch>
             </React.Fragment>
         )

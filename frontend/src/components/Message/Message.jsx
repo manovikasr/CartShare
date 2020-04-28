@@ -2,10 +2,8 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import PoolerStoreProducts from "./PoolerStoreProducts";
-import AdminStoreProducts from "./AdminStoreProducts";
 
-class StoreProducts extends Component {
+class Message extends Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -20,30 +18,20 @@ class StoreProducts extends Component {
                 this.props.history.push("/verify");
             }
         }
-        if (!this.props.location.state) {
-            this.props.history.push("/stores");
-        }
     }
 
     render() {
         const { user } = this.props.auth;
-        var storeProductsComponent;
-
-        if (user.role === "admin") {
-            storeProductsComponent = <AdminStoreProducts />
-        } else {
-            storeProductsComponent = <PoolerStoreProducts />
-        }
 
         return (
             <div>
-                {storeProductsComponent}
+                <b>Messages</b>
             </div>
         );
     }
 }
 
-StoreProducts.propTypes = {
+Message.propTypes = {
     auth: PropTypes.object.isRequired
 };
 
@@ -52,4 +40,4 @@ const mapStateToProps = state => ({
 });
 
 
-export default connect(mapStateToProps, {})(withRouter(StoreProducts));
+export default connect(mapStateToProps, {})(withRouter(Message));

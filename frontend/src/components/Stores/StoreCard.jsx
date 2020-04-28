@@ -56,7 +56,7 @@ class StoreCard extends Component {
                     src={storeImage}
                 />
                 <Card.Body>
-                    <Link to={{ pathname: "/store/inventory", state: { store: this.props.store } }}>
+                    <Link to={{ pathname: "/store/products", state: { store: this.props.store } }}>
                         <center>
                             <Card.Title>{this.props.store.store_name}</Card.Title>
                         </center>

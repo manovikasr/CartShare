@@ -23,7 +23,7 @@ class Navigationbar extends Component {
     const { user, isAuthenticated } = this.props.auth;
 
     var menu, menuOptions;
-    var login, logout, userDropdown;
+    var login, logout, userDropdown, verifyEmail;
 
     login = (
       <div className="collapse navbar-collapse navbar-right" id="navbarNav">
@@ -37,6 +37,12 @@ class Navigationbar extends Component {
       <Link className="nav-link text-dark t-font-size-14" to="/" onClick={this.onLogoutClick}><i className="fas fa-sign-out-alt pr-2"></i>Logout</Link>
     );
 
+    if (!user.email_verified) {
+      verifyEmail = (
+        <Dropdown.Item><Link to="/verify" className="nav-link text-dark t-font-size-14"><i className="far fa-envelope pr-2"></i>Verify Email</Link></Dropdown.Item>
+      );
+    }
+
     userDropdown = (
       <Dropdown>
         <Dropdown.Toggle variant="link" className="nav-link text-dark t-font-size-14" id="dropdown-basic">
@@ -44,6 +50,7 @@ class Navigationbar extends Component {
         </Dropdown.Toggle>
         <Dropdown.Menu>
           <Dropdown.Item><Link to="/profile" className="nav-link text-dark t-font-size-14"><i className="far fa-address-card pr-2"></i>Profile</Link></Dropdown.Item>
+          {verifyEmail}
           <Dropdown.Item>{logout}</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
@@ -59,10 +66,13 @@ class Navigationbar extends Component {
               <Link className="nav-link text-dark t-font-size-14" to="/stores"><i className="fas fa-store pr-2"></i>Stores</Link>
             </Nav.Link>
             <Nav.Link>
-              <Link className="nav-link text-dark t-font-size-14" to="/pools"><i className="fas fa-users pr-2"></i>Pool</Link>
+              <Link className="nav-link text-dark t-font-size-14" to="/pools/mypool"><i className="fas fa-users pr-2"></i>Pool</Link>
             </Nav.Link>
             <Nav.Link>
               <Link className="nav-link text-dark t-font-size-14" to="/orders"><i className="fas fa-clipboard pr-2"></i>Orders</Link>
+            </Nav.Link>
+            <Nav.Link>
+              <Link className="nav-link text-dark t-font-size-14" to="/message"><i className="fas fa-envelope pr-2"></i>Message</Link>
             </Nav.Link>
             <Nav.Link>
               <Link className="nav-link text-dark t-font-size-14" to="/cart"><i className="fas fa-shopping-cart pr-2"></i>Cart</Link>
@@ -107,7 +117,7 @@ class Navigationbar extends Component {
       <div>
         <nav className="navbar navbar-expand-lg navbar-dark bg-white border">
           <Navbar.Brand>
-            <Link to='/home' className="nav-link" href="#">
+            <Link to='/' className="nav-link" href="#">
               <img src={cartLogo} width="30" height="auto" alt="Cart Share" /> &nbsp;&nbsp;
             <font color="red"><b>Cart Share</b></font>
             </Link>

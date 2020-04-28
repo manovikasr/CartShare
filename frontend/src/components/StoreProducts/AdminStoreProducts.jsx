@@ -17,12 +17,12 @@ class AdminStoreProducts extends Component {
         };
     }
 
-    async componentDidMount() {
+    componentDidMount() {
         if (this.props.location.state) {
-            await this.setState({
-                store: this.props.location.state.store
+            this.setState({
+                store: this.props.location.state.store,
+                products: this.props.location.state.store.store_products
             });
-            this.getProducts();
         } else {
             this.props.history.push("/stores");
         }
@@ -34,40 +34,8 @@ class AdminStoreProducts extends Component {
         });
     }
 
-    getProducts = () => {
-        if (this.state.store) {
-            axios.get(`products/${this.state.store.id}`)
-                .then(res => {
-                    if (res.data) {
-                        this.setState({
-                            products: res.data
-                        });
-                    }
-                })
-                .catch(e => {
-                    console.log(e.response);
-                });
-        }
-
-
-        this.setState({
-            products: [
-                {
-                    id: 1,
-                    product_name: "Product",
-                    product_sku: "SKU"
-                },
-                {
-                    id: 2,
-                    product_name: "Product2",
-                    product_sku: "SKU"
-                }
-            ]
-        });
-    };
-
     render() {
-        var alertMessage, products;
+        var products;
         var store_name, address, address2;
         if (this.state.store) {
             store_name = this.state.store.store_name;
