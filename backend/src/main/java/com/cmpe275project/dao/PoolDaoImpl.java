@@ -121,13 +121,59 @@ public class PoolDaoImpl implements PoolDao {
 	public List<PoolRequest> getApplicationsByRefName(String refname) {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<PoolRequest> criteriaQuery = builder.createQuery(PoolRequest.class);
-		criteriaQuery.select(criteriaQuery.from(PoolRequest.class));
+		
 		Root<PoolRequest> root = criteriaQuery.from( PoolRequest.class );
+	//	criteriaQuery.select(builder.);
 	    criteriaQuery.where(
                 builder.equal(
                                       root.get( "refusername" ),refname
                                      )
-            );
+            ).distinct(true);
+	    List<PoolRequest> listPoolRequests = entityManager.createQuery(criteriaQuery).getResultList();
+	    
+	    return listPoolRequests;
+	}
+
+	@Override
+	public void leavePool(Long userid, Long poolid) {
+		User user = entityManager.find(User.class,userid);
+		//Pool p = entityManager.find(Pool.class,poolid);
+		user.setPool(null);
+		entityManager.unwrap(Session.class).update(user);
+		
+	}
+
+	@Override
+	public Long supportPoolRequest(Long applicationid) {
+		
+		PoolRequest request = entityManager.find(PoolRequest.class, applicationid);
+		Long poolid = request.getReqpoolid();
+		request.setRefsupportstatus(true);
+		entityManager.unwrap(Session.class).update(request);
+		
+		return poolid; 
+	}
+
+	@Override
+	public Long getPoolLeaderId(Long poolid) {
+		Pool pool = entityManager.find(Pool.class, poolid);
+		return pool.getPoolleaderid();
+	}
+
+	@Override
+	public List<PoolRequest> getAllSupportedApplicationsByPoolId(Long poolid) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<PoolRequest> criteriaQuery = builder.createQuery(PoolRequest.class);
+	//	criteriaQuery.select(criteriaQuery.from(PoolRequest.class));
+		Root<PoolRequest> root = criteriaQuery.from( PoolRequest.class );
+	    criteriaQuery.where(
+                builder.equal(
+                                      root.get( "reqpoolid" ),poolid
+                                     ),
+                builder.and(
+   		             builder.equal(root.get( "refsupportstatus" ), true)
+   		             )
+            ).distinct(true);
 	    List<PoolRequest> listPoolRequests = entityManager.createQuery(criteriaQuery).getResultList();
 	    return listPoolRequests;
 	}

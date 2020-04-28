@@ -33,8 +33,6 @@ public interface UserService {
 	
 	public User getUserInfoByEmail(String email);
 	
-	public User getUserInfoByScreenName(String screen_name);
-
 	public Integer generateAccessCode();
 	
 	public  boolean isAccessCodeMatches(String email, Integer access_code);
