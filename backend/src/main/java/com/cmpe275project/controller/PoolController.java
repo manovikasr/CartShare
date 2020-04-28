@@ -126,7 +126,7 @@ public class PoolController {
 			status = HttpStatus.CONFLICT;
 			return new ResponseEntity<>(response,status); 
 		}
-		if(knowsleader==true) {
+		if(membersCount==1 || knowsleader==true) {
 			poolService.addPoolRequest(userid,user_screenname,poolid,refname,true);
 		}
 		else {
@@ -212,6 +212,8 @@ public class PoolController {
 			poolLeader = userService.getUserInfoById(poolLeaderId);
 		}
 		String emailId = poolLeader.getEmail();
+		
+		
 		/*
 		 * send email to poolleader for approving
 		 * */
@@ -236,7 +238,37 @@ public class PoolController {
 		status = HttpStatus.OK;
 		return new ResponseEntity<>(response,status);
 	}
-	
+	@PostMapping("/deletePool")
+	public ResponseEntity<?> deletePool(@RequestParam(name="pool_id") Long poolid,@RequestParam(name="leader_id") Long leaderid)
+	{
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		PoolResponse response = new PoolResponse();
+		
+		if(!poolService.isPoolIdExist(poolid)) {
+			response.setMessage("Pool Does Not exist....");
+			return new ResponseEntity<>(response,status);
+		}
+		int membersCount = poolService.countMembers(poolid);
+		if(membersCount>1) {
+			status = HttpStatus.CONFLICT;
+			response.setMessage("Pool has active members....");
+			return new ResponseEntity<>(response,status);
+		}
+		else {
+			Long leaderId = poolService.getPoolLeaderId(poolid);
+			if(leaderId == leaderid) {
+				poolService.leavePool(leaderid, poolid);
+				poolService.deletePool(poolid);
+				status = HttpStatus.OK;
+				response.setMessage("Pool deleted successfully");
+			}
+			else {
+				status = HttpStatus.CONFLICT;
+				response.setMessage("Only leader can delete pool");
+			}
+			return new ResponseEntity<>(response,status);
+		}
+	}
 	@PostMapping("/approve")
 	public ResponseEntity<?> approvePool(@RequestParam(name="user_id") Long userid, @RequestParam(name="pool_id") Long poolid)
 	{

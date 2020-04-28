@@ -178,4 +178,10 @@ public class PoolDaoImpl implements PoolDao {
 	    return listPoolRequests;
 	}
 
+	@Override
+	public void deletePool(Long poolid) {
+		Pool pool = entityManager.find(Pool.class, poolid);
+		entityManager.unwrap(Session.class).delete(pool);
+	}
+
 }

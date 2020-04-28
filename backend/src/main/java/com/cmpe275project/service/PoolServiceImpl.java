@@ -87,4 +87,10 @@ public class PoolServiceImpl implements PoolService{
 		
 		return poolDao.getAllSupportedApplicationsByPoolId(poolid);
 	}
+	@Override
+	public void deletePool(Long poolid) {
+		
+		poolDao.deletePool(poolid);
+		
+	}
 }

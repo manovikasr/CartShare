@@ -130,5 +130,11 @@ public class UserServiceImpl implements UserService{
 		return userDao.checkHasPool(userid);
 	}
 
+	@Override
+	public User getUserInfoByScreenName(String sender_screen_name) {
+		// TODO Auto-generated method stub
+		return userDao.getUserInfoByScreenName(sender_screen_name);
+	}
+
 
 }
