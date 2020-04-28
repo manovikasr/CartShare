@@ -1,5 +1,7 @@
 package com.cmpe275project.service;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.cmpe275project.dao.PoolDao;
 import com.cmpe275project.dao.UserDao;
 import com.cmpe275project.model.Pool;
-import com.cmpe275project.requestObjects.PoolRequest;
+import com.cmpe275project.model.PoolRequest;
 
 @Service
 @Transactional
@@ -50,5 +52,19 @@ public class PoolServiceImpl implements PoolService{
 	public int countMembers(Long poolid) {
 		
 		return poolDao.countMembers(poolid);
+	}
+	@Override
+	public List<Pool> getAllPools() {
+		
+		return poolDao.getAllPools();
+	}
+	@Override
+	public void addPoolRequest(Long userid,String user_screenname,Long poolid, String refname, boolean b) {
+		poolDao.addPoolRequest(userid,user_screenname,poolid,refname,b);
+		
+	}
+	@Override
+	public List<PoolRequest> getApplicationsByRefName(String refname) {
+		return poolDao.getApplicationsByRefName(refname);
 	}
 }
