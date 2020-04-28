@@ -67,4 +67,24 @@ public class PoolServiceImpl implements PoolService{
 	public List<PoolRequest> getApplicationsByRefName(String refname) {
 		return poolDao.getApplicationsByRefName(refname);
 	}
+	@Override
+	public void leavePool(Long userid, Long poolid) {
+		
+		poolDao.leavePool(userid,poolid);
+	}
+	@Override
+	public Long supportPoolRequest(Long applicationid) {
+		
+		return poolDao.supportPoolRequest(applicationid);
+	}
+	@Override
+	public Long getPoolLeaderId(Long poolid) {
+		
+		return poolDao.getPoolLeaderId(poolid);
+	}
+	@Override
+	public List<PoolRequest> getAllSupportedApplicationsByPoolId(Long poolid) {
+		
+		return poolDao.getAllSupportedApplicationsByPoolId(poolid);
+	}
 }

@@ -22,4 +22,12 @@ public interface PoolDao {
 	public void addPoolRequest(Long userid, String user_screenname, Long poolid, String refname, boolean b);
 
 	public List<PoolRequest> getApplicationsByRefName(String refname);
+
+	public void leavePool(Long userid, Long poolid);
+
+	public Long supportPoolRequest(Long applicationid);
+
+	public Long getPoolLeaderId(Long poolid);
+
+	public List<PoolRequest> getAllSupportedApplicationsByPoolId(Long poolid);
 }
