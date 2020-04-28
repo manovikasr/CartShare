@@ -4,15 +4,22 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cmpe275project.model.User;
+import com.cmpe275project.requestObjects.MessageRequest;
 import com.cmpe275project.responseObjects.UserResponse;
 import com.cmpe275project.service.EmailService;
 import com.cmpe275project.service.UserService;
@@ -38,20 +45,36 @@ public class UserController {
 	}
 	
 	@PostMapping("/message")
-	public ResponseEntity<?> sendMessage(@RequestParam String from_email, @RequestParam String to_screen_name, @RequestParam String text) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
-		HttpStatus status;
+	public ResponseEntity<?> sendMessage(@Valid @RequestBody MessageRequest messageRequest, Errors errors) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
+		HttpStatus status = HttpStatus.NOT_FOUND;
 		UserResponse response = new UserResponse();
-		if(userService.isEmailExists(from_email)) {
-			User user1 = userService.getUserInfoByEmail(from_email);
-			User user2 = userService.getUserInfoByScreenName(to_screen_name);
-			String user1_screen_name = user1.getScreen_name();
-			String to_email = user2.getEmail();
-			Map<String, Object> map = new HashMap<>();
-			map.put("from_screen_name", user1_screen_name);
-			map.put("to_screen_name", to_screen_name);
-			map.put("text", text);
+		
+		if(errors.hasErrors()) {
+			Map<String,String> errorMap = new HashMap<String,String>();
 			
-			emailService.sendMessageEmail(user1_screen_name, to_email, map);
+			for (ObjectError error : errors.getAllErrors()) {
+				String fieldError = ((FieldError) error).getField();
+				errorMap.put(fieldError, error.getDefaultMessage());
+			}
+			response.setErrors(errorMap);
+			response.setMessage("Unable to send message");
+			
+			return new ResponseEntity<>(response, status);
+		}
+		
+		User sender = userService.getUserInfoByScreenName(messageRequest.getSender_screen_name());
+		User receiver = userService.getUserInfoByScreenName(messageRequest.getReceiver_screen_name());
+		if(sender != null && receiver != null) {
+			String receiver_email = receiver.getEmail();
+			String sender_screen_name = sender.getScreen_name();
+			String receiver_screen_name = receiver.getScreen_name();
+			
+			Map<String, Object> map = new HashMap<>();
+			map.put("from_screen_name", sender_screen_name);
+			map.put("to_screen_name", receiver_screen_name);
+			map.put("text", messageRequest.getMessage());
+			
+			emailService.sendMessageEmail(sender_screen_name, receiver_email, map);
 			status = HttpStatus.OK;
 			response.setMessage("Message sent succesfully");
 		}
