@@ -30,4 +30,6 @@ public interface PoolDao {
 	public Long getPoolLeaderId(Long poolid);
 
 	public List<PoolRequest> getAllSupportedApplicationsByPoolId(Long poolid);
+
+	public void deletePool(Long poolid);
 }

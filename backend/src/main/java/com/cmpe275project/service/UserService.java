@@ -38,5 +38,7 @@ public interface UserService {
 	public  boolean isAccessCodeMatches(String email, Integer access_code);
 
 	public boolean checkHasPool(Long userid);
+
+	public User getUserInfoByScreenName(String sender_screen_name);
 	
 }
