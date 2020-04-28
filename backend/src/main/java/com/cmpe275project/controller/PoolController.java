@@ -1,5 +1,6 @@
 package com.cmpe275project.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +26,14 @@ import com.cmpe275project.model.User;
 import com.cmpe275project.responseObjects.PoolApplicationsResponse;
 import com.cmpe275project.responseObjects.PoolResponse;
 import com.cmpe275project.responseObjects.UserResponse;
+import com.cmpe275project.service.EmailService;
 import com.cmpe275project.service.PoolService;
 import com.cmpe275project.service.UserService;
+
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
 
 @RestController
 @RequestMapping("/pool")
@@ -36,6 +43,9 @@ public class PoolController {
 	private PoolService poolService;
 	
 	@Autowired UserService userService;
+	
+	@Autowired
+	EmailService emailService;
 	
 	
 	@PostMapping("")
@@ -87,7 +97,7 @@ public class PoolController {
 	}
 
 	@PostMapping("/apply")
-	public ResponseEntity<?> applyPool(@RequestParam(name="user_id") Long userid,@RequestParam(name="pool_id") Long poolid,@RequestParam(name="ref_name") String refname,@RequestParam(name="knows_leader") Boolean knowsleader)
+	public ResponseEntity<?> applyPool(@RequestParam(name="user_id") Long userid,@RequestParam(name="pool_id") Long poolid,@RequestParam(name="ref_name") String refname,@RequestParam(name="knows_leader") Boolean knowsleader) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException
 	{
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		UserResponse response = new UserResponse();
@@ -122,12 +132,16 @@ public class PoolController {
 			poolService.addPoolRequest(userid,user_screenname,poolid,refname,false);
 		}
 		User referenceUser = userService.getUserInfoByScreenName(refname);
-		String emailId = referenceUser.getEmail();
-		/*
-		 * Add code here
-		 * Send email to refname
-		 * 
-		 * */
+		String ref_email = referenceUser.getEmail();
+		String ref_screen_name = referenceUser.getScreen_name();
+		user_screenname = userService.getUserInfoById(userid).getScreen_name();
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("applicant_screen_name", user_screenname);
+		map.put("ref_screen_name",ref_screen_name);
+		
+		emailService.sendRefEmail(ref_email, map);
+	
 		status = HttpStatus.OK;
 		User user = userService.getUserInfoById(userid);
 		response.setMessage("Email sent successfully");
