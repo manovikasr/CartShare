@@ -41,6 +41,4 @@ public interface UserService {
 
 	public boolean checkHasPool(Long userid);
 	
-	public User getUserInfoByScreenName(String screen_name);
-	
 }
