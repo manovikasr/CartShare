@@ -107,6 +107,11 @@ public class UserServiceImpl implements UserService{
 		
 		return userDao.getUserInfoByEmail(email);
 	}
+	
+	@Override
+	public User getUserInfoByScreenName(String screen_name) {
+		return userDao.getUserInfoByScreenName(screen_name);
+	}
 
 	@Override
 	public Integer generateAccessCode() {
