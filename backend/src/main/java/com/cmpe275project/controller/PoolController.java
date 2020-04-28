@@ -1,6 +1,7 @@
 package com.cmpe275project.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cmpe275project.model.Pool;
+import com.cmpe275project.model.PoolRequest;
 import com.cmpe275project.model.User;
+import com.cmpe275project.responseObjects.PoolApplicationsResponse;
 import com.cmpe275project.responseObjects.PoolResponse;
 import com.cmpe275project.responseObjects.UserResponse;
 import com.cmpe275project.service.PoolService;
@@ -70,6 +74,87 @@ public class PoolController {
         }
         
 		return new ResponseEntity<>(response,status);
+	}
+	@GetMapping("/all")
+	public ResponseEntity<?> getAllPools()
+	{
+		PoolResponse response = new PoolResponse();
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		List<Pool> poolList = poolService.getAllPools();
+		response.setPoolList(poolList);
+		status = HttpStatus.OK;
+		return new ResponseEntity<>(response,status);
+	}
+
+	@PostMapping("/apply")
+	public ResponseEntity<?> applyPool(@RequestParam(name="user_id") Long userid,@RequestParam(name="pool_id") Long poolid,@RequestParam(name="ref_name") String refname,@RequestParam(name="knows_leader") Boolean knowsleader)
+	{
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		UserResponse response = new UserResponse();
+		String user_screenname="";
+		if(!userService.isUserIdExists(userid)) {
+			response.setMessage("User does not exist");
+			response.setUser(null);
+			return new ResponseEntity<>(response,status);
+		}
+		else {
+			user_screenname = userService.getUserInfoById(userid).getScreen_name();
+		}
+		if(userService.checkHasPool(userid)) {
+			response.setMessage("Already joined pool ");
+			status = HttpStatus.BAD_REQUEST;
+			return new ResponseEntity<>(response,status);
+		}
+		if(!poolService.isPoolIdExist(poolid)) {
+			response.setMessage("Pool Does Not exist....Create a pool first");
+			return new ResponseEntity<>(response,status);
+		}
+		int membersCount = poolService.countMembers(poolid);
+		if(membersCount>=4) {
+			response.setMessage("Can't add more than 4 poolers");
+			status = HttpStatus.CONFLICT;
+			return new ResponseEntity<>(response,status); 
+		}
+		if(knowsleader==true) {
+			poolService.addPoolRequest(userid,user_screenname,poolid,refname,true);
+		}
+		else {
+			poolService.addPoolRequest(userid,user_screenname,poolid,refname,false);
+		}
+		User referenceUser = userService.getUserInfoByScreenName(refname);
+		String emailId = referenceUser.getEmail();
+		/*
+		 * Add code here
+		 * Send email to refname
+		 * 
+		 * */
+		status = HttpStatus.OK;
+		User user = userService.getUserInfoById(userid);
+		response.setMessage("Email sent successfully");
+		response.setUser(user);
+		return new ResponseEntity<>(response,status);
+		
+	}
+	
+	@PostMapping("/applicationByRefName")
+	public ResponseEntity<?> getApplicationsByRefName(@RequestParam(name="ref_name") String refname)
+	{
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		User referenceUser = userService.getUserInfoByScreenName(refname);
+		PoolApplicationsResponse response = new PoolApplicationsResponse();
+		if(referenceUser == null)
+		{	
+			response.setMessage("user does not exist");
+			return new ResponseEntity<>(response,status);
+		}
+		
+		List<PoolRequest> poolRequests = poolService.getApplicationsByRefName(refname);
+		response.setMessage("List fetched successfully");
+		response.setListPoolApplications(poolRequests);
+		status = HttpStatus.OK;
+		return new ResponseEntity<>(response,status);
+		
+		
 	}
 	
 	@PostMapping("/join")

@@ -363,5 +363,25 @@ public class UserDaoImpl implements UserDao{
 		else
 			return true;
 	}
+
+	@Override
+	public User getUserInfoByScreenName(String screen_name) {
+		
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<User> criteriaQuery = builder.createQuery(User.class);
+		Root<User> root = criteriaQuery.from( User.class);
+		criteriaQuery.select(root);
+		criteriaQuery.where(builder.equal(root.get( "screen_name" ),screen_name));
+		TypedQuery<User> query = entityManager.createQuery(criteriaQuery);
+		User user = null;
+		
+		try {
+			user = query.getSingleResult();
+		}catch(Exception ex) {
+			System.out.println("Error in User Dao "+ex.getMessage());
+		}
+		
+		return  user;
+	}
 	
 }

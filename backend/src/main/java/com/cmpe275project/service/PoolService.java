@@ -1,9 +1,11 @@
 package com.cmpe275project.service;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import com.cmpe275project.model.Pool;
-import com.cmpe275project.requestObjects.PoolRequest;
+import com.cmpe275project.model.PoolRequest;
 
 public interface PoolService {
 
@@ -16,4 +18,10 @@ public interface PoolService {
 	public boolean isPoolIdExist(Long poolid);
 
 	public int countMembers(Long poolid);
+
+	public List<Pool> getAllPools();
+
+	public void addPoolRequest(Long userid, String user_screenname, Long poolid, String refname, boolean b);
+
+	public List<PoolRequest> getApplicationsByRefName(String refname);
 }

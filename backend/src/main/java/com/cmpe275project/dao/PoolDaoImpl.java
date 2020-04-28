@@ -14,6 +14,7 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import com.cmpe275project.model.Pool;
+import com.cmpe275project.model.PoolRequest;
 import com.cmpe275project.model.User;
 
 @Repository
@@ -93,6 +94,42 @@ public class PoolDaoImpl implements PoolDao {
 		Pool p = entityManager.find(Pool.class,poolid);
 		List<User> poolers = p.getUser();
 		return poolers.size();
+	}
+
+	@Override
+	public List<Pool> getAllPools() {
+		CriteriaQuery<Pool> criteria = entityManager.getCriteriaBuilder().createQuery(Pool.class);
+	    criteria.select(criteria.from(Pool.class));
+	    List<Pool> listPools = entityManager.createQuery(criteria).getResultList();
+	    return listPools;
+	}
+
+	@Override
+	public void addPoolRequest(Long userid, String user_screenname, Long poolid, String refname, boolean b) {
+		
+		PoolRequest poolreq = new PoolRequest();
+		poolreq.setRequserid(userid);
+		poolreq.setRequserscreenname(user_screenname);
+		poolreq.setReqpoolid(poolid);
+		poolreq.setRefusername(refname);
+		poolreq.setRefsupportstatus(b);
+		
+		entityManager.unwrap(Session.class).save(poolreq);
+	}
+
+	@Override
+	public List<PoolRequest> getApplicationsByRefName(String refname) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<PoolRequest> criteriaQuery = builder.createQuery(PoolRequest.class);
+		criteriaQuery.select(criteriaQuery.from(PoolRequest.class));
+		Root<PoolRequest> root = criteriaQuery.from( PoolRequest.class );
+	    criteriaQuery.where(
+                builder.equal(
+                                      root.get( "refusername" ),refname
+                                     )
+            );
+	    List<PoolRequest> listPoolRequests = entityManager.createQuery(criteriaQuery).getResultList();
+	    return listPoolRequests;
 	}
 
 }
