@@ -32,6 +32,8 @@ public interface UserService {
 	public User getUserInfoById(Long id);
 	
 	public User getUserInfoByEmail(String email);
+	
+	public User getUserInfoByScreenName(String screen_name);
 
 	public Integer generateAccessCode();
 	
