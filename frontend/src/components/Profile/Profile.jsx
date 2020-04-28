@@ -30,7 +30,7 @@ class Profile extends Component {
 
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         this.setState({
             message: ""
         });
@@ -176,7 +176,7 @@ class Profile extends Component {
                                         <div className="col-md-12 text-center p-2">
                                             <ButtonGroup aria-label="Third group">
                                                 <Button type="submit" variant="success">Update</Button>&nbsp;&nbsp;
-                        <Button variant="secondary" onClick={() => { this.props.history.push("/"); }}>Cancel</Button>
+                                                <Button variant="secondary" onClick={() => { this.props.history.push("/"); }}>Cancel</Button>
                                             </ButtonGroup>
                                         </div>
                                     </div>
