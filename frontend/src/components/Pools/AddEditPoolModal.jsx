@@ -6,10 +6,10 @@ class AddEditPoolModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            store_name: "",
-            address: "",
-            city: "",
-            state: "",
+            pool_id: "",
+            pool_name: "",
+            neighbourhood: "",
+            pool_description: "",
             zip: "",
             error_message: ""
         };
@@ -79,8 +79,8 @@ class AddEditPoolModal extends Component {
     }
 
     render() {
-        var title = "Add Pool", onSubmit = this.addPool;
-        var errorMessage, store_name, address, city, state, zip;
+        var title = "Add Pool", onSubmit = this.addPool, updateMode = false;
+        var errorMessage, pool_id, pool_name, neighbourhood, pool_description, state, zip;
         if (this.state.error_message) {
             errorMessage = (
                 <Alert variant="warning">{this.state.error_message}</Alert>
@@ -88,9 +88,10 @@ class AddEditPoolModal extends Component {
         }
 
         if (this.props.store) {
+            updateMode = true;
             title = "Update Pool";
             onSubmit = this.updatePool;
-            
+
         }
         return (
             <Modal show={this.props.showModal} onHide={this.props.onHide}>
@@ -100,51 +101,55 @@ class AddEditPoolModal extends Component {
                 <Modal.Body>
                     <Form onSubmit={onSubmit}>
                         {errorMessage}
+
                         <Form.Row>
-                            <Form.Group as={Col} controlId="store_name">
-                                <Form.Label><b>Pool Name</b></Form.Label>
-                                <Form.Control name="store_name"
+                            <Form.Group as={Col} controlId="pool_id">
+                                <Form.Label><b>Pool ID</b></Form.Label>
+                                <Form.Control name="pool_id"
                                     type="text"
                                     onChange={this.onChange}
-                                    defaultValue={store_name}
-                                    placeholder="Enter the store name"
+                                    defaultValue={pool_id}
+                                    placeholder="Enter the pool id"
+                                    pattern="^[A-Za-z0-9 ]+$"
+                                    required
+                                    readOnly={updateMode} />
+                            </Form.Group>
+                        </Form.Row>
+
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="pool_name">
+                                <Form.Label><b>Pool Name</b></Form.Label>
+                                <Form.Control name="pool_name"
+                                    type="text"
+                                    onChange={this.onChange}
+                                    defaultValue={pool_name}
+                                    placeholder="Enter the Pool name"
                                     pattern="^[A-Za-z0-9 ]+$"
                                     required />
                             </Form.Group>
                         </Form.Row>
 
                         <Form.Row>
-                            <Form.Group as={Col} controlId="address">
-                                <Form.Label><b>Street Address</b></Form.Label>
-                                <Form.Control name="address"
+                            <Form.Group as={Col} controlId="neighbourhood">
+                                <Form.Label><b>Neighbourhood</b></Form.Label>
+                                <Form.Control name="neighbourhood"
                                     type="text"
                                     onChange={this.onChange}
-                                    defaultValue={address}
-                                    placeholder="Enter the street address"
+                                    defaultValue={neighbourhood}
+                                    placeholder="Enter the neighbourhood name"
                                     pattern="^[A-Za-z0-9,# ]+$"
                                     required />
                             </Form.Group>
                         </Form.Row>
 
                         <Form.Row>
-                            <Form.Group as={Col} controlId="city">
-                                <Form.Label><b>City</b></Form.Label>
-                                <Form.Control name="city"
-                                    type="text"
+                            <Form.Group as={Col} controlId="pool_description">
+                                <Form.Label><b>Description</b></Form.Label>
+                                <Form.Control name="pool_description"
+                                    as="textarea"
                                     onChange={this.onChange}
-                                    defaultValue={city}
-                                    placeholder="Enter the city"
-                                    pattern="^[A-Za-z ]+$"
-                                    required />
-                            </Form.Group>
-
-                            <Form.Group as={Col} controlId="state">
-                                <Form.Label><b>State</b></Form.Label>
-                                <Form.Control name="state"
-                                    type="text"
-                                    onChange={this.onChange}
-                                    defaultValue={state}
-                                    placeholder="Enter the state"
+                                    defaultValue={pool_description}
+                                    placeholder="Enter the description"
                                     pattern="^[A-Za-z ]+$"
                                     required />
                             </Form.Group>
