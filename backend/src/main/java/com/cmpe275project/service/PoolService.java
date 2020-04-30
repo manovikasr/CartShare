@@ -11,6 +11,8 @@ import com.cmpe275project.model.PoolRequest;
 public interface PoolService {
 
 	public void createPool(@Valid Pool poolRequest);
+	
+	public boolean checkPoolIDExists(String pool_id);
 
 	public boolean checkPoolNameExists(String poolname);
 

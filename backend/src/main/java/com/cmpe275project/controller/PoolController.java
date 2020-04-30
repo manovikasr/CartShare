@@ -49,7 +49,7 @@ public class PoolController {
 	EmailService emailService;
 	
 	
-	@PostMapping("")
+	@PostMapping("/pool")
 	public ResponseEntity<?> addPool(@Valid @RequestBody Pool poolRequest, Errors errors)
 	{
 		HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -68,24 +68,32 @@ public class PoolController {
 			
 			return new ResponseEntity<>(response, status);
 		}
-		if(!userService.isUserIdExists(poolRequest.getPoolleaderid())) {
+        
+		if(!userService.isUserIdExists(poolRequest.getPool_leader_id())) {
 			status = HttpStatus.NOT_FOUND;
-			System.out.println(poolRequest.getPoolleaderid()+"----------------------------");
         	response.setMessage("Pool leader does not exist");
         	return new ResponseEntity<>(response,status);
 		}
-        if(!poolService.checkPoolNameExists(poolRequest.getPoolname())){
-        	poolService.createPool(poolRequest);
-        	status = HttpStatus.OK;
-        	response.setMessage("Pool Successfully Added");
-        	response.setPool(poolRequest);
-        }else {
-        	status = HttpStatus.CONFLICT;
-        	response.setMessage("Pool Name Already In Use");
-        }
-        
+		
+		if(poolService.checkPoolIDExists(poolRequest.getPool_id())){
+			status = HttpStatus.CONFLICT;
+        	response.setMessage("Pool ID Already In Use");
+		}
+			
+		if(!poolService.checkPoolNameExists(poolRequest.getPool_name())){
+			poolService.createPool(poolRequest);
+			status = HttpStatus.OK;
+			response.setMessage("Pool Successfully Added");
+			response.setPool(poolRequest);
+		}
+		else {
+			status = HttpStatus.CONFLICT;
+			response.setMessage("Pool Name Already In Use");
+		}
+					
 		return new ResponseEntity<>(response,status);
 	}
+	
 	@GetMapping("/all")
 	public ResponseEntity<?> getAllPools()
 	{

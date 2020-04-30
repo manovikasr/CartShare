@@ -37,22 +37,39 @@ class Cart extends Component {
             });
         }
 
+        // this.setState({
+        //     cart_items: [{
+        //         id: 1,
+        //         product_name: "A",
+        //         sku: "123",
+        //         quantity: 2,
+        //         price: 20
+        //     },
+        //     {
+        //         id: 2,
+        //         product_name: "B",
+        //         sku: "XYZ",
+        //         quantity: 4,
+        //         price: 50
+        //     }]
+        // })
+
         this.calculateTotals();
     }
 
     getStoreDetails = store_id => {
 
         axios.get(`store/${store_id}`)
-        .then(res => {
-            if(res.data){
-                this.setState({
-                    store: res.data.store
-                });
-            }
-        })
-        .catch(e => {
-            console.log(e);
-        })
+            .then(res => {
+                if (res.data) {
+                    this.setState({
+                        store: res.data.store
+                    });
+                }
+            })
+            .catch(e => {
+                console.log(e);
+            })
     };
 
     calculateTotals = () => {
@@ -61,7 +78,7 @@ class Cart extends Component {
         cart_items.forEach(item => {
             subTotal += (item.quantity * item.price);
         });
-        
+
         taxAmount = (subTotal * this.state.taxPercent / 100).toFixed(2);
         total = (subTotal + subTotal * this.state.taxPercent / 100).toFixed(2);
         this.setState({
@@ -115,17 +132,17 @@ class Cart extends Component {
         var cart, store, cartTable, productsList, actionButtons;
         if (this.state.store && this.state.cart_items.length) {
             store = (
-                <Card style={{ width: "60rem", margin: "2%" }}>
-                    <center>
+                <center>
+                    <Card style={{ width: "60rem", margin: "2%" }}>
                         <ListGroup className="list-group-flush">
-                            <ListGroupItem><h3>Store: {this.state.store.store_name}</h3></ListGroupItem>
+                            <ListGroupItem><h3>{this.state.store.store_name}</h3></ListGroupItem>
                             <ListGroupItem>
                                 {this.state.store.address}<br />
                                 {this.state.store.city + ", " + this.state.store.state + " - " + this.state.store.zip}<br />
                             </ListGroupItem>
                         </ListGroup>
-                    </center>
-                </Card>
+                    </Card>
+                </center>
             );
         }
         if (this.state.cart_items.length) {
@@ -204,7 +221,6 @@ class Cart extends Component {
             <div style={{ height: "75vh" }} className="container valign-wrapper">
                 <br />
                 <h2>Your Cart</h2>
-                <br />
                 {cart}
             </div>
         );

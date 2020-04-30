@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { Button, Modal, Form, Col, Alert } from "react-bootstrap";
 import axios from "axios";
 
@@ -8,9 +11,9 @@ class AddEditPoolModal extends Component {
         this.state = {
             pool_id: "",
             pool_name: "",
-            neighbourhood: "",
-            pool_description: "",
-            zip: "",
+            neighbourhood_name: "",
+            pool_desc: "",
+            pool_zip: "",
             error_message: ""
         };
     }
@@ -21,21 +24,32 @@ class AddEditPoolModal extends Component {
         });
     }
 
+    onHide = (e) => {
+        this.setState({
+            error_message: ""
+        });
+        this.props.onHide();
+    }
+
     addPool = (e) => {
         e.preventDefault();
+        const { user } = this.props.auth;
 
-        const storeData = {
-            store_name: this.state.store_name,
-            address: this.state.address,
-            city: this.state.city,
-            state: this.state.state,
-            zip: this.state.zip
+        const poolData = {
+            pool_leader_id: user.id,
+            pool_id: this.state.pool_id,
+            pool_name: this.state.pool_name,
+            neighbourhood_name: this.state.neighbourhood_name,
+            pool_desc: this.state.pool_desc,
+            pool_zip: this.state.pool_zip
         };
 
-        axios.post("store", storeData)
+        axios.post("pool", poolData)
             .then(res => {
-                this.props.onHide();
-                this.props.getStores();
+                if (res.status === 200) {
+                    this.props.onHide();
+                    this.props.getStores();
+                }
             })
             .catch(e => {
                 console.log(e.response);
@@ -61,7 +75,7 @@ class AddEditPoolModal extends Component {
             store_name, address, city, state, zip
         };
 
-        axios.put(`store/${store_id}`, storeData)
+        axios.put(`pool/${store_id}`, storeData)
             .then(res => {
                 if (res.status === 200) {
                     this.props.onHide();
@@ -80,7 +94,7 @@ class AddEditPoolModal extends Component {
 
     render() {
         var title = "Add Pool", onSubmit = this.addPool, updateMode = false;
-        var errorMessage, pool_id, pool_name, neighbourhood, pool_description, state, zip;
+        var errorMessage, pool_id, pool_name, neighbourhood_name, pool_desc, state, pool_zip;
         if (this.state.error_message) {
             errorMessage = (
                 <Alert variant="warning">{this.state.error_message}</Alert>
@@ -94,7 +108,7 @@ class AddEditPoolModal extends Component {
 
         }
         return (
-            <Modal show={this.props.showModal} onHide={this.props.onHide}>
+            <Modal show={this.props.showModal} onHide={this.onHide}>
                 <Modal.Header closeButton>
                     <Modal.Title><b>{title}</b></Modal.Title>
                 </Modal.Header>
@@ -130,12 +144,12 @@ class AddEditPoolModal extends Component {
                         </Form.Row>
 
                         <Form.Row>
-                            <Form.Group as={Col} controlId="neighbourhood">
-                                <Form.Label><b>Neighbourhood</b></Form.Label>
-                                <Form.Control name="neighbourhood"
+                            <Form.Group as={Col} controlId="neighbourhood_name">
+                                <Form.Label><b>Neighbourhood Name</b></Form.Label>
+                                <Form.Control name="neighbourhood_name"
                                     type="text"
                                     onChange={this.onChange}
-                                    defaultValue={neighbourhood}
+                                    defaultValue={neighbourhood_name}
                                     placeholder="Enter the neighbourhood name"
                                     pattern="^[A-Za-z0-9,# ]+$"
                                     required />
@@ -143,12 +157,12 @@ class AddEditPoolModal extends Component {
                         </Form.Row>
 
                         <Form.Row>
-                            <Form.Group as={Col} controlId="pool_description">
+                            <Form.Group as={Col} controlId="pool_desc">
                                 <Form.Label><b>Description</b></Form.Label>
-                                <Form.Control name="pool_description"
+                                <Form.Control name="pool_desc"
                                     as="textarea"
                                     onChange={this.onChange}
-                                    defaultValue={pool_description}
+                                    defaultValue={pool_desc}
                                     placeholder="Enter the description"
                                     pattern="^[A-Za-z ]+$"
                                     required />
@@ -156,12 +170,12 @@ class AddEditPoolModal extends Component {
                         </Form.Row>
 
                         <Form.Row>
-                            <Form.Group as={Col} controlId="zip">
+                            <Form.Group as={Col} controlId="pool_zip">
                                 <Form.Label><b>Zip Code</b></Form.Label>
-                                <Form.Control name="zip"
+                                <Form.Control name="pool_zip"
                                     type="text"
                                     onChange={this.onChange}
-                                    defaultValue={zip}
+                                    defaultValue={pool_zip}
                                     placeholder="Enter the zip code"
                                     pattern="^[0-9 ]+$"
                                     required />
@@ -182,4 +196,12 @@ class AddEditPoolModal extends Component {
     }
 }
 
-export default AddEditPoolModal;
+AddEditPoolModal.propTypes = {
+    auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+    auth: state.auth
+});
+
+export default connect(mapStateToProps, {})(withRouter(AddEditPoolModal));

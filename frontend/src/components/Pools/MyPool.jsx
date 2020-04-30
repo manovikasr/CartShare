@@ -49,7 +49,7 @@ class MyPool extends Component {
                     <center>
                         <Button variant="success" onClick={this.handleToggle}>Create Pool</Button>
                         <br /><br />OR<br /><br />
-                        <Button variant="primary" href="/pools/all">Join Pool</Button>
+                        <Button variant="primary" href="/pool/all">Join Pool</Button>
                     </center>
                 </div>
             )

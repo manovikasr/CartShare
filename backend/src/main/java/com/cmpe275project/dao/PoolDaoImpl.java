@@ -25,7 +25,7 @@ public class PoolDaoImpl implements PoolDao {
 
 	@Transactional
 	public void createPool(Pool p) {
-		User user = entityManager.find(User.class,p.getPoolleaderid());
+		User user = entityManager.find(User.class,p.getPool_leader_id());
 		user.setPool(p);
 		entityManager.unwrap(Session.class).update(user);
 	}
@@ -40,9 +40,9 @@ public class PoolDaoImpl implements PoolDao {
 		entityManager.unwrap(Session.class).update(user);
 		
 	}
-
+	
 	@Override
-	public boolean checkPoolNameExists(String poolname) {
+	public boolean checkPoolIDExists(String pool_id) {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
 		CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
@@ -51,7 +51,31 @@ public class PoolDaoImpl implements PoolDao {
 		
 		criteriaQuery.where(
 				                           builder.equal(
-				                                                 root.get( "poolname" ),poolname
+				                                                 root.get( "pool_id" ), pool_id
+				                                                )
+				                       );
+		
+		
+		TypedQuery<Long> query = entityManager.createQuery(criteriaQuery); 
+		Long count = (Long) query.getSingleResult();
+		
+		if(count>0)
+			  return true;
+		
+		return false;
+	}
+
+	@Override
+	public boolean checkPoolNameExists(String pool_name) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+		CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+		Root<Pool> root = criteriaQuery.from( Pool.class );
+		criteriaQuery.select(builder.count(root));
+		
+		criteriaQuery.where(
+				                           builder.equal(
+				                                                 root.get( "pool_name" ),pool_name
 				                                                )
 				                       );
 		
@@ -157,7 +181,7 @@ public class PoolDaoImpl implements PoolDao {
 	@Override
 	public Long getPoolLeaderId(Long poolid) {
 		Pool pool = entityManager.find(Pool.class, poolid);
-		return pool.getPoolleaderid();
+		return pool.getPool_leader_id();
 	}
 
 	@Override

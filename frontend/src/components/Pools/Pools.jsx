@@ -30,18 +30,18 @@ class Pools extends Component {
                 <BrowserRouter>
                     <Nav variant="tabs" >
                         <Nav.Item>
-                            <Nav.Link eventKey="1" as={NavLink} to="/pools/mypool">
+                            <Nav.Link eventKey="1" as={NavLink} to="/pool/mypool">
                                 My Pool
                         </Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link eventKey="2" as={NavLink} to="/pools/all">
+                            <Nav.Link eventKey="2" as={NavLink} to="/pool/all">
                                 All Pools
                         </Nav.Link>
                         </Nav.Item>
                     </Nav>
-                    <Route path="/pools/mypool" component={MyPool} exact />
-                    <Route path="/pools/all" component={AllPools} exact />
+                    <Route path="/pool/mypool" component={MyPool} exact />
+                    <Route path="/pool/all" component={AllPools} exact />
                 </BrowserRouter>
             </div>
         );

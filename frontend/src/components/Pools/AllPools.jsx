@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import axios from "axios";
 import { Alert, Card, Button, Row, Col } from "react-bootstrap";
 import PoolCard from "./PoolCard";
 
@@ -22,7 +23,24 @@ class AllPools extends Component {
                 this.props.history.push("/verify");
             }
         }
+        this.getAllPools();
     }
+
+    getAllPools = () => {
+        axios.get("all")
+        .then(res => {
+            if(res.data){
+                this.setState({
+                    pools: res.data.pool_list
+                });
+            }
+        })
+        .catch(e => {
+            if(e.response){
+                console.log(e.response.data);
+            }
+        });
+    };
 
     render() {
         const { user } = this.props.auth;

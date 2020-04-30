@@ -120,6 +120,15 @@ class Profile extends Component {
                                                 value={user.role === "admin" ? "Admin" : "Pooler"}
                                                 readOnly />
                                         </Form.Group>
+                                        {(user.role === "pooler") &&
+                                            <Form.Group as={Col} controlId="credits">
+                                                <Form.Label><b>Credits</b></Form.Label>
+                                                <Form.Control name="credits"
+                                                    type="text"
+                                                    value={user.credits || 0}
+                                                    readOnly />
+                                            </Form.Group>
+                                        }
                                     </Form.Row>
 
                                     <Form.Row>

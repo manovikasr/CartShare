@@ -3,6 +3,7 @@ import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Card, Button, Row, Col } from "react-bootstrap";
+import poolImage from "../../images/PoolImage.jpeg";
 
 class PoolCard extends Component {
     constructor(props) {
@@ -24,31 +25,36 @@ class PoolCard extends Component {
 
     render() {
         const { user } = this.props.auth;
-        const product = this.props.product;
-
+        const pool = this.props.pool;
+        var pool_members = "";
+        pool.user.forEach(user => {
+            pool_members += user.screen_name + ", ";
+        })
+        pool_members = pool_members.substring(0, pool_members.length-2);
         return (
             <Card bg="white" style={{ width: "50rem", margin: "2%" }}>
                 <Row>
                     <Col>
-                        <Card.Img style={{ width: "12rem", height: "12rem" }} alt="" src={product.product_img} />
+                        <Card.Img style={{ width: "12rem", height: "12rem" }} alt="" src={poolImage} />
                     </Col>
-                        <Card.Body>
-                            <Card.Title>{product.product_name}</Card.Title>
-                            <Card.Text>
-                                <b>Brand: </b>{product.product_brand}<br />
-                                <b>SKU: </b>{product.sku}<br />
-                                <b>Price: </b>{product.price}<br />
-                                <b>Unit Type: </b>{product.unit_type}<br />
-                                <b>Description:</b>{product.product_desc}
-                            </Card.Text>
-                        </Card.Body>
+                    <Card.Body>
+                        <Card.Title>{pool.pool_name}</Card.Title>
+                        <Card.Text>
+                            <b>ID: </b>{pool.pool_id}<br/>
+                            <b>Description: </b>{pool.pool_desc}<br/>
+                            <b>Neighbourhood: </b>{pool.neighbourhood_name}<br />
+                            <b>ZIP: </b>{pool.pool_zip}<br />
+                        </Card.Text>
+                        <Card.Text>
+                            <b>Members: </b> {pool_members}
+                        </Card.Text>
+                    </Card.Body>
                     <Col align="right">
-                        <br/><br/><br/>
-                        <Button variant="link" onClick={this.updateStore}>Update</Button><br/>
-                        <Button variant="link" onClick={this.deleteStore}>Delete</Button>
+                        <br /><br /><br/>
+                        <Button variant="primary" onClick={this.updateStore}>Apply</Button>&nbsp;&nbsp;&nbsp;
                     </Col>
                 </Row>
-            </Card>
+            </Card >
         );
     }
 }

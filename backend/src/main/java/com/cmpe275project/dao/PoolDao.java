@@ -10,6 +10,8 @@ public interface PoolDao {
 	public void createPool(Pool p);
 
 	public void joinPool(long poolid, long userid);
+	
+	public boolean checkPoolIDExists(String pool_id);
 
 	public boolean checkPoolNameExists(String poolname);
 

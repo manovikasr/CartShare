@@ -62,7 +62,7 @@ class Main extends React.Component {
                     <Route exact path="/cart" component={Cart} />
                     <Route exact path="/stores" component={Stores} />
                     <Route exact path="/products" component={Products} />
-                    <Route path="/pools" component={Pools} />
+                    <Route path="/pool" component={Pools} />
                     <Route exact path="/store/products" component={StoreProducts} />
                 </Switch>
             </React.Fragment>
