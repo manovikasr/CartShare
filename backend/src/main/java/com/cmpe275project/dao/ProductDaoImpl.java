@@ -143,7 +143,13 @@ public class ProductDaoImpl implements ProductDao{
 		
 		
 		TypedQuery<Long> query = entityManager.createQuery(criteriaQuery); 
-		Long count = (Long) query.getSingleResult();
+		long count = 0;
+		
+		try {
+			count = (Long) query.getSingleResult();	
+		}catch(Exception ex){
+			System.out.println("Error in Product Dao -isProductIdExists "+ex.getMessage());
+		}
 		
 		if(count>0)
 			  return true;
