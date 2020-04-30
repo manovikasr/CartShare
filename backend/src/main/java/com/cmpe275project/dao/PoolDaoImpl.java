@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import com.cmpe275project.model.Pool;
 import com.cmpe275project.model.PoolRequest;
+import com.cmpe275project.model.Store;
 import com.cmpe275project.model.User;
 
 @Repository
@@ -88,6 +89,35 @@ public class PoolDaoImpl implements PoolDao {
 		
 		return false;
 	}
+	
+	@Override
+	public boolean checkPoolNameAvailable(String pool_name, Long pool_id) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+		CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+		Root<Pool> root = criteriaQuery.from( Pool.class );
+		criteriaQuery.select(builder.count(root));
+		
+		criteriaQuery.where(
+				                           builder.equal(
+				                                                 root.get( "pool_name" ),pool_name
+				                                                ),
+				                           builder.and(
+				                        		   builder.notEqual(root.get("id"), pool_id)
+				                        		   )
+				                           
+				                       );
+		
+		
+		TypedQuery<Long> query = entityManager.createQuery(criteriaQuery); 
+		Long count = (Long) query.getSingleResult();
+		
+		if(count>0)
+			  return true;
+		
+		return false;
+		
+	}
 
 	@Override
 	public boolean isPoolIdExists(Long poolid) {
@@ -126,6 +156,25 @@ public class PoolDaoImpl implements PoolDao {
 	    criteria.select(criteria.from(Pool.class));
 	    List<Pool> listPools = entityManager.createQuery(criteria).getResultList();
 	    return listPools;
+	}
+	
+	@Override
+	public Pool getPoolInfoById(Long id) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Pool> criteriaQuery = builder.createQuery(Pool.class);
+		Root<Pool> root = criteriaQuery.from( Pool.class);
+		criteriaQuery.select(root);
+		criteriaQuery.where(builder.equal(root.get( "id" ),id));
+		TypedQuery<Pool> query = entityManager.createQuery(criteriaQuery);
+		Pool pool = null;
+		
+		try {
+			pool = query.getSingleResult();
+		}catch(Exception ex) {
+			System.out.println("Error in Pool Dao "+ex.getMessage());
+		}
+		
+		return pool;
 	}
 
 	@Override
@@ -200,6 +249,11 @@ public class PoolDaoImpl implements PoolDao {
             ).distinct(true);
 	    List<PoolRequest> listPoolRequests = entityManager.createQuery(criteriaQuery).getResultList();
 	    return listPoolRequests;
+	}
+	
+	@Override
+	public void editPool(Pool pool) {
+		entityManager.unwrap(Session.class).update(pool);
 	}
 
 	@Override

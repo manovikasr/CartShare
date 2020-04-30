@@ -14,12 +14,16 @@ public interface PoolDao {
 	public boolean checkPoolIDExists(String pool_id);
 
 	public boolean checkPoolNameExists(String poolname);
+	
+	public boolean checkPoolNameAvailable(String poolname, Long poolid);
 
 	public boolean isPoolIdExists(Long poolid);
 
 	public int countMembers(Long poolid);
 
 	public List<Pool> getAllPools();
+	
+	public Pool getPoolInfoById(Long poolid);
 
 	public void addPoolRequest(Long userid, String user_screenname, Long poolid, String refname, boolean b);
 
@@ -33,5 +37,7 @@ public interface PoolDao {
 
 	public List<PoolRequest> getAllSupportedApplicationsByPoolId(Long poolid);
 
+	public void editPool(Pool pool);
+	
 	public void deletePool(Long poolid);
 }

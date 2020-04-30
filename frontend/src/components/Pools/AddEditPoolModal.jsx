@@ -48,7 +48,7 @@ class AddEditPoolModal extends Component {
             .then(res => {
                 if (res.status === 200) {
                     this.props.onHide();
-                    this.props.getStores();
+                    this.props.getPoolData();
                 }
             })
             .catch(e => {
@@ -62,24 +62,23 @@ class AddEditPoolModal extends Component {
 
     updatePool = (e) => {
         e.preventDefault();
-        var store_id, store_name, address, city, state, zip;
-        if (this.props.store) {
-            store_id = this.props.store.id;
-            store_name = this.state.store_name || this.props.store.store_name;
-            address = this.state.address || this.props.store.address;
-            city = this.state.city || this.props.store.city;
-            state = this.state.state || this.props.store.state;
-            zip = this.state.zip || this.props.store.zip;
+        var id, pool_id, pool_name, neighbourhood_name, pool_desc;
+        if (this.props.pool) {
+            id = this.props.pool.id;
+            pool_id = this.props.pool.pool_id;
+            pool_name = this.state.pool_name || this.props.pool.pool_name;
+            neighbourhood_name = this.state.neighbourhood_name || this.props.pool.neighbourhood_name;
+            pool_desc = this.state.pool_desc || this.props.pool.pool_desc;
         }
-        const storeData = {
-            store_name, address, city, state, zip
+        const poolData = {
+            pool_name, pool_id, neighbourhood_name, pool_desc
         };
 
-        axios.put(`pool/${store_id}`, storeData)
+        axios.put(`${id}`, poolData)
             .then(res => {
                 if (res.status === 200) {
                     this.props.onHide();
-                    this.props.getStores();
+                    this.props.getPoolData();
                 }
             })
             .catch(e => {
@@ -101,11 +100,15 @@ class AddEditPoolModal extends Component {
             );
         }
 
-        if (this.props.store) {
+        if (this.props.pool) {
             updateMode = true;
             title = "Update Pool";
             onSubmit = this.updatePool;
-
+            pool_id = this.props.pool.pool_id;
+            pool_name = this.props.pool.pool_name;
+            pool_desc = this.props.pool.pool_desc;
+            neighbourhood_name = this.props.pool.neighbourhood_name;
+            pool_zip = this.props.pool.pool_zip;
         }
         return (
             <Modal show={this.props.showModal} onHide={this.onHide}>
@@ -115,7 +118,6 @@ class AddEditPoolModal extends Component {
                 <Modal.Body>
                     <Form onSubmit={onSubmit}>
                         {errorMessage}
-
                         <Form.Row>
                             <Form.Group as={Col} controlId="pool_id">
                                 <Form.Label><b>Pool ID</b></Form.Label>
@@ -144,19 +146,6 @@ class AddEditPoolModal extends Component {
                         </Form.Row>
 
                         <Form.Row>
-                            <Form.Group as={Col} controlId="neighbourhood_name">
-                                <Form.Label><b>Neighbourhood Name</b></Form.Label>
-                                <Form.Control name="neighbourhood_name"
-                                    type="text"
-                                    onChange={this.onChange}
-                                    defaultValue={neighbourhood_name}
-                                    placeholder="Enter the neighbourhood name"
-                                    pattern="^[A-Za-z0-9,# ]+$"
-                                    required />
-                            </Form.Group>
-                        </Form.Row>
-
-                        <Form.Row>
                             <Form.Group as={Col} controlId="pool_desc">
                                 <Form.Label><b>Description</b></Form.Label>
                                 <Form.Control name="pool_desc"
@@ -170,6 +159,19 @@ class AddEditPoolModal extends Component {
                         </Form.Row>
 
                         <Form.Row>
+                            <Form.Group as={Col} controlId="neighbourhood_name">
+                                <Form.Label><b>Neighbourhood Name</b></Form.Label>
+                                <Form.Control name="neighbourhood_name"
+                                    type="text"
+                                    onChange={this.onChange}
+                                    defaultValue={neighbourhood_name}
+                                    placeholder="Enter the neighbourhood name"
+                                    pattern="^[A-Za-z0-9,# ]+$"
+                                    required />
+                            </Form.Group>
+                        </Form.Row>
+
+                        <Form.Row>
                             <Form.Group as={Col} controlId="pool_zip">
                                 <Form.Label><b>Zip Code</b></Form.Label>
                                 <Form.Control name="pool_zip"
@@ -178,7 +180,8 @@ class AddEditPoolModal extends Component {
                                     defaultValue={pool_zip}
                                     placeholder="Enter the zip code"
                                     pattern="^[0-9 ]+$"
-                                    required />
+                                    required
+                                    readOnly={updateMode} />
                             </Form.Group>
                         </Form.Row>
                         <center>

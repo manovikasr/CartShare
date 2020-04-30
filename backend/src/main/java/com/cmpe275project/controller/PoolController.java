@@ -15,7 +15,9 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cmpe275project.model.Pool;
 import com.cmpe275project.model.PoolRequest;
+import com.cmpe275project.model.Store;
 import com.cmpe275project.model.User;
 import com.cmpe275project.responseObjects.PoolApplicationsResponse;
 import com.cmpe275project.responseObjects.PoolResponse;
+import com.cmpe275project.responseObjects.StoreResponse;
 import com.cmpe275project.responseObjects.UserResponse;
 import com.cmpe275project.service.EmailService;
 import com.cmpe275project.service.PoolService;
@@ -104,6 +108,126 @@ public class PoolController {
 		status = HttpStatus.OK;
 		return new ResponseEntity<>(response,status);
 	}
+	
+	@GetMapping("/user/{user_id}")
+	public ResponseEntity<?> getPoolForUser(@PathVariable Long user_id)
+	{
+		PoolResponse response = new PoolResponse();
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		User user = userService.getUserInfoById(user_id);
+		if(user != null) {
+			response.setPool(user.getPool());
+			status = HttpStatus.OK;
+		}
+		
+		return new ResponseEntity<>(response,status);
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<?> updatePool(@PathVariable Long id, @Valid @RequestBody Pool poolRequest, Errors errors)
+	{
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		PoolResponse response = new PoolResponse();
+		
+		if (errors.hasErrors()) {
+
+			Map<String, String> errorMap = new HashMap<String, String>();
+
+			for (ObjectError error : errors.getAllErrors()) {
+				String fieldError = ((FieldError) error).getField();
+				errorMap.put(fieldError, error.getDefaultMessage());
+			}
+			response.setErrors(errorMap);
+			response.setMessage("Unable to update Pool");
+
+			return new ResponseEntity<>(response, status);
+		}
+		
+		if(!poolService.isPoolIdExist(id)) {
+			status = HttpStatus.NOT_FOUND;
+			response.setMessage("Pool Id not found");
+			return new ResponseEntity<>(response,status);
+		}
+		
+		if(!poolService.checkPoolNameAvailable(poolRequest.getPool_name(), id)) {
+		      
+			Pool pool = poolService.getPoolInfoById(id);
+			
+			pool.setPool_name(poolRequest.getPool_name());
+			pool.setNeighbourhood_name(poolRequest.getNeighbourhood_name());
+			pool.setPool_desc(poolRequest.getPool_desc());
+			
+			poolService.editPool(pool);
+			
+			status         = HttpStatus.OK;
+			response.setMessage("Pool Successfully Edited");
+	        response.setPool(pool);		
+			
+		}else {
+			status = HttpStatus.CONFLICT;
+			response.setMessage("Pool Name is already in use");
+		}
+		
+		return new ResponseEntity<>(response,status);
+	}
+	
+	@PostMapping("/delete/{pool_id}")
+	public ResponseEntity<?> deletePool(@PathVariable Long pool_id)
+	{
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		PoolResponse response = new PoolResponse();
+		
+		if(!poolService.isPoolIdExist(pool_id)) {
+			response.setMessage("Pool Does Not exist");
+			return new ResponseEntity<>(response,status);
+		}
+		
+		int membersCount = poolService.countMembers(pool_id);
+		if(membersCount>1) {
+			status = HttpStatus.CONFLICT;
+			response.setMessage("Pool has active members");
+		}
+		else {
+			Long leader_id = poolService.getPoolLeaderId(pool_id);
+
+			poolService.leavePool(leader_id, pool_id);
+			poolService.deletePool(pool_id);
+			status = HttpStatus.OK;
+			response.setMessage("Pool deleted successfully");
+		}
+
+		return new ResponseEntity<>(response,status);
+	}
+	
+	@PostMapping("/leave/{poolid}/{userid}")
+	public ResponseEntity<?> leavePool(@PathVariable Long poolid, @PathVariable Long userid)
+	{
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		UserResponse response = new UserResponse();
+		
+		if(!userService.isUserIdExists(userid)) {
+			response.setMessage("User does not exist");
+			response.setUser(null);
+			return new ResponseEntity<>(response,status);
+		}
+		if(!userService.checkHasPool(userid)) {
+			response.setMessage("Not a member of any pool ");
+			status = HttpStatus.BAD_REQUEST;
+			return new ResponseEntity<>(response,status);
+		}
+		if(!poolService.isPoolIdExist(poolid)) {
+			response.setMessage("Pool Does Not exist");
+			return new ResponseEntity<>(response,status);
+		}
+		
+		poolService.leavePool(userid,poolid);
+		response.setMessage("Left pool");
+		status = HttpStatus.OK;
+		
+		return new ResponseEntity<>(response,status);
+		
+	}
+	
 
 	@PostMapping("/apply")
 	public ResponseEntity<?> applyPool(@RequestParam(name="user_id") Long userid,@RequestParam(name="pool_id") Long poolid,@RequestParam(name="ref_name") String refname,@RequestParam(name="knows_leader") Boolean knowsleader) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException
@@ -181,34 +305,7 @@ public class PoolController {
 		
 	}
 	
-	@PostMapping("/leave")
-	public ResponseEntity<?> leavePool(@RequestParam(name="user_id") Long userid, @RequestParam(name="pool_id") Long poolid)
-	{
-		HttpStatus status = HttpStatus.NOT_FOUND;
-		UserResponse response = new UserResponse();
-		
-		if(!userService.isUserIdExists(userid)) {
-			response.setMessage("User does not exist");
-			response.setUser(null);
-			return new ResponseEntity<>(response,status);
-		}
-		if(!userService.checkHasPool(userid)) {
-			response.setMessage("Not a member of any pool ");
-			status = HttpStatus.BAD_REQUEST;
-			return new ResponseEntity<>(response,status);
-		}
-		if(!poolService.isPoolIdExist(poolid)) {
-			response.setMessage("Pool Does Not exist....");
-			return new ResponseEntity<>(response,status);
-		}
-		
-		poolService.leavePool(userid,poolid);
-		response.setMessage("Left pool");
-		status = HttpStatus.OK;
-		
-		return new ResponseEntity<>(response,status);
-		
-	}
+
 	@PostMapping("/supportPoolRequest")
 	public ResponseEntity<?> supportPoolRequest(@RequestParam(name="application_id") Long applicationid)
 	{	HttpStatus status = HttpStatus.NOT_FOUND;
@@ -246,37 +343,7 @@ public class PoolController {
 		status = HttpStatus.OK;
 		return new ResponseEntity<>(response,status);
 	}
-	@PostMapping("/deletePool")
-	public ResponseEntity<?> deletePool(@RequestParam(name="pool_id") Long poolid,@RequestParam(name="leader_id") Long leaderid)
-	{
-		HttpStatus status = HttpStatus.NOT_FOUND;
-		PoolResponse response = new PoolResponse();
-		
-		if(!poolService.isPoolIdExist(poolid)) {
-			response.setMessage("Pool Does Not exist....");
-			return new ResponseEntity<>(response,status);
-		}
-		int membersCount = poolService.countMembers(poolid);
-		if(membersCount>1) {
-			status = HttpStatus.CONFLICT;
-			response.setMessage("Pool has active members....");
-			return new ResponseEntity<>(response,status);
-		}
-		else {
-			Long leaderId = poolService.getPoolLeaderId(poolid);
-			if(leaderId == leaderid) {
-				poolService.leavePool(leaderid, poolid);
-				poolService.deletePool(poolid);
-				status = HttpStatus.OK;
-				response.setMessage("Pool deleted successfully");
-			}
-			else {
-				status = HttpStatus.CONFLICT;
-				response.setMessage("Only leader can delete pool");
-			}
-			return new ResponseEntity<>(response,status);
-		}
-	}
+	
 	@PostMapping("/approve")
 	public ResponseEntity<?> approvePool(@RequestParam(name="user_id") Long userid, @RequestParam(name="pool_id") Long poolid)
 	{

@@ -15,6 +15,8 @@ public interface PoolService {
 	public boolean checkPoolIDExists(String pool_id);
 
 	public boolean checkPoolNameExists(String poolname);
+	
+	public boolean checkPoolNameAvailable(String poolname, Long poolid);
 
 	public void joinPool(Long userid, Long poolid);
 
@@ -23,6 +25,8 @@ public interface PoolService {
 	public int countMembers(Long poolid);
 
 	public List<Pool> getAllPools();
+	
+	public Pool getPoolInfoById(Long poolid);
 
 	public void addPoolRequest(Long userid, String user_screenname, Long poolid, String refname, boolean b);
 
@@ -36,5 +40,7 @@ public interface PoolService {
 
 	public List<PoolRequest> getAllSupportedApplicationsByPoolId(Long poolid);
 
+	public void editPool(@Valid Pool pool);
+	
 	public void deletePool(Long poolid);
 }

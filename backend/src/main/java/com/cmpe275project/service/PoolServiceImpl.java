@@ -41,6 +41,11 @@ public class PoolServiceImpl implements PoolService{
 	public boolean checkPoolNameExists(String poolname) {
 		return poolDao.checkPoolNameExists(poolname);
 	}
+	
+	@Override
+	public boolean checkPoolNameAvailable(String poolname, Long poolid) {
+		return poolDao.checkPoolNameAvailable(poolname, poolid);
+	}
 
 	@Override
 	public boolean isPoolIdExist(Long poolid) {
@@ -57,6 +62,11 @@ public class PoolServiceImpl implements PoolService{
 	public List<Pool> getAllPools() {
 		
 		return poolDao.getAllPools();
+	}
+	
+	@Override
+	public Pool getPoolInfoById(Long poolid) {
+		return poolDao.getPoolInfoById(poolid);
 	}
 
 	@Override
@@ -91,6 +101,11 @@ public class PoolServiceImpl implements PoolService{
 	public List<PoolRequest> getAllSupportedApplicationsByPoolId(Long poolid) {
 		
 		return poolDao.getAllSupportedApplicationsByPoolId(poolid);
+	}
+	
+	@Override
+	public void editPool(Pool pool) {
+		poolDao.editPool(pool);
 	}
 	
 	@Override
