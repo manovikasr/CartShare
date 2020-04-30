@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.cmpe275project.model.Store;
-import com.cmpe275project.model.Product;
 
 public class StoreResponse {
 
