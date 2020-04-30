@@ -62,7 +62,7 @@ public class Pool {
 	@Column(name = "pool_leader_id")
 	private long pool_leader_id;
 	
-	@OneToMany(mappedBy = "pool",cascade=CascadeType.ALL)
+	@OneToMany(mappedBy = "pool")
     private List<User> user;
 	
 	public long getId() {
