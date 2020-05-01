@@ -358,7 +358,7 @@ public class PoolController {
 	}
 
 	@PostMapping("/application/support")
-	public ResponseEntity<?> supportPoolRequest(@RequestParam(name = "application_id") Long applicationid) {
+	public ResponseEntity<?> supportPoolRequest(@RequestParam(name = "application_id") Long applicationid) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		PoolResponse response = new PoolResponse();
 		Long poolid = poolService.supportPoolRequest(applicationid);
@@ -370,10 +370,17 @@ public class PoolController {
 		PoolRequest appInfo = poolService.getApplicationInfo(applicationid);
 		User userId = userService.getUserInfoById(appInfo.getRequserid());
 		String emailId = poolLeader.getEmail();
-
-		/*
-		 * send email to poolleader for approving
-		 */
+		String pool_leader_name = poolLeader.getScreen_name();
+		String applicant_name = userId.getScreen_name();
+		String pool_name = userId.getPool().getPool_name();
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("applicant_screen_name", applicant_name);
+		map.put("pool_leader_name", pool_leader_name);
+		map.put("pool_name", pool_name);
+		
+		emailService.sendEmailForLeaderApproval(emailId, map);
+		
 		status = HttpStatus.OK;
 		response.setMessage("Waiting for Leaders approval");
 		return new ResponseEntity<>(response, status);
