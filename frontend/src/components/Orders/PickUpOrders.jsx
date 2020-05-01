@@ -3,6 +3,7 @@ import { withRouter, BrowserRouter, NavLink, Route } from "react-router-dom";
 import { Nav, Container, Row, Col, Alert, Table, Form, Button, Card } from "react-bootstrap";
 import PropTypes from "prop-types";
 import OrderProductsModal from "./OrderProductsModal";
+import BarcodeModal from "./BarcodeModal";
 import { connect } from "react-redux";
 import OrderCard from "./OrdersCard";
 
@@ -25,8 +26,10 @@ class PickUpOrders extends Component {
             },{
                 order_id:4,
                 no_products:4,
-                status:"Placed"
-            }]
+                status:"Placed",
+                user_id:6
+            }],
+            showBarcodeModal: false
         };
     }
 
@@ -47,9 +50,21 @@ class PickUpOrders extends Component {
         });
     }
 
+    handleBarcodeModalToggle = () => {
+        this.setState({
+            showBarcodeModal:!this.state.showBarcodeModal
+        });
+    }
+
     hideModal = () => {
         this.setState({
             showModal:false
+        });
+    }
+
+    hideBarcodeModal = () => {
+        this.setState({
+            showBarcodeModal:false
         });
     }
 
@@ -66,7 +81,7 @@ class PickUpOrders extends Component {
             });
             actionButtons = (
                 <div>
-                    <Button variant="success">Confirm</Button> &nbsp;&nbsp;&nbsp;
+                    <Button variant="success" onClick = {this.handleBarcodeModalToggle}>Confirm</Button> &nbsp;&nbsp;&nbsp;
                     <Button variant="danger" onClick = {this.clearDetails}>Clear</Button> 
                 </div>
             );
@@ -87,6 +102,7 @@ class PickUpOrders extends Component {
                 <br/><br/>
                 <div className = "mx-3">{actionButtons}</div>    
                 <OrderProductsModal showModal = {this.state.showModal} onHide = {this.hideModal} />
+                <BarcodeModal showModal = {this.state.showBarcodeModal} onHide = {this.hideBarcodeModal} />
             </div>
         );
     }
