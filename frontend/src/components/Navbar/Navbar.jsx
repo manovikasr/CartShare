@@ -69,7 +69,7 @@ class Navigationbar extends Component {
               <Link className="nav-link text-dark t-font-size-14" to="/pool/mypool"><i className="fas fa-users pr-2"></i>Pool</Link>
             </Nav.Link>
             <Nav.Link>
-              <Link className="nav-link text-dark t-font-size-14" to="/orders"><i className="fas fa-clipboard pr-2"></i>Orders</Link>
+              <Link className="nav-link text-dark t-font-size-14" to="/orders/myorders"><i className="fas fa-clipboard pr-2"></i>Orders</Link>
             </Nav.Link>
             <Nav.Link>
               <Link className="nav-link text-dark t-font-size-14" to="/message"><i className="fas fa-envelope pr-2"></i>Message</Link>
