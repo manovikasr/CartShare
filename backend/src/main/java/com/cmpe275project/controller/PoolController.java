@@ -367,6 +367,8 @@ public class PoolController {
 		if (poolLeaderId != null) {
 			poolLeader = userService.getUserInfoById(poolLeaderId);
 		}
+		PoolRequest appInfo = poolService.getApplicationInfo(applicationid);
+		User userId = userService.getUserInfoById(appInfo.getRequserid());
 		String emailId = poolLeader.getEmail();
 
 		/*
@@ -379,7 +381,7 @@ public class PoolController {
 
 	@PostMapping("/application/approve")
 	public ResponseEntity<?> approvePool(@RequestParam(name = "user_id") Long userid,
-			@RequestParam(name = "pool_id") Long poolid) {
+			@RequestParam(name = "pool_id") Long poolid, @RequestParam(name = "application_id") Long appid) {
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		UserResponse response = new UserResponse();
 
@@ -404,6 +406,7 @@ public class PoolController {
 			 */
 			
 				poolService.joinPool(userid, poolid);
+				poolService.removePoolRequest(appid);
 				User user = userService.getUserInfoById(userid);
 				System.out.println("pool id added " + user.getPool().getId());
 				status = HttpStatus.OK;

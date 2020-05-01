@@ -282,4 +282,16 @@ public class PoolDaoImpl implements PoolDao {
 		entityManager.unwrap(Session.class).delete(pool);
 	}
 
+	@Override
+	public void removePoolRequest(Long appid) {
+		PoolRequest poolReq = entityManager.find(PoolRequest.class, appid);
+		entityManager.unwrap(Session.class).delete(poolReq);
+	}
+
+	@Override
+	public PoolRequest getApplicationInfo(Long applicationid) {
+		PoolRequest poolReq = entityManager.find(PoolRequest.class, applicationid);
+		return poolReq;
+	}
+
 }

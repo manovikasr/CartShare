@@ -45,4 +45,8 @@ public interface PoolService {
 	public void editPool(@Valid Pool pool);
 	
 	public void deletePool(Long poolid);
+
+	public void removePoolRequest(Long appid);
+
+	public PoolRequest getApplicationInfo(Long applicationid);
 }
