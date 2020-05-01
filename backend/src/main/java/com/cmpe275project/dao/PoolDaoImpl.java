@@ -189,18 +189,38 @@ public class PoolDaoImpl implements PoolDao {
 		
 		entityManager.unwrap(Session.class).save(poolreq);
 	}
-
+	
 	@Override
-	public List<PoolRequest> getApplicationsByRefName(String refname) {
+	public List<PoolRequest> getUserApplications(Long user_id) {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<PoolRequest> criteriaQuery = builder.createQuery(PoolRequest.class);
 		
 		Root<PoolRequest> root = criteriaQuery.from( PoolRequest.class );
-	//	criteriaQuery.select(builder.);
+
 	    criteriaQuery.where(
                 builder.equal(
-                                      root.get( "refusername" ),refname
+                                      root.get( "requserid" ),user_id
                                      )
+            ).distinct(true);
+	    List<PoolRequest> listPoolRequests = entityManager.createQuery(criteriaQuery).getResultList();
+	    
+	    return listPoolRequests;
+	}
+
+	@Override
+	public List<PoolRequest> getApplicationsByRefName(String ref_name, Long pool_id) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<PoolRequest> criteriaQuery = builder.createQuery(PoolRequest.class);
+		
+		Root<PoolRequest> root = criteriaQuery.from( PoolRequest.class );
+
+	    criteriaQuery.where(
+                builder.equal(
+                                      root.get( "refusername" ),ref_name
+                                     ),
+                builder.and(
+      		             builder.equal(root.get( "reqpoolid" ), pool_id)
+      		             )
             ).distinct(true);
 	    List<PoolRequest> listPoolRequests = entityManager.createQuery(criteriaQuery).getResultList();
 	    

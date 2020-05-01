@@ -44,7 +44,7 @@ class AddEditPoolModal extends Component {
             pool_zip: this.state.pool_zip
         };
 
-        axios.post("pool", poolData)
+        axios.post("/pool", poolData)
             .then(res => {
                 if (res.status === 200) {
                     this.props.onHide();
@@ -188,7 +188,7 @@ class AddEditPoolModal extends Component {
                             <Button variant="primary" type="submit">
                                 <b>{title}</b>
                             </Button> &nbsp; &nbsp;
-                            <Button variant="secondary" onClick={this.props.onHide}>
+                            <Button variant="secondary" onClick={this.onHide}>
                                 <b>Cancel</b>
                             </Button>
                         </center>

@@ -26,8 +26,10 @@ public interface PoolDao {
 	public Pool getPoolInfoById(Long poolid);
 
 	public void addPoolRequest(Long userid, String user_screenname, Long poolid, String refname, boolean b);
+	
+	public List<PoolRequest> getUserApplications(Long user_id);
 
-	public List<PoolRequest> getApplicationsByRefName(String refname);
+	public List<PoolRequest> getApplicationsByRefName(String ref_name, Long pool_id);
 
 	public void leavePool(Long userid, Long poolid);
 

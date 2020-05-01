@@ -74,10 +74,15 @@ public class PoolServiceImpl implements PoolService{
 		poolDao.addPoolRequest(userid,user_screenname,poolid,refname,b);
 		
 	}
+	
+	@Override
+	public List<PoolRequest> getUserApplications(Long user_id) {
+		return poolDao.getUserApplications(user_id);
+	}
 
 	@Override
-	public List<PoolRequest> getApplicationsByRefName(String refname) {
-		return poolDao.getApplicationsByRefName(refname);
+	public List<PoolRequest> getApplicationsByRefName(String ref_name, Long pool_id) {
+		return poolDao.getApplicationsByRefName(ref_name, pool_id);
 	}
 
 	@Override

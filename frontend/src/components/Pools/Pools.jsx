@@ -24,7 +24,6 @@ class Pools extends Component {
     }
 
     render() {
-        const { user } = this.props.auth;
         return (
             <div>
                 <BrowserRouter>

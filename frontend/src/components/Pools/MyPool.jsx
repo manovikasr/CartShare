@@ -178,7 +178,8 @@ class MyPool extends Component {
                             }
                         </tbody>
                     </table>
-                    <PoolApplications />
+                    <br/><br/>
+                    <PoolApplications pool={pool}/>
                 </div>
             );
         }

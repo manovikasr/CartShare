@@ -294,7 +294,7 @@ public class UserDaoImpl implements UserDao{
 		criteriaQuery.where(builder.equal(root.get( "id" ),id));
 		TypedQuery<User> query = entityManager.createQuery(criteriaQuery);
 		User user = null;
-		
+
 		try {
 			user = query.getSingleResult();
 		}catch(Exception ex) {
