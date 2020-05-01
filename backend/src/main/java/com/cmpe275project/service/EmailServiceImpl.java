@@ -116,7 +116,7 @@ public class EmailServiceImpl implements EmailService{
 			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
 			
 			Template t = freeMarkerConfig.getTemplate("ReferenceEmail.ftl");
-            String subject = "Cart Share - Request of Reference for pool application";
+            String subject = "Cart Share - Request to refer for Pool joining application";
 			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
 			
 			helper.setTo(to);

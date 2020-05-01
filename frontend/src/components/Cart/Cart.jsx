@@ -128,7 +128,6 @@ class Cart extends Component {
     };
 
     render() {
-        const { user } = this.props.auth;
         var cart, store, cartTable, productsList, actionButtons;
         if (this.state.store && this.state.cart_items.length) {
             store = (
