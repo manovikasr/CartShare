@@ -42,4 +42,8 @@ public interface PoolDao {
 	public void editPool(Pool pool);
 	
 	public void deletePool(Long poolid);
+
+	public void removePoolRequest(Long appid);
+
+	public PoolRequest getApplicationInfo(Long applicationid);
 }

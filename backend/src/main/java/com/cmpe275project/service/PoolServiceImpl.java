@@ -119,4 +119,16 @@ public class PoolServiceImpl implements PoolService{
 		poolDao.deletePool(poolid);
 		
 	}
+
+	@Override
+	public void removePoolRequest(Long appid) {
+		
+		poolDao.removePoolRequest(appid);
+	}
+
+	@Override
+	public PoolRequest getApplicationInfo(Long applicationid) {
+		// TODO Auto-generated method stub
+		return poolDao.getApplicationInfo(applicationid);
+	}
 }
