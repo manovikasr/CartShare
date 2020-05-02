@@ -1,5 +1,5 @@
 <html>
-<head><head>
+<head></head>
 
 <body>
 	<p>Hi ${pool_leader_name},</p>

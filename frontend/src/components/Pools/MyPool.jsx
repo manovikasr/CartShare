@@ -95,7 +95,14 @@ class MyPool extends Component {
     render() {
         const { user } = this.props.auth;
         var pool = this.state.pool;
-        var poolInfo, actionButton;
+        var poolInfo, actionButton, errorMessage;
+        if (this.state.error_message) {
+            errorMessage = (
+                <Alert variant="danger">
+                    {this.state.error_message}
+                </Alert>
+            )
+        }
         if (!pool) {
             poolInfo = (
                 <div>
@@ -153,33 +160,40 @@ class MyPool extends Component {
                         {actionButton}
                     </center>
                     <br />
-                    <table class="table" style={{ width: "30%" }}>
-                        <thead>
-                            <th>
-                                Members
-                            </th>
-                            <th>
-                            </th>
-                        </thead>
-                        <tbody>
-                            {
-                                pool.user && pool.user.map(member => {
-                                    return (
-                                        <tr>
-                                            <td>
-                                                {member.screen_name}
-                                            </td>
-                                            <td>
-                                                {pool.pool_leader_id === member.id && <b>Pool Leader</b>}
-                                            </td>
-                                        </tr>
-                                    )
-                                })
-                            }
-                        </tbody>
-                    </table>
-                    <br/><br/>
-                    <PoolApplications pool={pool}/>
+                    {errorMessage}
+                    <br />
+                    <Row>
+                        <Col>
+                            <table class="table" style={{ width: "40%" }}>
+                                <thead>
+                                    <th>
+                                        Members
+                                    </th>
+                                    <th>
+                                    </th>
+                                </thead>
+                                <tbody>
+                                    {
+                                        pool.user && pool.user.map(member => {
+                                            return (
+                                                <tr>
+                                                    <td>
+                                                        {member.screen_name}
+                                                    </td>
+                                                    <td>
+                                                        {pool.pool_leader_id === member.id && <b>Pool Leader</b>}
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
+                            </table>
+                        </Col>
+                        <Col key={pool.id}>
+                            <PoolApplications pool={pool} getPoolData={this.getPoolData} />
+                        </Col>
+                    </Row>
                 </div>
             );
         }
