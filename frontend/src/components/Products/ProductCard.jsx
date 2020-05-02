@@ -17,10 +17,16 @@ class ProductCard extends Component {
 
     }
 
-    hideModal = () => {
+    handleToggle = () => {
         this.setState({
-            showModal: false
+            showModal: !this.state.showModal
         });
+    };
+
+    deleteProduct = e => {
+        if (window.confirm("Are you sure you want to delete this Store?")) {
+            this.props.deleteProduct(this.props.product.id);
+        }
     };
 
     render() {
@@ -28,7 +34,7 @@ class ProductCard extends Component {
         const product = this.props.product;
 
         return (
-            <Card bg="white" style={{ width: "50rem", margin: "2%" }}>
+            <Card bg="white" style={{ width: "45rem", margin: "10%" }}>
                 <Row>
                     <Col>
                         <Card.Img style={{ width: "12rem", height: "12rem" }} alt="" src={product.product_img} />
@@ -45,11 +51,11 @@ class ProductCard extends Component {
                         </Card.Body>
                     <Col align="right">
                         <br/><br/><br/>
-                        <Button variant="link" onClick={this.updateStore}>Update</Button><br/>
-                        <Button variant="link" onClick={this.deleteStore}>Delete</Button>
+                        <Button variant="link" onClick={this.handleToggle}>Update</Button><br/>
+                        <Button variant="link" onClick={this.deleteProduct}>Delete</Button>
                     </Col>
                 </Row>
-                {/* <AddEditProductModal store={this.props.store} showModal={this.state.showModal} onHide={this.hideModal} getStores={this.props.getStores} /> */}
+                <AddEditProductModal store={this.props.store} product={product} showModal={this.state.showModal} onHide={this.handleToggle} getProducts={this.props.getProducts} />
             </Card>
         );
     }

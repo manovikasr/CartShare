@@ -13,16 +13,16 @@ public class PoolResponse {
 	
 	private Pool pool;
 	
-	private List<Pool> poolList;
+	private List<Pool> pool_list;
 	
 	
 
-	public List<Pool> getPoolList() {
-		return poolList;
+	public List<Pool> getPool_list() {
+		return pool_list;
 	}
 
-	public void setPoolList(List<Pool> poolList) {
-		this.poolList = poolList;
+	public void setPoolList(List<Pool> pool_list) {
+		this.pool_list = pool_list;
 	}
 
 	public String getMessage() {

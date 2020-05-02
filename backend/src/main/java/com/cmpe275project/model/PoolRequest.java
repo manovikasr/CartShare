@@ -30,6 +30,10 @@ public class PoolRequest {
 	@Column(name = "reference_support_status")
 	private boolean refsupportstatus;
 
+	public long getId() {
+		return id;
+	}
+	
 	public long getRequserid() {
 		return requserid;
 	}

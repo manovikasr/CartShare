@@ -65,7 +65,7 @@ class Message extends Component {
                 }
             })
             .catch(e => {
-                if(e.response && e.response.data){
+                if (e.response && e.response.data) {
                     this.setState({
                         alert_message: e.response.data.message
                     });
@@ -85,59 +85,65 @@ class Message extends Component {
         }
 
         return (
-            <div style={{ height: "75vh" }} className="container valign-wrapper">
-                <br />
-                <h2>Send a Message</h2>
-                <br />
-                {alertMessage}
-                <Form onSubmit={this.onSubmit} autoComplete="off">
-                    <Form.Row>
-                        <Form.Group as={Col} controlId="sender_screen_name">
-                            <Form.Label><b>Sender Name</b></Form.Label>
-                            <Form.Control name="sender_screen_name"
-                                type="text"
-                                defaultValue={this.state.sender_screen_name}
-                                readOnly />
-                        </Form.Group>
-                    </Form.Row>
+            <div className="container p-4">
+                <div className="row justify-content-center align-items-center h-100">
+                    <div className="col-md-12">
+                        <div className="col-md-6 mx-auto bg-white p-3 border rounded">
+                            <h2 align="center">Send a Message</h2>
+                            <br />
+                            {alertMessage}
+                            <Form onSubmit={this.onSubmit} autoComplete="off">
+                                <Form.Row>
+                                    <Form.Group as={Col} controlId="sender_screen_name">
+                                        <Form.Label><b>Sender Name</b></Form.Label>
+                                        <Form.Control name="sender_screen_name"
+                                            type="text"
+                                            defaultValue={this.state.sender_screen_name}
+                                            readOnly />
+                                    </Form.Group>
+                                </Form.Row>
 
-                    <Form.Row>
-                        <Form.Group as={Col} controlId="receiver_screen_name">
-                            <Form.Label><b>Receiver's Name</b></Form.Label>
-                            <Form.Control name="receiver_screen_name"
-                                type="text"
-                                onChange={this.onChange}
-                                value={this.state.receiver_screen_name}
-                                placeholder="Enter receiver's name"
-                                pattern="^[A-Za-z0-9 ]+$"
-                                required />
-                        </Form.Group>
-                    </Form.Row>
+                                <Form.Row>
+                                    <Form.Group as={Col} controlId="receiver_screen_name">
+                                        <Form.Label><b>Receiver's Name</b></Form.Label>
+                                        <Form.Control name="receiver_screen_name"
+                                            type="text"
+                                            onChange={this.onChange}
+                                            value={this.state.receiver_screen_name}
+                                            placeholder="Enter receiver's name"
+                                            pattern="^[A-Za-z0-9 ]+$"
+                                            required />
+                                    </Form.Group>
+                                </Form.Row>
 
-                    <Form.Row>
-                        <Form.Group as={Col} controlId="message">
-                            <Form.Label><b>Message</b></Form.Label>
-                            <Form.Control name="message"
-                                as="textarea"
-                                rows={7}
-                                onChange={this.onChange}
-                                value={this.state.message}
-                                placeholder="Enter your message"
-                                pattern="^[A-Za-z0-9.,- ]+$"
-                                required />
-                        </Form.Group>
-                    </Form.Row>
+                                <Form.Row>
+                                    <Form.Group as={Col} controlId="message">
+                                        <Form.Label><b>Message</b></Form.Label>
+                                        <Form.Control name="message"
+                                            as="textarea"
+                                            rows={10}
+                                            onChange={this.onChange}
+                                            value={this.state.message}
+                                            placeholder="Enter your message"
+                                            pattern="^[A-Za-z0-9.,- ]+$"
+                                            required />
+                                    </Form.Group>
+                                </Form.Row>
+                                <br/>
 
 
-                    <div className="row">
-                        <div className="col-md-12 text-center p-2">
-                            <ButtonGroup aria-label="Third group">
-                                <Button type="submit" variant="success">Send</Button>&nbsp;&nbsp;
+                                <div className="row">
+                                    <div className="col-md-12 text-center p-2">
+                                        <ButtonGroup aria-label="Third group">
+                                            <Button type="submit" variant="success">Send</Button>&nbsp;&nbsp;
                                                 <Button variant="secondary" onClick={() => { this.props.history.push("/"); }}>Cancel</Button>
-                            </ButtonGroup>
+                                        </ButtonGroup>
+                                    </div>
+                                </div>
+                            </Form>
                         </div>
                     </div>
-                </Form>
+                </div>
             </div>
         );
     }

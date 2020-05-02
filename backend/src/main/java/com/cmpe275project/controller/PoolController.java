@@ -15,7 +15,9 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,9 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cmpe275project.model.Pool;
 import com.cmpe275project.model.PoolRequest;
+import com.cmpe275project.model.Store;
 import com.cmpe275project.model.User;
 import com.cmpe275project.responseObjects.PoolApplicationsResponse;
 import com.cmpe275project.responseObjects.PoolResponse;
+import com.cmpe275project.responseObjects.StoreResponse;
 import com.cmpe275project.responseObjects.UserResponse;
 import com.cmpe275project.service.EmailService;
 import com.cmpe275project.service.PoolService;
@@ -42,139 +46,166 @@ public class PoolController {
 
 	@Autowired
 	private PoolService poolService;
-	
-	@Autowired UserService userService;
-	
+
+	@Autowired
+	UserService userService;
+
 	@Autowired
 	EmailService emailService;
-	
-	
+
 	@PostMapping("")
-	public ResponseEntity<?> addPool(@Valid @RequestBody Pool poolRequest, Errors errors)
-	{
+	public ResponseEntity<?> addPool(@Valid @RequestBody Pool poolRequest, Errors errors) {
+
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		PoolResponse response = new PoolResponse();
-		
-        if(errors.hasErrors()) {
-			
-			Map<String,String> errorMap = new HashMap<String,String>();
-			
+
+		if (errors.hasErrors()) {
+
+			Map<String, String> errorMap = new HashMap<String, String>();
+
 			for (ObjectError error : errors.getAllErrors()) {
-			       String fieldError = ((FieldError) error).getField();
-			       errorMap.put(fieldError, error.getDefaultMessage());
-			  }
+				String fieldError = ((FieldError) error).getField();
+				errorMap.put(fieldError, error.getDefaultMessage());
+			}
 			response.setErrors(errorMap);
 			response.setMessage("Unable to add Pool");
-			
+
 			return new ResponseEntity<>(response, status);
 		}
-		if(!userService.isUserIdExists(poolRequest.getPoolleaderid())) {
+
+        
+		if(!userService.isUserIdExists(poolRequest.getPool_leader_id())) {
 			status = HttpStatus.NOT_FOUND;
-			System.out.println(poolRequest.getPoolleaderid()+"----------------------------");
         	response.setMessage("Pool leader does not exist");
         	return new ResponseEntity<>(response,status);
 		}
-        if(!poolService.checkPoolNameExists(poolRequest.getPoolname())){
-        	poolService.createPool(poolRequest);
-        	status = HttpStatus.OK;
-        	response.setMessage("Pool Successfully Added");
-        	response.setPool(poolRequest);
-        }else {
-        	status = HttpStatus.CONFLICT;
-        	response.setMessage("Pool Name Already In Use");
-        }
-        
+		
+		if(poolService.checkPoolIDExists(poolRequest.getPool_id())){
+			status = HttpStatus.CONFLICT;
+        	response.setMessage("Pool ID Already In Use");
+		}
+			
+		if(!poolService.checkPoolNameExists(poolRequest.getPool_name())){
+
+		
+
+			poolService.createPool(poolRequest);
+			status = HttpStatus.OK;
+			response.setMessage("Pool Successfully Added");
+			response.setPool(poolRequest);
+
+		}
+		else {
+			status = HttpStatus.CONFLICT;
+			response.setMessage("Pool Name Already In Use");
+		}
+					
 		return new ResponseEntity<>(response,status);
 	}
+	
+
 	@GetMapping("/all")
-	public ResponseEntity<?> getAllPools()
-	{
+	public ResponseEntity<?> getAllPools() {
 		PoolResponse response = new PoolResponse();
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		List<Pool> poolList = poolService.getAllPools();
 		response.setPoolList(poolList);
 		status = HttpStatus.OK;
+		return new ResponseEntity<>(response, status);
+	}
+	
+	@GetMapping("/user/{user_id}")
+	public ResponseEntity<?> getPoolForUser(@PathVariable Long user_id)
+	{
+		PoolResponse response = new PoolResponse();
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		User user = userService.getUserInfoById(user_id);
+		if(user != null) {
+			response.setPool(user.getPool());
+			status = HttpStatus.OK;
+		}
+		
 		return new ResponseEntity<>(response,status);
 	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<?> updatePool(@PathVariable Long id, @Valid @RequestBody Pool poolRequest, Errors errors)
+	{
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		PoolResponse response = new PoolResponse();
+		
+		if (errors.hasErrors()) {
 
-	@PostMapping("/apply")
-	public ResponseEntity<?> applyPool(@RequestParam(name="user_id") Long userid,@RequestParam(name="pool_id") Long poolid,@RequestParam(name="ref_name") String refname,@RequestParam(name="knows_leader") Boolean knowsleader) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException
-	{
-		HttpStatus status = HttpStatus.NOT_FOUND;
-		UserResponse response = new UserResponse();
-		String user_screenname="";
-		if(!userService.isUserIdExists(userid)) {
-			response.setMessage("User does not exist");
-			response.setUser(null);
+			Map<String, String> errorMap = new HashMap<String, String>();
+
+			for (ObjectError error : errors.getAllErrors()) {
+				String fieldError = ((FieldError) error).getField();
+				errorMap.put(fieldError, error.getDefaultMessage());
+			}
+			response.setErrors(errorMap);
+			response.setMessage("Unable to update Pool");
+
+			return new ResponseEntity<>(response, status);
+		}
+		
+		if(!poolService.isPoolIdExist(id)) {
+			status = HttpStatus.NOT_FOUND;
+			response.setMessage("Pool Id not found");
 			return new ResponseEntity<>(response,status);
 		}
-		else {
-			user_screenname = userService.getUserInfoById(userid).getScreen_name();
-		}
-		if(userService.checkHasPool(userid)) {
-			response.setMessage("Already joined pool ");
-			status = HttpStatus.BAD_REQUEST;
-			return new ResponseEntity<>(response,status);
-		}
-		if(!poolService.isPoolIdExist(poolid)) {
-			response.setMessage("Pool Does Not exist....Create a pool first");
-			return new ResponseEntity<>(response,status);
-		}
-		int membersCount = poolService.countMembers(poolid);
-		if(membersCount>=4) {
-			response.setMessage("Can't add more than 4 poolers");
+		
+		if(!poolService.checkPoolNameAvailable(poolRequest.getPool_name(), id)) {
+		      
+			Pool pool = poolService.getPoolInfoById(id);
+			
+			pool.setPool_name(poolRequest.getPool_name());
+			pool.setNeighbourhood_name(poolRequest.getNeighbourhood_name());
+			pool.setPool_desc(poolRequest.getPool_desc());
+			
+			poolService.editPool(pool);
+			
+			status         = HttpStatus.OK;
+			response.setMessage("Pool Successfully Edited");
+	        response.setPool(pool);		
+			
+		}else {
 			status = HttpStatus.CONFLICT;
-			return new ResponseEntity<>(response,status); 
+			response.setMessage("Pool Name is already in use");
 		}
-		if(membersCount==1 || knowsleader==true) {
-			poolService.addPoolRequest(userid,user_screenname,poolid,refname,true);
-		}
-		else {
-			poolService.addPoolRequest(userid,user_screenname,poolid,refname,false);
-		}
-		User referenceUser = userService.getUserInfoByScreenName(refname);
-		String ref_email = referenceUser.getEmail();
-		String ref_screen_name = referenceUser.getScreen_name();
-		user_screenname = userService.getUserInfoById(userid).getScreen_name();
 		
-		Map<String, Object> map = new HashMap<>();
-		map.put("applicant_screen_name", user_screenname);
-		map.put("ref_screen_name",ref_screen_name);
-		
-		emailService.sendRefEmail(ref_email, map);
-	
-		status = HttpStatus.OK;
-		User user = userService.getUserInfoById(userid);
-		response.setMessage("Email sent successfully");
-		response.setUser(user);
 		return new ResponseEntity<>(response,status);
-		
 	}
 	
-	@PostMapping("/applicationByRefName")
-	public ResponseEntity<?> getApplicationsByRefName(@RequestParam(name="ref_name") String refname)
+	@PostMapping("/delete/{pool_id}")
+	public ResponseEntity<?> deletePool(@PathVariable Long pool_id)
 	{
 		HttpStatus status = HttpStatus.NOT_FOUND;
-		User referenceUser = userService.getUserInfoByScreenName(refname);
-		PoolApplicationsResponse response = new PoolApplicationsResponse();
-		if(referenceUser == null)
-		{	
-			response.setMessage("user does not exist");
+		PoolResponse response = new PoolResponse();
+		
+		if(!poolService.isPoolIdExist(pool_id)) {
+			response.setMessage("Pool Does Not exist");
 			return new ResponseEntity<>(response,status);
 		}
 		
-		List<PoolRequest> poolRequests = (List<PoolRequest>) poolService.getApplicationsByRefName(refname);
-		response.setMessage("List fetched successfully");
-		response.setListPoolApplications(poolRequests);
-		//response.setSetApps(new HashSet<PoolRequest>(poolRequests));
-		status = HttpStatus.OK;
+		int membersCount = poolService.countMembers(pool_id);
+		if(membersCount>1) {
+			status = HttpStatus.CONFLICT;
+			response.setMessage("Pool has active members");
+		}
+		else {
+			Long leader_id = poolService.getPoolLeaderId(pool_id);
+
+			poolService.leavePool(leader_id, pool_id);
+			poolService.deletePool(pool_id);
+			status = HttpStatus.OK;
+			response.setMessage("Pool deleted successfully");
+		}
+
 		return new ResponseEntity<>(response,status);
-		
-		
 	}
 	
-	@PostMapping("/leave")
-	public ResponseEntity<?> leavePool(@RequestParam(name="user_id") Long userid, @RequestParam(name="pool_id") Long poolid)
+	@PostMapping("/leave/{poolid}/{userid}")
+	public ResponseEntity<?> leavePool(@PathVariable Long poolid, @PathVariable Long userid)
 	{
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		UserResponse response = new UserResponse();
@@ -190,7 +221,7 @@ public class PoolController {
 			return new ResponseEntity<>(response,status);
 		}
 		if(!poolService.isPoolIdExist(poolid)) {
-			response.setMessage("Pool Does Not exist....");
+			response.setMessage("Pool Does Not exist");
 			return new ResponseEntity<>(response,status);
 		}
 		
@@ -201,113 +232,219 @@ public class PoolController {
 		return new ResponseEntity<>(response,status);
 		
 	}
-	@PostMapping("/supportPoolRequest")
-	public ResponseEntity<?> supportPoolRequest(@RequestParam(name="application_id") Long applicationid)
-	{	HttpStatus status = HttpStatus.NOT_FOUND;
-		PoolResponse response = new PoolResponse();
-		Long poolid = poolService.supportPoolRequest(applicationid);
-		Long poolLeaderId = poolService.getPoolLeaderId(poolid);
-		User poolLeader = null;
-		if(poolLeaderId!=null) {
-			poolLeader = userService.getUserInfoById(poolLeaderId);
-		}
-		String emailId = poolLeader.getEmail();
-		
-		
-		/*
-		 * send email to poolleader for approving
-		 * */
-		status = HttpStatus.OK;
-		response.setMessage("Waiting for Leaders approval");
-		return new ResponseEntity<>(response,status);
-	}
 	
-	@PostMapping("/allSupportedApplicationsByPoolId")
-	public ResponseEntity<?> allSupportedApplicationsByPool(@RequestParam(name="pool_id") Long poolid)
-	{
-		HttpStatus status = HttpStatus.NOT_FOUND;
-		PoolApplicationsResponse response = new PoolApplicationsResponse();
+
+	@PostMapping("/apply")
+	public ResponseEntity<?> applyPool(@RequestParam(name = "user_id") Long user_id,
+			@RequestParam(name = "pool_id") Long pool_id, @RequestParam(name = "ref_name") String refname,
+			@RequestParam(name = "knows_leader") Boolean knows_leader) throws TemplateNotFoundException,
+			MalformedTemplateNameException, ParseException, IOException, TemplateException {
 		
-		if(!poolService.isPoolIdExist(poolid)) {
-			response.setMessage("Pool Does Not exist....");
-			return new ResponseEntity<>(response,status);
-		}
-		List<PoolRequest> poolApplications = poolService.getAllSupportedApplicationsByPoolId(poolid);
-		response.setMessage("Successfully fetched records....");
-		response.setListPoolApplications(poolApplications);
-		status = HttpStatus.OK;
-		return new ResponseEntity<>(response,status);
-	}
-	@PostMapping("/deletePool")
-	public ResponseEntity<?> deletePool(@RequestParam(name="pool_id") Long poolid,@RequestParam(name="leader_id") Long leaderid)
-	{
-		HttpStatus status = HttpStatus.NOT_FOUND;
-		PoolResponse response = new PoolResponse();
-		
-		if(!poolService.isPoolIdExist(poolid)) {
-			response.setMessage("Pool Does Not exist....");
-			return new ResponseEntity<>(response,status);
-		}
-		int membersCount = poolService.countMembers(poolid);
-		if(membersCount>1) {
-			status = HttpStatus.CONFLICT;
-			response.setMessage("Pool has active members....");
-			return new ResponseEntity<>(response,status);
-		}
-		else {
-			Long leaderId = poolService.getPoolLeaderId(poolid);
-			if(leaderId == leaderid) {
-				poolService.leavePool(leaderid, poolid);
-				poolService.deletePool(poolid);
-				status = HttpStatus.OK;
-				response.setMessage("Pool deleted successfully");
-			}
-			else {
-				status = HttpStatus.CONFLICT;
-				response.setMessage("Only leader can delete pool");
-			}
-			return new ResponseEntity<>(response,status);
-		}
-	}
-	@PostMapping("/approve")
-	public ResponseEntity<?> approvePool(@RequestParam(name="user_id") Long userid, @RequestParam(name="pool_id") Long poolid)
-	{
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		UserResponse response = new UserResponse();
 		
-		if(!userService.isUserIdExists(userid)) {
+		if (!userService.isUserIdExists(user_id)) {
 			response.setMessage("User does not exist");
-			response.setUser(null);
-			return new ResponseEntity<>(response,status);
-		}
-		if(userService.checkHasPool(userid)) {
-			response.setMessage("Already joined pool ");
+			return new ResponseEntity<>(response, status);
+		} 
+		
+		if (userService.checkHasPool(user_id)) {
+			response.setMessage("User already in a pool");
 			status = HttpStatus.BAD_REQUEST;
-			return new ResponseEntity<>(response,status);
-		}
-		if(!poolService.isPoolIdExist(poolid)) {
-			response.setMessage("Pool Does Not exist....Create a pool first");
-			return new ResponseEntity<>(response,status);
-		}
-		else {
-			/*int membersCount = poolService.countMembers(poolid);
-			if(membersCount>=4) {
-				response.setMessage("Can't add more than 4 poolers");
-				status = HttpStatus.CONFLICT;
-				return new ResponseEntity<>(response,status); 
-			}else*/
-			{
-				poolService.joinPool(userid,poolid);
-				User user = userService.getUserInfoById(userid);
-				System.out.println("pool id added "+user.getPool().getId());
-				status = HttpStatus.OK;
-				response.setMessage("User joined pool successfully");
-				response.setUser(user);
-				return new ResponseEntity<>(response,status);
-				
-			}
+			return new ResponseEntity<>(response, status);
 		}
 		
+		if (!poolService.isPoolIdExist(pool_id)) {
+			response.setMessage("Pool does not exist");
+			return new ResponseEntity<>(response, status);
+		}
+		
+		int membersCount = poolService.countMembers(pool_id);
+		if (membersCount >= 4) {
+			response.setMessage("Can't add more than 4 poolers");
+			status = HttpStatus.CONFLICT;
+			return new ResponseEntity<>(response, status);
+		}
+		
+		User reference_user = userService.getUserInfoByScreenName(refname);
+		
+		if(reference_user == null) {
+			response.setMessage("Reference user does not exist");
+			return new ResponseEntity<>(response, status);
+		}
+		
+		if(!userService.checkHasPool(reference_user.getId()) || reference_user.getPool().getId() != pool_id) {
+			response.setMessage("Referenced user is not present in this pool");
+			status = HttpStatus.CONFLICT;
+			return new ResponseEntity<>(response, status);
+		}
+
+		
+		String ref_email = reference_user.getEmail();
+		String ref_screen_name = reference_user.getScreen_name();
+		String pool_name = reference_user.getPool().getPool_name();
+		String user_screen_name = userService.getUserInfoById(user_id).getScreen_name();
+		
+		poolService.addPoolRequest(user_id, user_screen_name, pool_id, ref_screen_name, knows_leader);
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("applicant_screen_name", user_screen_name);
+		map.put("ref_screen_name", ref_screen_name);
+		map.put("pool_name", pool_name);
+		
+		emailService.sendRefEmail(ref_email, map);
+
+		status = HttpStatus.OK;
+		
+		response.setMessage("Applied successfully");
+		return new ResponseEntity<>(response, status);
+
 	}
 	
+	@GetMapping("/application/user/{user_id}")
+	public ResponseEntity<?> getUserApplications(@PathVariable Long user_id) {
+		
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		User user = userService.getUserInfoById(user_id);
+		PoolApplicationsResponse response = new PoolApplicationsResponse();
+		if (user == null) {
+			response.setMessage("User does not exist");
+			return new ResponseEntity<>(response, status);
+		}
+
+		List<PoolRequest> pool_applications = (List<PoolRequest>) poolService.getUserApplications(user_id);
+		response.setMessage("User's Pool Applications");
+		response.setPool_Applications_List(pool_applications);
+		// response.setSetApps(new HashSet<PoolRequest>(poolRequests));
+		status = HttpStatus.OK;
+		return new ResponseEntity<>(response, status);
+
+	}
+
+	@GetMapping("/application/reference/{pool_id}/{ref_name}")
+	public ResponseEntity<?> getApplicationsByRefName(@PathVariable String ref_name, @PathVariable Long pool_id) {
+		
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		User referenceUser = userService.getUserInfoByScreenName(ref_name);
+		PoolApplicationsResponse response = new PoolApplicationsResponse();
+		
+		if (referenceUser == null) {
+			response.setMessage("User does not exist");
+			return new ResponseEntity<>(response, status);
+		}
+
+		List<PoolRequest> pool_applications = (List<PoolRequest>) poolService.getApplicationsByRefName(ref_name, pool_id);
+		response.setMessage("List fetched successfully");
+		response.setPool_Applications_List(pool_applications);
+		status = HttpStatus.OK;
+		return new ResponseEntity<>(response, status);
+
+	}
+	
+	@GetMapping("/application/pending/{pool_id}")
+	public ResponseEntity<?> allSupportedApplicationsByPool(@PathVariable Long pool_id) {
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		PoolApplicationsResponse response = new PoolApplicationsResponse();
+
+		if (!poolService.isPoolIdExist(pool_id)) {
+			response.setMessage("Pool Does Not exist");
+			return new ResponseEntity<>(response, status);
+		}
+		List<PoolRequest> poolApplications = poolService.getAllSupportedApplicationsByPoolId(pool_id);
+		response.setMessage("Successfully fetched records....");
+		response.setPool_Applications_List(poolApplications);
+		status = HttpStatus.OK;
+		return new ResponseEntity<>(response, status);
+	}
+
+	@PostMapping("/application/support")
+	public ResponseEntity<?> supportPoolRequest(@RequestParam(name = "application_id") Long application_id,
+			@RequestParam(name = "support") boolean support)
+					throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		PoolResponse response = new PoolResponse();
+		Long pool_id = null;
+		if(support) {
+			pool_id = poolService.supportPoolRequest(application_id);
+		
+			if(pool_id == null) {
+				response.setMessage("Pool Does Not exist");
+				return new ResponseEntity<>(response, status);
+			}
+			Long poolLeaderId = poolService.getPoolLeaderId(pool_id);
+			User poolLeader = null;
+			if (poolLeaderId != null) {
+				poolLeader = userService.getUserInfoById(poolLeaderId);
+			}
+			String email_id = poolLeader.getEmail();
+			String pool_leader_name = poolLeader.getScreen_name();
+			
+			PoolRequest pool_application = poolService.getApplicationInfo(application_id);
+			User applicant = userService.getUserInfoById(pool_application.getRequserid());
+			String applicant_name = applicant.getScreen_name();
+			Pool pool = poolService.getPoolInfoById(pool_application.getReqpoolid());
+			String pool_name = pool.getPool_name();
+			
+			Map<String, Object> map = new HashMap<>();
+			map.put("applicant_screen_name", applicant_name);
+			map.put("pool_leader_name", pool_leader_name);
+			map.put("pool_name", pool_name);
+			
+			emailService.sendEmailForLeaderApproval(email_id, map);
+
+			status = HttpStatus.OK;
+			response.setMessage("Pool Application Supported");
+		}
+		else {
+			poolService.removePoolRequest(application_id);
+			response.setMessage("Pool Application Removed");
+			status = HttpStatus.OK;
+		}
+		return new ResponseEntity<>(response, status);
+	}
+
+	@PostMapping("/application/approve")
+	public ResponseEntity<?> approvePool(@RequestParam(name = "user_id") Long user_id,
+			@RequestParam(name = "pool_id") Long pool_id, @RequestParam(name = "approval") boolean approval, 
+			@RequestParam(name="application_id") Long application_id) {
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		UserResponse response = new UserResponse();
+
+		if (!userService.isUserIdExists(user_id)) {
+			response.setMessage("User does not exist");
+			return new ResponseEntity<>(response, status);
+		}
+		if (userService.checkHasPool(user_id)) {
+			response.setMessage("Already joined pool ");
+			status = HttpStatus.BAD_REQUEST;
+			return new ResponseEntity<>(response, status);
+		}
+		if (!poolService.isPoolIdExist(pool_id)) {
+			response.setMessage("Pool Does Not exist");
+			return new ResponseEntity<>(response, status);
+		} else {
+			/*
+			 * int membersCount = poolService.countMembers(poolid); if(membersCount>=4) {
+			 * response.setMessage("Can't add more than 4 poolers"); status =
+			 * HttpStatus.CONFLICT; return new ResponseEntity<>(response,status); }else
+			 */
+			response.setMessage("User application rejected");
+			if(approval) {
+				poolService.joinPool(user_id, pool_id);
+				response.setMessage("User joined pool successfully");
+			}
+			
+			poolService.removePoolRequest(application_id);
+				
+			User user = userService.getUserInfoById(user_id);
+			status = HttpStatus.OK;
+				
+			response.setUser(user);
+			return new ResponseEntity<>(response, status);
+
+			
+		}
+
+	}
+
 }

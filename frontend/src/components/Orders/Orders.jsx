@@ -3,10 +3,10 @@ import { withRouter, BrowserRouter, NavLink, Route } from "react-router-dom";
 import { Nav } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import MyPool from "./MyPool";
-import AllPools from "./AllPools";
+import MyOrders from "./MyOrders";
+import PickUpOrders from "./PickUpOrders";
 
-class Pools extends Component {
+class Orders extends Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -24,30 +24,31 @@ class Pools extends Component {
     }
 
     render() {
+        const { user } = this.props.auth;
         return (
             <div>
                 <BrowserRouter>
                     <Nav variant="tabs" >
                         <Nav.Item>
-                            <Nav.Link eventKey="1" as={NavLink} to="/pool/mypool">
-                                My Pool
-                        </Nav.Link>
+                            <Nav.Link eventKey="1" active as={NavLink} to="/orders/myorders">
+                                My Orders
+                            </Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link eventKey="2" as={NavLink} to="/pool/all">
-                                All Pools
-                        </Nav.Link>
+                            <Nav.Link eventKey="2" as={NavLink} to="/orders/pickup">
+                                Pickup Orders
+                            </Nav.Link>
                         </Nav.Item>
                     </Nav>
-                    <Route path="/pool/mypool" component={MyPool} exact />
-                    <Route path="/pool/all" component={AllPools} exact />
+                    <Route path="/orders/myorders" component={MyOrders} exact />
+                    <Route path="/orders/pickup" component={PickUpOrders} exact />
                 </BrowserRouter>
             </div>
         );
     }
 }
 
-Pools.propTypes = {
+Orders.propTypes = {
     auth: PropTypes.object.isRequired
 };
 
@@ -56,4 +57,4 @@ const mapStateToProps = state => ({
 });
 
 
-export default connect(mapStateToProps, {})(withRouter(Pools));
+export default connect(mapStateToProps, {})(withRouter(Orders));

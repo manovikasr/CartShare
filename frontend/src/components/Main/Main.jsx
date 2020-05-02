@@ -15,6 +15,8 @@ import StoreProducts from "../StoreProducts/StoreProducts";
 import Message from '../Message/Message';
 import Cart from '../Cart/Cart';
 import Pools from '../Pools/Pools';
+import Orders from '../Orders/Orders';
+import PoolersOrders from '../Orders/PoolersOrderDelivery';
 import jwt_decode from "jwt-decode";
 import setAuthToken from "../../config/setAuthToken";
 import { setCurrentUser, logoutUser } from "../../redux/actions/authActions";
@@ -62,8 +64,10 @@ class Main extends React.Component {
                     <Route exact path="/cart" component={Cart} />
                     <Route exact path="/stores" component={Stores} />
                     <Route exact path="/products" component={Products} />
-                    <Route path="/pools" component={Pools} />
+                    <Route path="/pool" component={Pools} />
+                    <Route path="/orders" component={Orders} />
                     <Route exact path="/store/products" component={StoreProducts} />
+                    <Route exact path="/order/poolorders" component={PoolersOrders} />
                 </Switch>
             </React.Fragment>
         )
