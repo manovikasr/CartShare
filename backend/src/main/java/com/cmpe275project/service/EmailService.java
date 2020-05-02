@@ -16,4 +16,6 @@ public interface EmailService {
 	public void sendMessageEmail(String from, String to, Map<String, Object> map) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException;
 	
 	public void sendRefEmail(String to, Map<String, Object> map) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException;
+	
+	public void sendEmailForLeaderApproval(String to, Map<String, Object> map) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException;
 }

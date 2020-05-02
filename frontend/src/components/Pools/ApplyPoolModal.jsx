@@ -45,11 +45,14 @@ class ApplyPoolModal extends Component {
         const pool = this.props.pool;
         const knows_leader = this.state.know_pool_leader;
         var ref_name = this.state.ref_name;
+        var pool_leader_id = pool.pool_leader_id;
+        var pool_leader = pool.user.find(member => member.id === pool_leader_id);
 
         if (knows_leader) {
-            var pool_leader_id = pool.pool_leader_id;
-            var pool_leader = pool.user.find(member => member.id === pool_leader_id);
-                ref_name = pool_leader ? pool_leader.screen_name : this.state.ref_name;
+            ref_name = pool_leader ? pool_leader.screen_name : this.state.ref_name;
+        } else {
+            if(pool_leader.screen_name === ref_name)
+                knows_leader = true;
         }
 
         axios.post(`/pool/apply?user_id=${user.id}&pool_id=${pool.id}&knows_leader=${knows_leader}&ref_name=${ref_name}`)

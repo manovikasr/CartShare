@@ -129,6 +129,31 @@ public class EmailServiceImpl implements EmailService{
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		
+	}
+	
+	@Override
+	public void sendEmailForLeaderApproval(String to, Map<String, Object> map) throws TemplateNotFoundException,
+			MalformedTemplateNameException, ParseException, IOException, TemplateException {
+		// TODO Auto-generated method stub
+		try {
+			MimeMessage message = emailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message);
+			
+			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
+			
+			Template t = freeMarkerConfig.getTemplate("ApproveRejectEmail.ftl");
+            String subject = "Cart Share - Pooler Application Approval pending";
+			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
+			
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(text, true);
+			
+			emailSender.send(message);
+			
+		} catch (MessagingException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 	}
 }
