@@ -162,7 +162,7 @@ class AddEditProductModal extends Component {
             price = this.props.product.price;
         }
 
-        if (!this.props.store) {
+        if (!this.props.store && ! this.props.product) {
             storesField = (
                 <Form.Row>
                     <Form.Group as={Col} controlId="stores">
