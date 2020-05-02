@@ -1,8 +1,13 @@
 package com.cmpe275project.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 //import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -41,8 +46,15 @@ public class JwtUserDetailsService implements UserDetailsService {
 		if (user == null) {
 			throw new UsernameNotFoundException("User not found for id "+ id);
 		}
-		return new org.springframework.security.core.userdetails.User(user.getEmail(), "",
-				new ArrayList<>());
+		
+		Set<GrantedAuthority> setAuths = new HashSet<GrantedAuthority>();
+		setAuths.add(new SimpleGrantedAuthority(user.getRole()));
+        
+
+        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(setAuths);
+
+		
+		return new org.springframework.security.core.userdetails.User(user.getEmail(), "",authorities);
 	}
 
 
