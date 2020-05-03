@@ -127,6 +127,7 @@ public class StoreController {
 			store = storeService.getStoreInfoById(id);
 			response.setMessage("Store Details");
 			response.setStore(store);
+			//response.set
 			status = HttpStatus.OK;
 		}else {
 			response.setMessage("Store Details Not Available");

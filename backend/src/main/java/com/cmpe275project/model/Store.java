@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
@@ -20,6 +21,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Range;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name="stores")
@@ -57,13 +59,17 @@ public class Store {
 	@Column(name = "zip")
 	private Integer zip;
 	
-	@OneToMany(fetch = FetchType.LAZY)
+	/*@OneToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "store_products", 
     joinColumns = { @JoinColumn(name = "store_id") }, 
     inverseJoinColumns = { @JoinColumn(name = "product_id") })
 	//@JsonIgnore
-	private List<Product> store_products;
+	private List<Product> store_products;*/
 
+	@OneToMany(fetch = FetchType.LAZY,mappedBy = "store")
+	//@JsonIgnore
+	@JsonManagedReference
+	private List<Product> products;
 	
 	public Store() {
 		super();
@@ -117,13 +123,16 @@ public class Store {
 		this.zip = zip;
 	}
 
-	public List<Product> getStore_products() {
-		return store_products;
+	public List<Product> getProducts() {
+		return products;
 	}
 
-	public void setStore_products(List<Product> store_products) {
-		this.store_products = store_products;
+	public void setProducts(List<Product> products) {
+		this.products = products;
 	}
+
+	
+
 	
 	
 	 

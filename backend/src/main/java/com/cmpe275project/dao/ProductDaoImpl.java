@@ -45,6 +45,33 @@ public class ProductDaoImpl implements ProductDao{
 	}
 	
 	@Override
+	public Boolean chkSkuAndStoreIdExists(String sku, Long store_id) {
+		// TODO Auto-generated method stub
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+		CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+		Root<Product> root = criteriaQuery.from( Product.class );
+		criteriaQuery.select(builder.count(root));
+		
+		criteriaQuery.where(
+				                         builder.equal(
+				                        		                root.get( "sku" ), sku
+				                        		              ),
+				                         builder.and(
+				                        		             builder.notEqual(root.get( "store_id" ), store_id)
+				                        		             )
+				                         );
+		
+		TypedQuery<Long> query = entityManager.createQuery(criteriaQuery); 
+		Long count = (Long) query.getSingleResult();
+		
+		if(count>0)
+			  return true;
+		
+		return false;
+	}
+	
+	@Override
 	public Boolean chkSKUExists(String sku) {
 		
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -71,7 +98,7 @@ public class ProductDaoImpl implements ProductDao{
 	}
 	
 	@Override
-	public Boolean isSKUAvailable(String sku, Long id) {
+	public Boolean isSkuAndStoreIdAvailable(String sku,Long store_id) {
 		// TODO Auto-generated method stub
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
@@ -84,7 +111,7 @@ public class ProductDaoImpl implements ProductDao{
 				                        		                root.get( "sku" ), sku
 				                        		              ),
 				                         builder.and(
-				                        		             builder.notEqual(root.get( "id" ), id)
+				                        		             builder.notEqual(root.get( "store_id" ), store_id)
 				                        		             )
 				                         );
 		

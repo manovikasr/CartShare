@@ -6,11 +6,13 @@ public interface ProductDao {
 
 	public Boolean chkProductNameExists(String product_name);
 	
+	public Boolean chkSkuAndStoreIdExists(String sku, Long store_id);
+	
 	public Boolean chkSKUExists(String sku);
 	
 	public Boolean isProductNameAvailable(String product_name,Long id);
 	
-	public Boolean isSKUAvailable(String sku,Long id);
+	public Boolean isSkuAndStoreIdAvailable(String sku,Long store_id);
 	
 	public Boolean isProductIdExists(Long id);
 	

@@ -44,7 +44,7 @@ public class User {
 	@NotNull(message = "Email is Mandatory")
 	@NotEmpty(message = "Email is Mandatory")
 	@NotBlank(message = "Email is Mandatory")
-	@Column(name = "email")
+	@Column(name = "email",updatable=false)
 	private String email;
 	
 	@NotNull(message = "Role is Mandatory")
