@@ -14,7 +14,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name="OrderInfo")
+@Table(name="Orders")
 public class Order {
 	
 	@Id
