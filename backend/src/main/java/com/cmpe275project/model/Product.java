@@ -14,12 +14,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
@@ -42,6 +44,9 @@ public class Product {
 	@NotBlank(message = "SKU is Mandatory")
 	@Column(name = "sku")
 	private String sku;
+	
+	@Column(name = "store_id")
+	private Long store_id;
 	
 	@NotNull(message = "Product Desc")
 	@NotEmpty(message = "Product Desc is Mandatory")
@@ -66,12 +71,42 @@ public class Product {
 	@Column(name = "price")
 	private Double price;
 	
-	/*@ManyToMany(mappedBy = "products")
-	Set<Store> stores;*/
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonBackReference
+	@JoinColumn(name = "store_id", nullable=true, updatable=false, insertable=false)
+	private Store store;
+
+	public Product() {
+		super();
+	}
 	
+	public Product(
+			@NotNull(message = "Product Name is Mandatory") @NotEmpty(message = "Product Name is Mandatory") @NotBlank(message = "Product Name is Mandatory") String product_name,
+			@NotNull(message = "SKU is Mandatory") @NotEmpty(message = "SKU is Mandatory") @NotBlank(message = "SKU is Mandatory") String sku,
+			Long store_id,
+			@NotNull(message = "Product Desc") @NotEmpty(message = "Product Desc is Mandatory") @NotBlank(message = "Product Desc is Mandatory") String product_desc,
+			String product_img, String product_brand,
+			@NotNull(message = "Unit type is Mandatory") @NotEmpty(message = "Unit type is Mandatory") @NotBlank(message = "Unit Type is Mandatory") String unit_type,
+			@NotNull(message = "Price is Mandatory") Double price) {
+		super();
+		this.product_name = product_name;
+		this.sku = sku;
+		this.store_id = store_id;
+		this.product_desc = product_desc;
+		this.product_img = product_img;
+		this.product_brand = product_brand;
+		this.unit_type = unit_type;
+		this.price = price;
+	}
+
+
+
+
+
 	public long getId() {
 		return id;
 	}
+
 
 	public void setId(long id) {
 		this.id = id;
@@ -133,6 +168,23 @@ public class Product {
 		this.price = price;
 	}
 
+	public Long getStore_id() {
+		return store_id;
+	}
+
+	public void setStore_id(Long store_id) {
+		this.store_id = store_id;
+	}
+
+	public Store getStore() {
+		return store;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
+	}
+
+	
 	
 	/*public Set<Store> getStores() {
 		return stores;

@@ -148,6 +148,7 @@ class ProductCard extends Component {
         }
 
         return (
+
             <div>
                 <Card bg="white" style={{ width: "45rem", margin: "10%" }}>
                     <Row>
