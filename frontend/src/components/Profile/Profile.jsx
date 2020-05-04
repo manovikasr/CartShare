@@ -17,8 +17,9 @@ class Profile extends Component {
             city: "",
             state: "",
             zip: "",
-            message: "",
-            profile: {}
+            profile: {},
+            success_message: "",
+            error_message: ""
         };
     }
 
@@ -27,6 +28,21 @@ class Profile extends Component {
             this.props.history.push("/");
         }
         this.getProfile();
+    }
+
+    componentWillReceiveProps(props) {
+        console.log(props)
+        if (props.errors.message) {
+            this.setState({
+                error_message: props.errors.message,
+                success_message: ""
+            });
+        } if(props.success.message) {
+            this.setState({
+                success_message: "Profile updated",
+                error_message: ""
+            });
+        }
     }
 
     getProfile = () => {
@@ -57,26 +73,33 @@ class Profile extends Component {
 
     onSubmit = e => {
         e.preventDefault();
-
+        const { user } = this.props.auth;
         const userData = {
+            user_id: user.id,
+            contribution_credits: this.state.profile.contribution_credits,
             email: this.state.profile.email,
             screen_name: this.state.profile.screen_name,
-            nick_name: this.state.profile.nick_name,
-            address: this.state.profile.address,
-            city: this.state.profile.city,
-            state: this.state.profile.state,
-            zip: this.state.profile.zip
+            nick_name: this.state.nick_name || this.state.profile.nick_name,
+            address: this.state.address || this.state.profile.address,
+            city: this.state.city || this.state.profile.city,
+            state: this.state.state || this.state.profile.state,
+            zip: this.state.zip || this.state.profile.zip,
         };
 
         this.props.updateProfile(userData);
     };
 
     render() {
-        var errorMessage, contri_status = "";
+        var errorMessage, successMessage, contri_status = "";
         var user = this.state.profile;
-        if (this.state.message) {
+        if (this.state.error_message) {
             errorMessage = (
-                <Alert variant="warning">{this.state.message}</Alert>
+                <Alert variant="warning">{this.state.error_message}</Alert>
+            );
+        }
+        if (this.state.success_message) {
+            successMessage = (
+                <Alert variant="success">{this.state.success_message}</Alert>
             );
         }
 
@@ -101,6 +124,7 @@ class Profile extends Component {
                                 </center>
                                 <br />
                                 {errorMessage}
+                                {successMessage}
 
                                 <Form onSubmit={this.onSubmit} autoComplete="off">
                                     <Form.Row>
