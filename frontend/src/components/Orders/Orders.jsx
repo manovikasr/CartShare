@@ -37,7 +37,7 @@ class Orders extends Component {
                         </Nav.Item>
                         <Nav.Item>
                             <Nav.Link eventKey="2" as={NavLink} to="/orders/pickup">
-                                Pickup Orders
+                                Orders to Deliver
                             </Nav.Link>
                         </Nav.Item>
                         <Nav.Item>

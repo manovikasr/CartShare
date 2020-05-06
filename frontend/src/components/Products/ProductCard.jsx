@@ -68,7 +68,8 @@ class ProductCard extends Component {
 
         let index = cart_items.findIndex((cart_item => cart_item.id === item_id));
         if (index === -1) {
-            cart_items.push({ ...item, quantity: this.state.purchase_quantity });
+            var final_price = this.state.purchase_quantity * item.price
+            cart_items.push({ ...item, quantity: this.state.purchase_quantity, total_price: final_price, product_id: item.id});
             localStorage.setItem("cart_store_id", this.props.store.id);
             localStorage.setItem("cart_items", JSON.stringify(cart_items));
             this.setState({

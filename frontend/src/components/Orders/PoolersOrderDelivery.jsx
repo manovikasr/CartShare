@@ -45,6 +45,7 @@ class PoolersOrderDelivery extends Component {
                 this.props.history.push("/verify");
             }
         }
+        console.log(this.props.location.state);
         this.getStoreInfo();
     }
 
@@ -204,7 +205,7 @@ class PoolersOrderDelivery extends Component {
                         </div>
                     </div>
                 </div>
-                <OrderProductsModal showModal = {this.state.showModal} onHide = {this.hideModal} />
+                {/*<OrderProductsModal showModal = {this.state.showModal} onHide = {this.hideModal} />*/}
             </div>
         );
     }
