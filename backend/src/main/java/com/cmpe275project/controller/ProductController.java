@@ -63,6 +63,7 @@ public class ProductController {
 		
         for(long store_id : store_ids) {
         
+        		System.out.println(store_id);
 		        if(storeService.isStoreIdExists(store_id)) {
 		        	
 		        	if(!productService.chkSkuAndStoreIdExists(productRequest.getSku(), store_id)) {
@@ -70,41 +71,19 @@ public class ProductController {
 		         	    products.add(product);	
 		        	}else {
 		        		 status = HttpStatus.CONFLICT;
-		        		 response.setMessage("Unable to add Product. Sku : "+productRequest.getSku()+" and Store Id : "+store_id+" already Exists");
+		        		 response.setMessage("Unable to add Product. SKU : "+productRequest.getSku()+" and Store Id : "+store_id+" already Exists");
 		        		 return new ResponseEntity<>(response,status);
 		        	}
 		        	
 		        }else {
-		        	response.setMessage("Store Id : "+store_id+" not exists");
+		        	response.setMessage("Store Id : "+store_id+" does not exists");
 		   		    return new ResponseEntity<>(response,status);
 		        }
-        	
-        	
         }
         
         productService.addAll(products);
         response.setMessage("Product Successfully Added");
         status = HttpStatus.OK;
-        //response.setStore(productRequest);
-        
-        
-        /*if(!productService.chkProductNameExists(productRequest.getProduct_name())){
-        	
-        	if(!productService.chkSKUExists(productRequest.getSku())) {
-        	      
-        		productService.add(productRequest);
-            	response.setMessage("Product Successfully Added");
-            	response.setStore(productRequest);
-        		
-        	}else {
-        		status = HttpStatus.CONFLICT;
-            	response.setMessage("SKU Already In Use");
-        	}
-        	
-        }else {
-        	status = HttpStatus.CONFLICT;
-        	response.setMessage("Product Name Already In Use");
-        }*/
         
 		return new ResponseEntity<>(response,status);
 	}
@@ -142,7 +121,7 @@ public class ProductController {
 		}
 		
 		
-			if(!productService.isSkuAndStoreIdAvailable(productRequest.getSku(),productRequest.getStore_id())) {
+			if(!productService.isSkuAndStoreIdAvailable(productRequest.getSku(),productRequest.getStore_id(), id)) {
 				
 				Product product = productService.getProductInfoById(id);
 				product.setProduct_name(productRequest.getProduct_name());

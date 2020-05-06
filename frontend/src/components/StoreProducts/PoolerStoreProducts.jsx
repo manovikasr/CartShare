@@ -12,18 +12,36 @@ class PoolerStoreProducts extends Component {
         super(props);
         this.state = {
             store: {},
-            products: []
+            products: [],
+            search_input: ""
         };
     }
 
     async componentDidMount() {
         if (this.props.location.state) {
+            console.log(this.props.location.state);
             await this.setState({
                 store: this.props.location.state.store,
-                products: this.props.location.state.store.store_products
+                products: this.props.location.state.store.products
             });
         } else {
             this.props.history.push("/stores");
+        }
+        const { user } = this.props.auth;
+        if (user.role === 'pooler') {
+            axios.get(`/pool/user/${user.id}`)
+                .then(res => {
+                    if (res.data && res.data.pool && res.data.pool.id) {
+                        this.setState({
+                            isPoolMember: true
+                        });
+                    }
+                })
+                .catch(e => {
+                    if (e.response) {
+                        console.log(e.response.data)
+                    }
+                })
         }
     }
 
@@ -84,7 +102,7 @@ class PoolerStoreProducts extends Component {
                 products = filteredProducts.map(product => {
                     return (
                         <Col sm={3}>
-                            <ProductCard store={this.state.store} product={product} getProducts={this.getProducts} />
+                            <ProductCard store={this.state.store} product={product} getProducts={this.getProducts} isPoolMember={this.state.isPoolMember} />
                         </Col>
                     )
                 });
@@ -127,9 +145,6 @@ class PoolerStoreProducts extends Component {
                                 onChange={this.onChange}
                             />
                         </InputGroup>
-                    </Col>
-                    <Col>
-                        <Button variant="success" style={{ margin: "3%" }} onClick={this.handleToggle}>Add Product</Button>
                     </Col>
                 </Row>
                 {alertMessage}<br />

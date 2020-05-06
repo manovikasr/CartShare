@@ -44,9 +44,9 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public Boolean isSkuAndStoreIdAvailable(String sku,Long store_id) {
+	public Boolean isSkuAndStoreIdAvailable(String sku,Long store_id, Long product_id) {
 		// TODO Auto-generated method stub
-		return productDao.isSkuAndStoreIdAvailable(sku, store_id);
+		return productDao.isSkuAndStoreIdAvailable(sku, store_id, product_id);
 	}
 
 	@Override

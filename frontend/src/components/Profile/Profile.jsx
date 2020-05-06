@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import axios from "axios";
 import { updateProfile } from "../../redux/actions/authActions";
 import { Col, Form, Button, ButtonGroup, Alert } from 'react-bootstrap';
 
@@ -16,7 +17,9 @@ class Profile extends Component {
             city: "",
             state: "",
             zip: "",
-            message: ""
+            profile: {},
+            success_message: "",
+            error_message: ""
         };
     }
 
@@ -24,11 +27,37 @@ class Profile extends Component {
         if (!this.props.auth.isAuthenticated) {
             this.props.history.push("/");
         }
+        this.getProfile();
     }
 
     componentWillReceiveProps(props) {
-
+        console.log(props)
+        if (props.errors.message) {
+            this.setState({
+                error_message: props.errors.message,
+                success_message: ""
+            });
+        } if(props.success.message) {
+            this.setState({
+                success_message: "Profile updated",
+                error_message: ""
+            });
+        }
     }
+
+    getProfile = () => {
+        axios.get("/profile")
+            .then(res => {
+                if (res.data) {
+                    this.setState({
+                        profile: res.data.user
+                    });
+                }
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    };
 
     componentWillUnmount() {
         this.setState({
@@ -44,28 +73,46 @@ class Profile extends Component {
 
     onSubmit = e => {
         e.preventDefault();
-
+        const { user } = this.props.auth;
         const userData = {
-            email: this.state.email,
-            screen_name: this.state.screen_name,
-            nick_name: this.state.nick_name,
-            address: this.state.address,
-            city: this.state.city,
-            state: this.state.state,
-            zip: this.state.zip
+            user_id: user.id,
+            contribution_credits: this.state.profile.contribution_credits,
+            email: this.state.profile.email,
+            screen_name: this.state.profile.screen_name,
+            nick_name: this.state.nick_name || this.state.profile.nick_name,
+            address: this.state.address || this.state.profile.address,
+            city: this.state.city || this.state.profile.city,
+            state: this.state.state || this.state.profile.state,
+            zip: this.state.zip || this.state.profile.zip,
         };
 
         this.props.updateProfile(userData);
     };
 
     render() {
-        var errorMessage;
-        var { user } = this.props.auth;
-        if (this.state.message) {
+        var errorMessage, successMessage, contri_status = "";
+        var user = this.state.profile;
+        if (this.state.error_message) {
             errorMessage = (
-                <Alert variant="warning">{this.state.message}</Alert>
+                <Alert variant="warning">{this.state.error_message}</Alert>
             );
         }
+        if (this.state.success_message) {
+            successMessage = (
+                <Alert variant="success">{this.state.success_message}</Alert>
+            );
+        }
+
+        if (this.state.profile.id) {
+            let contri_credits = this.state.profile.contribution_credits;
+            if (contri_credits >= 0)
+                contri_status = "GREEN";
+            else if (contri_credits > -4)
+                contri_status = "YELLOW";
+            else
+                contri_status = "RED";
+        }
+
         return (
             <React.Fragment>
                 <div className="container p-4">
@@ -77,6 +124,7 @@ class Profile extends Component {
                                 </center>
                                 <br />
                                 {errorMessage}
+                                {successMessage}
 
                                 <Form onSubmit={this.onSubmit} autoComplete="off">
                                     <Form.Row>
@@ -107,7 +155,7 @@ class Profile extends Component {
                                             <Form.Label><b>Email Id</b></Form.Label>
                                             <Form.Control name="email"
                                                 type="text"
-                                                value={user.sub}
+                                                value={user.email}
                                                 readOnly />
                                         </Form.Group>
                                     </Form.Row>
@@ -120,7 +168,10 @@ class Profile extends Component {
                                                 value={user.role === "admin" ? "Admin" : "Pooler"}
                                                 readOnly />
                                         </Form.Group>
-                                        {(user.role === "pooler") &&
+                                    </Form.Row>
+
+                                    {(user.role === "pooler") &&
+                                        <Form.Row>
                                             <Form.Group as={Col} controlId="credits">
                                                 <Form.Label><b>Credits</b></Form.Label>
                                                 <Form.Control name="credits"
@@ -128,8 +179,15 @@ class Profile extends Component {
                                                     value={user.credits || 0}
                                                     readOnly />
                                             </Form.Group>
-                                        }
-                                    </Form.Row>
+                                            <Form.Group as={Col} controlId="status">
+                                                <Form.Label><b>Status</b></Form.Label>
+                                                <Form.Control name="status"
+                                                    type="text"
+                                                    value={contri_status}
+                                                    readOnly />
+                                            </Form.Group>
+                                        </Form.Row>
+                                    }
 
                                     <Form.Row>
                                         <Form.Group as={Col} controlId="address">
@@ -137,7 +195,7 @@ class Profile extends Component {
                                             <Form.Control name="address"
                                                 type="text"
                                                 onChange={this.onChange}
-                                                defaultValue={this.state.address}
+                                                defaultValue={user.address}
                                                 placeholder="Enter your street address"
                                                 pattern="^[A-Za-z0-9 ]+$"
                                                 required />
@@ -150,7 +208,7 @@ class Profile extends Component {
                                             <Form.Control name="city"
                                                 type="text"
                                                 onChange={this.onChange}
-                                                defaultValue={this.state.city}
+                                                defaultValue={user.city}
                                                 placeholder="Enter your city"
                                                 pattern="^[A-Za-z ]+$"
                                                 required />
@@ -161,7 +219,7 @@ class Profile extends Component {
                                             <Form.Control name="state"
                                                 type="text"
                                                 onChange={this.onChange}
-                                                defaultValue={this.state.state}
+                                                defaultValue={user.state}
                                                 placeholder="Enter your state"
                                                 pattern="^[A-Za-z ]+$"
                                                 required />
@@ -174,7 +232,7 @@ class Profile extends Component {
                                             <Form.Control name="zip"
                                                 type="text"
                                                 onChange={this.onChange}
-                                                defaultValue={this.state.zip}
+                                                defaultValue={user.zip}
                                                 placeholder="Enter your zip code"
                                                 pattern="^[0-9 ]+$"
                                                 required />

@@ -61,6 +61,8 @@ class MyPool extends Component {
                 .then(res => {
                     if (res.status === 200) {
                         this.getPoolData();
+                        localStorage.removeItem("cart_store_id");
+                        localStorage.removeItem("cart_items");
                     }
                 })
                 .catch(e => {
@@ -79,6 +81,8 @@ class MyPool extends Component {
                 .then(res => {
                     if (res.status === 200) {
                         this.getPoolData();
+                        localStorage.removeItem("cart_store_id");
+                        localStorage.removeItem("cart_items");
                     }
                 })
                 .catch(e => {

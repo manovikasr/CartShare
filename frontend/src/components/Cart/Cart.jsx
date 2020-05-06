@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import axios from "axios";
+import ConfirmOrderModal from "./ConfirmOrderModal";
 import { Alert, Button, Card, ListGroup, ListGroupItem, Table } from "react-bootstrap";
 
 class Cart extends Component {
@@ -14,7 +15,9 @@ class Cart extends Component {
             taxPercent: 9.75,
             taxAmount: 0,
             subTotal: 0,
-            total: 0
+            total: 0,
+            showModal: false,
+            user: {}
         };
     }
 
@@ -37,24 +40,9 @@ class Cart extends Component {
             });
         }
 
-        // this.setState({
-        //     cart_items: [{
-        //         id: 1,
-        //         product_name: "A",
-        //         sku: "123",
-        //         quantity: 2,
-        //         price: 20
-        //     },
-        //     {
-        //         id: 2,
-        //         product_name: "B",
-        //         sku: "XYZ",
-        //         quantity: 4,
-        //         price: 50
-        //     }]
-        // })
-
         this.calculateTotals();
+
+        this.getProfile();
     }
 
     getStoreDetails = store_id => {
@@ -71,6 +59,20 @@ class Cart extends Component {
                 console.log(e);
             })
     };
+
+    getProfile = () => {
+        axios.get("/profile")
+            .then(res => {
+                if (res.data) {
+                    this.setState({
+                        user: res.data.user
+                    });
+                }
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    }
 
     calculateTotals = () => {
         const cart_items = this.state.cart_items;
@@ -100,7 +102,24 @@ class Cart extends Component {
     };
 
     confirmOrder = (e) => {
+        this.setState({
+            showModal: true
+        });
+    };
 
+    onHideModal = (e) => {
+        this.setState({
+            showModal: false
+        });
+    }
+
+    placeOrder = (delivery) => {
+
+        // TODO axios call for placing order
+        // TODO - if delivery true - redirect to My Orders; else redirect to Pickup Orders page.
+        this.setState({
+            showModal: false
+        });
     };
 
     removeItem = async (e) => {
@@ -129,6 +148,7 @@ class Cart extends Component {
 
     render() {
         var cart, store, cartTable, productsList, actionButtons;
+        const user = this.state.user;
         if (this.state.store && this.state.cart_items.length) {
             store = (
                 <center>
@@ -221,6 +241,8 @@ class Cart extends Component {
                 <br />
                 <h2>Your Cart</h2>
                 {cart}
+                <ConfirmOrderModal showModal={this.state.showModal} onHide={this.onHideModal} credits={user.contribution_credits} placeOrder={this.placeOrder}
+                />
             </div>
         );
     }
