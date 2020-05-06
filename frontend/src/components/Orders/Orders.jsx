@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import MyOrders from "./MyOrders";
 import PickUpOrders from "./PickUpOrders";
+import DeliveredOrders from './DeliveredOrders';
 
 class Orders extends Component {
     constructor(props) {
@@ -30,7 +31,7 @@ class Orders extends Component {
                 <BrowserRouter>
                     <Nav variant="tabs" >
                         <Nav.Item>
-                            <Nav.Link eventKey="1" active as={NavLink} to="/orders/myorders">
+                            <Nav.Link eventKey="1" as={NavLink} to="/orders/myorders">
                                 My Orders
                             </Nav.Link>
                         </Nav.Item>
@@ -39,9 +40,15 @@ class Orders extends Component {
                                 Pickup Orders
                             </Nav.Link>
                         </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="3" as={NavLink} to="/orders/delivered">
+                                Delivered Orders
+                            </Nav.Link>
+                        </Nav.Item>
                     </Nav>
                     <Route path="/orders/myorders" component={MyOrders} exact />
                     <Route path="/orders/pickup" component={PickUpOrders} exact />
+                    <Route path="/orders/delivered" component={DeliveredOrders} exact />
                 </BrowserRouter>
             </div>
         );

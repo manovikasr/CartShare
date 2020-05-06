@@ -208,8 +208,8 @@ public class JwtAuthenticationController {
 		return new ResponseEntity<>(response,status);
 	}
 
-	@PutMapping("/profile")
-	public ResponseEntity<?> updateUserProfile(@Valid @RequestBody User userRequest,Errors errors,HttpServletRequest request)
+	@PutMapping("/profile/{user_id}")
+	public ResponseEntity<?> updateUserProfile(@Valid @RequestBody User userRequest, @PathVariable Long user_id, Errors errors)
 	{
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 	    UserResponse response = new UserResponse();
@@ -227,7 +227,7 @@ public class JwtAuthenticationController {
 
 			return new ResponseEntity<>(response, status);
 		}
-		long user_id = (Long) request.getAttribute("user_id");
+
 		User user = userService.getUserInfoById(user_id);
 		
 		if(!userService.isNickNameAvailable(userRequest.getNick_name(), user_id)) {

@@ -8,6 +8,7 @@ import {
   USER_LOADING,
   GET_SUCCESS_MSG,
   RESET_ALL_STATE,
+  RESET_SUCCESS_STATE,
   RESET_ERROR_STATE,
   CURRENT_USER_INFO
 } from "./action-types";
@@ -87,61 +88,48 @@ export const verifyEmail = userData => dispatch => {
         // Set current user
         dispatch(setCurrentUser(decoded));
       }
-
     })
     .catch(err => {
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data
       })
-    }
-    );
+    });
 };
 
-export const getProfile = userData => dispatch => {
-  axios
-    .get("user/profile/" + userData)
+export const updateProfile = (userData) => dispatch => {
+  axios.put(`/profile/${userData.user_id}`, userData)
     .then(res => {
-      dispatch(setUserInfo(res.data));
-    })
-}
-
-export const updateProfile = (userData) => {
-  return dispatch => {
-
-    axios.post("user/profile", userData)
-      .then(resp => {
-        if (resp.data) {
-          return true;
-        } else {
-
-        }
-      }, err => {
-        // dispatch(stopLoader());
-
-      });
-  };
-}
-
-
-
-export const updateProfile1 = userData => dispatch => {
-
-  axios
-    .post("user/profile", userData)
-    .then(res => {
-      dispatch(setUserInfo({ name: "Namanananan" }))
-
-
+      if (res.data.token.length > 0) {
+        // Set token to localStorage
+        const token = res.data.token;
+        localStorage.setItem("jwtToken", token);
+        // Set token to Auth header
+        setAuthToken(token);
+        // Decode token to get user data
+        const decoded = jwt_decode(token);
+        // Set current user
+        dispatch(setCurrentUser(decoded));
+        dispatch({
+          type: GET_SUCCESS_MSG,
+          payload: res.data
+        });
+        dispatch({
+          type: RESET_ERROR_STATE
+        });
+      }
     })
     .catch(err => {
       dispatch({
         type: GET_ERRORS,
         payload: err.response.data
-      })
-    }
-    );
-}
+      });
+      dispatch({
+        type: RESET_SUCCESS_STATE
+      });
+    });
+};
+
 // Set logged in user
 export const setCurrentUser = decoded => {
   return {
@@ -169,6 +157,8 @@ export const logoutUser = (history) => dispatch => {
   // Remove token from local storage
 
   localStorage.removeItem("jwtToken");
+  localStorage.removeItem("cart_store_id");
+  localStorage.removeItem("cart_items");
   // Remove auth header for future requests
   setAuthToken(false);
   // Set current user to empty object {} which will set isAuthenticated to false
@@ -185,51 +175,11 @@ export const logoutUser = (history) => dispatch => {
   }
 };
 
-export const updateUser = userInfo => async dispatch => {
-  await axios
-    .post("http://localhost:3001/user/profile", userInfo)
-    .then(response => {
-      //dispatch({ type: "SHOW_SUCCESS_MSG" });
-    })
-    .catch(err => {
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
-      });
-    });
-};
-
-export const fetchManagerProfile = userId => async dispatch => {
-  await axios
-    .get(`http://localhost:3001/user/profile/${userId}`)
-    .then(response => {
-      dispatch({ type: "MANAGER_PROFILE_DATA", payload: response.data });
-    })
-    .catch(err => {
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
-      });
-    });
-};
 export const startLoading = () => async dispatch => {
   dispatch({ type: '_REQUEST' })
-
 }
+
 export const endLoading = () => async dispatch => {
   dispatch({ type: '_SUCCESS' })
 }
-export const fetchTesterprojects = testerId => async dispatch => {
 
-  await axios
-    .get(`/project/tester/${testerId}`)
-    .then(response => {
-      dispatch({ type: "TESTER_PROJECTS", payload: response.data });
-    })
-    .catch(err => {
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response
-      });
-    });
-}

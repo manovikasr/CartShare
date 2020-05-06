@@ -12,7 +12,7 @@ class AdminStoreProducts extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            store: null,
+            store: {},
             products: [],
             search_input: ""
         };
@@ -20,22 +20,25 @@ class AdminStoreProducts extends Component {
 
     async componentDidMount() {
         if (this.props.location.state) {
-            await this.setState({
-                store: this.props.location.state.store,
-                products: this.props.location.state.store.store_products
-            });
+            this.getStoreProducts();
         } else {
             this.props.history.push("/stores");
         }
     }
 
-    getProducts = () => {
-        const store_id = this.state.store.id;
+    getStoreProducts = () => {
+        var store_id;
+        if (this.props.location.state) {
+            store_id = this.props.location.state.store ? this.props.location.state.store.id : this.props.location.state.store_id;
+        } else {
+            this.props.history.push("/stores");
+        }
         axios.get(`${store_id}`)
             .then(res => {
                 if (res.data) {
                     this.setState({
-                        products: res.data.store.store_products
+                        store: res.data.store,
+                        products: res.data.store.products
                     });
                 }
             })
@@ -59,19 +62,19 @@ class AdminStoreProducts extends Component {
     }
 
     deleteProduct = product_id => {
-        axios.post(`product/delete/${product_id}`)
-        .then(res => {
-          if (res.status === 200) {
-            this.getProducts();
-          }
-        })
-        .catch(e => {
-          if (e.response && e.response.data) {
-            this.setState({
-              error_message: e.response.data.message
+        axios.post(`/product/delete/${product_id}`)
+            .then(res => {
+                if (res.status === 200) {
+                    this.getStoreProducts();
+                }
+            })
+            .catch(e => {
+                if (e.response && e.response.data) {
+                    this.setState({
+                        error_message: e.response.data.message
+                    });
+                }
             });
-          }
-        });
     };
 
     render() {
@@ -79,10 +82,10 @@ class AdminStoreProducts extends Component {
         var store_name, address, address2, alertMessage;
         if (this.state.error_message) {
             alertMessage = (
-              <Alert variant="warning">{this.state.error_message}</Alert>
+                <Alert variant="warning">{this.state.error_message}</Alert>
             );
-          }
-        if (this.state.store) {
+        }
+        if (this.state.store && this.state.store.id) {
             store_name = this.state.store.store_name;
             address = this.state.store.address;
             address2 = this.state.store.city + ", " + this.state.store.state + " - " + this.state.store.zip;
@@ -101,7 +104,7 @@ class AdminStoreProducts extends Component {
                 products = filteredProducts.map(product => {
                     return (
                         <Col sm={3}>
-                            <ProductCard store={this.state.store} product={product} deleteProduct={this.deleteProduct} getProducts={this.getProducts} />
+                            <ProductCard store={this.state.store} product={product} deleteProduct={this.deleteProduct} getProducts={this.getStoreProducts} />
                         </Col>
                     )
                 });
@@ -149,9 +152,11 @@ class AdminStoreProducts extends Component {
                         <Button variant="success" style={{ margin: "3%" }} onClick={this.handleToggle}>Add Product</Button>
                     </Col>
                 </Row>
-                {alertMessage}<br/>
+                {alertMessage}<br />
                 {products}
-                <AddEditProductModal store={this.state.store} showModal={this.state.showModal} onHide={this.handleToggle} getProducts={this.getProducts} />
+                <div key={this.state.store.id}>
+                    <AddEditProductModal store={this.state.store} showModal={this.state.showModal} onHide={this.handleToggle} getProducts={this.getStoreProducts}/>
+                </div>
             </div>
         );
     }

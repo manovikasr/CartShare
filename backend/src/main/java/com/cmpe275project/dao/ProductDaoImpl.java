@@ -58,7 +58,7 @@ public class ProductDaoImpl implements ProductDao{
 				                        		                root.get( "sku" ), sku
 				                        		              ),
 				                         builder.and(
-				                        		             builder.notEqual(root.get( "store_id" ), store_id)
+				                        		             builder.equal(root.get( "store_id" ), store_id)
 				                        		             )
 				                         );
 		
@@ -98,7 +98,7 @@ public class ProductDaoImpl implements ProductDao{
 	}
 	
 	@Override
-	public Boolean isSkuAndStoreIdAvailable(String sku,Long store_id) {
+	public Boolean isSkuAndStoreIdAvailable(String sku,Long store_id, Long product_id) {
 		// TODO Auto-generated method stub
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
@@ -111,8 +111,11 @@ public class ProductDaoImpl implements ProductDao{
 				                        		                root.get( "sku" ), sku
 				                        		              ),
 				                         builder.and(
-				                        		             builder.notEqual(root.get( "store_id" ), store_id)
-				                        		             )
+				                        		             builder.equal(root.get( "store_id" ), store_id)
+				                        		             ),
+				                         builder.and(
+	                        		             builder.notEqual(root.get( "id" ), product_id)
+	                        		             )
 				                         );
 		
 		TypedQuery<Long> query = entityManager.createQuery(criteriaQuery); 

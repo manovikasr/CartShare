@@ -22,18 +22,26 @@ class Products extends Component {
     }
 
     getAllProducts = () => {
-        axios.get(`/products`)
+
+        axios.get("store")
             .then(res => {
-                if (res.data) {
+                if (res.data && res.data.stores) {
+                    let products_array = [], store_products;
+                    res.data.stores.forEach(store => {
+                        store_products = store.products.map(product => {
+                            product.store_name = store.store_name;
+                            return product;
+                        });
+                        products_array.push(...store_products);
+                    });
+
                     this.setState({
-                        products: res.data.products
+                        products: products_array
                     });
                 }
             })
             .catch(e => {
-                if (e.response) {
-                    console.log(e.response.data);
-                }
+                console.log(e);
             });
     };
 
@@ -51,18 +59,18 @@ class Products extends Component {
 
     deleteProduct = product_id => {
         axios.post(`product/delete/${product_id}`)
-        .then(res => {
-          if (res.status === 200) {
-            this.getAllProducts();
-          }
-        })
-        .catch(e => {
-          if (e.response && e.response.data) {
-            this.setState({
-              error_message: e.response.data.message
+            .then(res => {
+                if (res.status === 200) {
+                    this.getAllProducts();
+                }
+            })
+            .catch(e => {
+                if (e.response && e.response.data) {
+                    this.setState({
+                        error_message: e.response.data.message
+                    });
+                }
             });
-          }
-        });
     };
 
     render() {
@@ -70,14 +78,16 @@ class Products extends Component {
         var alertMessage;
         if (this.state.error_message) {
             alertMessage = (
-              <Alert variant="warning">{this.state.error_message}</Alert>
+                <Alert variant="warning">{this.state.error_message}</Alert>
             );
-          }
+        }
 
         if (this.state.products.length) {
             const filteredProducts = this.state.search_input.length ? this.state.products.filter(
-                product => product.product_name.toLowerCase().includes(this.state.search_input.toLowerCase()) 
-                || product.sku.toLowerCase().includes(this.state.search_input.toLowerCase())
+                product => product.product_name.toLowerCase().includes(this.state.search_input.toLowerCase())
+                    || product.sku.toLowerCase().includes(this.state.search_input.toLowerCase())
+                    || product.store_id.toString().includes(this.state.search_input.toLowerCase())
+                    || product.store_name.toLowerCase().includes(this.state.search_input.toLowerCase())
             ) : this.state.products;
             if (filteredProducts.length === 0 && this.state.search_input.length) {
                 products = (
@@ -89,7 +99,7 @@ class Products extends Component {
                 products = filteredProducts.map(product => {
                     return (
                         <Col sm={3}>
-                            <ProductCard product={product} deleteProduct={this.deleteProduct} getProducts={this.getAllProducts} />
+                            <ProductCard product={product} deleteProduct={this.deleteProduct} getProducts={this.getAllProducts} showStoreName={true} />
                         </Col>
                     )
                 });
@@ -103,12 +113,12 @@ class Products extends Component {
         }
         return (
             <div style={{ height: "75vh" }} className="container valign-wrapper">
-                <br/>
+                <br />
                 <Row>
                     <Col sm={9}>
                         <InputGroup style={{ width: '50%' }} size="lg">
                             <FormControl
-                                placeholder="Search Products.."
+                                placeholder="Search Products by name, SKU or store.."
                                 aria-label="Search Products"
                                 aria-describedby="basic-addon2"
                                 style={{ margin: "3%" }}
@@ -121,9 +131,9 @@ class Products extends Component {
                         <Button variant="success" style={{ margin: "3%" }} onClick={this.handleToggle}>Add Product</Button>
                     </Col>
                 </Row>
-                {alertMessage}<br/>
+                {alertMessage}<br />
                 {products}
-                <AddEditProductModal showModal={this.state.showModal} onHide={this.handleToggle} getProducts={this.getProducts} />
+                <AddEditProductModal showModal={this.state.showModal} onHide={this.handleToggle} getProducts={this.getAllProducts} addToMultiStore={true} />
             </div>
         );
     }
