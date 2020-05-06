@@ -2,33 +2,16 @@ import React, { Component } from "react";
 import { withRouter, BrowserRouter, NavLink, Route } from "react-router-dom";
 import { Nav, Container, Row, Col, Alert, Table, Form, Button, Card } from "react-bootstrap";
 import PropTypes from "prop-types";
-import OrderProductsModal from "./OrderProductsModal";
 import QRCodeModal from "./QRCodeModal";
 import { connect } from "react-redux";
 import OrderCard from "./OrdersCard";
+import axios from "axios";
 
 class PickUpOrders extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pending_orders:[{
-                order_id:1,
-                no_products:5,
-                status:"Placed"
-            },{
-                order_id:2,
-                no_products:3,
-                status:"Placed"
-            },{
-                order_id:3,
-                no_products:2,
-                status:"Placed"
-            },{
-                order_id:4,
-                no_products:4,
-                status:"Placed",
-                user_id:6
-            }],
+            pending_orders:[],
             showQRcodeModal: false
         };
     }
@@ -42,23 +25,28 @@ class PickUpOrders extends Component {
                 this.props.history.push("/verify");
             }
         }
+        this.getOrderToDeliver();
     }
 
-    handleToggle = () => {
-        this.setState({
-            showModal:!this.state.showModal
-        });
+    getOrderToDeliver = () => {
+         axios.get("/order/orders_for_delivery")
+        .then(res => {
+            if(res.data.orders) {
+                this.setState({
+                    pending_orders:res.data.orders
+                });
+            }
+        })
+        .catch(e => {
+            if(e.response) {
+                console.log(e.response.data);
+            }
+        })
     }
 
     handleQRcodeModalToggle = () => {
         this.setState({
             showQRcodeModal:!this.state.showQRcodeModal
-        });
-    }
-
-    hideModal = () => {
-        this.setState({
-            showModal:false
         });
     }
 
@@ -71,10 +59,10 @@ class PickUpOrders extends Component {
     render() {
         const { user } = this.props.auth;
         var orders_list, ordersTable, orders, actionButtons;
-        if(this.state.pending_orders.length) {
+        if(this.state.pending_orders && this.state.pending_orders.length) {
             orders_list = this.state.pending_orders.map(order => {
                 return (
-                    <Col sm={3} onClick = {this.handleToggle}>
+                    <Col sm={3}>
                         <OrderCard order = {order}/>
                     </Col>
                 ) 
@@ -87,10 +75,8 @@ class PickUpOrders extends Component {
             );
         }
         else {
-            orders = (
-                <div className = "py-4">
-                    <Alert variant="info">You don't have any orders yet.</Alert>
-                </div>
+            orders_list = (
+                <Alert variant="info">You don't have any orders to deliver yet.</Alert>
             );   
         }
 
@@ -101,7 +87,6 @@ class PickUpOrders extends Component {
                 <Row>{orders_list}</Row> 
                 <br/><br/>
                 <div className = "mx-3">{actionButtons}</div>    
-                <OrderProductsModal showModal = {this.state.showModal} onHide = {this.hideModal} />
                 <QRCodeModal showModal = {this.state.showQRcodeModal} onHide = {this.hideBarcodeModal} />
             </div>
         );

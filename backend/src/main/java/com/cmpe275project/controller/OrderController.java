@@ -1,5 +1,6 @@
 package com.cmpe275project.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +30,15 @@ import com.cmpe275project.model.Product;
 import com.cmpe275project.model.Store;
 import com.cmpe275project.model.User;
 import com.cmpe275project.responseObjects.OrderResponse;
+import com.cmpe275project.service.EmailService;
 import com.cmpe275project.service.OrderService;
 import com.cmpe275project.service.ProductService;
 import com.cmpe275project.service.StoreService;
 import com.cmpe275project.service.UserService;
+
+import freemarker.core.ParseException;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.TemplateException;
 
 @RestController
 @RequestMapping("/order")
@@ -50,8 +56,11 @@ public class OrderController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private EmailService emailService;
+	
 	@PostMapping("")
-	public ResponseEntity<?> placeOrder(@Valid @RequestBody Order orderRequest,Errors errors,HttpServletRequest request)
+	public ResponseEntity<?> placeOrder(@Valid @RequestBody Order orderRequest,Errors errors,HttpServletRequest request) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException
 	{
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		OrderResponse response = new OrderResponse();
@@ -105,8 +114,11 @@ public class OrderController {
 			
 			//TODO --------------Email Shoot-------------------------------------
 			if(orderRequest.getType_of_pickup()=="other")
-			 {
-				
+			 {	
+				String user_email = user.getEmail();
+				Map<String, Object> map = new HashMap<>();
+				map.put("pooler_name", user.getScreen_name());
+				emailService.sendEmailForPickUpConfirmation(user_email, map);
 			 }
 				response.setMessage("Order Successfully Placed");
 				
