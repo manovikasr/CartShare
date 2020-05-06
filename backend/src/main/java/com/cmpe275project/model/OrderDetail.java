@@ -1,10 +1,5 @@
 package com.cmpe275project.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,28 +7,37 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.Range;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 
 @Entity
-@Table(name="products")
-public class Product {
+@Table(name="order_details")
+public class OrderDetail {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long id;
+	
+	@Column(name = "order_id")
+	private long order_id;
+	
+	@Column(name = "product_id")
+	private Long product_id;
+	
+	@Column(name = "quantity")
+	private long quantity;
+
+	@NotNull(message = "Product Price is Mandatory")
+	@Column(name = "product_price")
+	private Double product_price;
+
+	@Column(name = "total_price")
+	private Double total_price;
 	
 	@NotNull(message = "Product Name is Mandatory")
 	@NotEmpty(message = "Product Name is Mandatory")
@@ -42,15 +46,10 @@ public class Product {
 	private String product_name;
 	
 	@NotNull(message = "SKU is Mandatory")
-	@NotEmpty(message = "SKU is Mandatory")
+    @NotEmpty(message = "SKU is Mandatory")
 	@NotBlank(message = "SKU is Mandatory")
 	@Column(name = "sku")
 	private String sku;
-	
-	@NotNull(message = "Store Id is Mandatory")
-	@Range(min=1, message="Store Id is Manadatory(Min 1 Digit)")
-	@Column(name = "store_id")
-	private Long store_id;
 	
 	@NotNull(message = "Product Desc")
 	@NotEmpty(message = "Product Desc is Mandatory")
@@ -70,50 +69,58 @@ public class Product {
 	@NotBlank(message = "Unit Type is Mandatory")
 	@Column(name = "unit_type")
 	private String unit_type;
-	
-	@NotNull(message = "Price is Mandatory")
-	@Column(name = "price")
-	private Double price;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonBackReference
-	@JoinColumn(name = "store_id", nullable=true, updatable=false, insertable=false)
-	private Store store;
-
-	public Product() {
-		super();
-	}
+	@JoinColumn(name = "order_id",insertable=false,updatable=false)
+	private Order order;
 	
-	public Product(
-			@NotNull(message = "Product Name is Mandatory") @NotEmpty(message = "Product Name is Mandatory") @NotBlank(message = "Product Name is Mandatory") String product_name,
-			@NotNull(message = "SKU is Mandatory") @NotEmpty(message = "SKU is Mandatory") @NotBlank(message = "SKU is Mandatory") String sku,
-			Long store_id,
-			@NotNull(message = "Product Desc") @NotEmpty(message = "Product Desc is Mandatory") @NotBlank(message = "Product Desc is Mandatory") String product_desc,
-			String product_img, String product_brand,
-			@NotNull(message = "Unit type is Mandatory") @NotEmpty(message = "Unit type is Mandatory") @NotBlank(message = "Unit Type is Mandatory") String unit_type,
-			@NotNull(message = "Price is Mandatory") Double price) {
-		super();
-		this.product_name = product_name;
-		this.sku = sku;
-		this.store_id = store_id;
-		this.product_desc = product_desc;
-		this.product_img = product_img;
-		this.product_brand = product_brand;
-		this.unit_type = unit_type;
-		this.price = price;
-	}
-
-
-
-
-
 	public long getId() {
 		return id;
 	}
 
-
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public long getOrder_id() {
+		return order_id;
+	}
+
+	public void setOrder_id(long order_id) {
+		this.order_id = order_id;
+	}
+
+	public Long getProduct_id() {
+		return product_id;
+	}
+
+	public void setProduct_id(Long product_id) {
+		this.product_id = product_id;
+	}
+
+	public long getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(long quantity) {
+		this.quantity = quantity;
+	}
+
+	public Double getProduct_price() {
+		return product_price;
+	}
+
+	public void setProduct_price(Double product_price) {
+		this.product_price = product_price;
+	}
+
+	public Double getTotal_price() {
+		return total_price;
+	}
+
+	public void setTotal_price(Double total_price) {
+		this.total_price = total_price;
 	}
 
 	public String getProduct_name() {
@@ -164,39 +171,14 @@ public class Product {
 		this.unit_type = unit_type;
 	}
 
-	public Double getPrice() {
-		return price;
+	public Order getOrder() {
+		return order;
 	}
 
-	public void setPrice(Double price) {
-		this.price = price;
+	public void setOrder(Order order) {
+		this.order = order;
 	}
-
-	public Long getStore_id() {
-		return store_id;
-	}
-
-	public void setStore_id(Long store_id) {
-		this.store_id = store_id;
-	}
-
-	public Store getStore() {
-		return store;
-	}
-
-	public void setStore(Store store) {
-		this.store = store;
-	}
-
 	
-	
-	/*public Set<Store> getStores() {
-		return stores;
-	}
-
-	public void setStores(Set<Store> stores) {
-		this.stores = stores;
-	}*/
 	
 	
 }
