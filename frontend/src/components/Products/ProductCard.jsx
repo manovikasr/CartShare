@@ -102,7 +102,7 @@ class ProductCard extends Component {
                 "content-type": "multipart/form-data"
             }
         };
-        axios.post(`upload/product/${product_id}`, formData, uploadConfig)
+        axios.post(`/upload/product/${product_id}`, formData, uploadConfig)
             .then(response => {
                 this.setState({
                     file: null,
@@ -152,7 +152,7 @@ class ProductCard extends Component {
         var buttons, store_name, onImageClick;
 
         // TODO
-        var imageSrc = product.product_img || productImage;
+        var imageSrc = `/image/product/${product.id}`;//product.product_img || productImage;
 
         if (user.role === 'admin') {
             onImageClick = this.handleImageClick;
