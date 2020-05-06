@@ -20,26 +20,25 @@ export const loginUser = userData => dispatch => {
   });
   axios.post("login", userData)
     .then(res => {
-      if(res.data.token.length>0)
-       {
-          // Set token to localStorage
-          const token  = res.data.token;
-          localStorage.setItem("jwtToken", token);
-          // Set token to Auth header
-          setAuthToken(token);
-          // Decode token to get user data
-          const decoded = jwt_decode(token);
-          // Set current user
-          dispatch(setCurrentUser(decoded));
-       }
-      
+      if (res.data.token.length > 0) {
+        // Set token to localStorage
+        const token = res.data.token;
+        localStorage.setItem("jwtToken", token);
+        // Set token to Auth header
+        setAuthToken(token);
+        // Decode token to get user data
+        const decoded = jwt_decode(token);
+        // Set current user
+        dispatch(setCurrentUser(decoded));
+      }
+
     })
-    .catch(err =>
-      {
-        dispatch({
+    .catch(err => {
+      dispatch({
         type: GET_ERRORS,
         payload: err.response.data
-      })}
+      })
+    }
     );
 };
 
@@ -49,26 +48,25 @@ export const registerUser = userData => dispatch => {
   });
   axios.post("register", userData)
     .then(res => {
-      if(res.data.token.length>0)
-       {
-          // Set token to localStorage
-          const token  = res.data.token;
-          localStorage.setItem("jwtToken", token);
-          // Set token to Auth header
-          setAuthToken(token);
-          // Decode token to get user data
-          const decoded = jwt_decode(token);
-          // Set current user
-          dispatch(setCurrentUser(decoded));
-       }
-      
+      if (res.data.token.length > 0) {
+        // Set token to localStorage
+        const token = res.data.token;
+        localStorage.setItem("jwtToken", token);
+        // Set token to Auth header
+        setAuthToken(token);
+        // Decode token to get user data
+        const decoded = jwt_decode(token);
+        // Set current user
+        dispatch(setCurrentUser(decoded));
+      }
+
     })
-    .catch(err =>
-      {
-        dispatch({
+    .catch(err => {
+      dispatch({
         type: GET_ERRORS,
         payload: err.response.data
-      })}
+      })
+    }
     );
 };
 
@@ -78,71 +76,70 @@ export const verifyEmail = userData => dispatch => {
   });
   axios.post(`verify/${userData.email}/${userData.access_code}`)
     .then(res => {
-      if(res.data.token.length>0)
-       {
-          // Set token to localStorage
-          const token  = res.data.token;
-          localStorage.setItem("jwtToken", token);
-          // Set token to Auth header
-          setAuthToken(token);
-          // Decode token to get user data
-          const decoded = jwt_decode(token);
-          // Set current user
-          dispatch(setCurrentUser(decoded));
-       }
-      
+      if (res.data.token.length > 0) {
+        // Set token to localStorage
+        const token = res.data.token;
+        localStorage.setItem("jwtToken", token);
+        // Set token to Auth header
+        setAuthToken(token);
+        // Decode token to get user data
+        const decoded = jwt_decode(token);
+        // Set current user
+        dispatch(setCurrentUser(decoded));
+      }
+
     })
-    .catch(err =>
-      {
-        dispatch({
+    .catch(err => {
+      dispatch({
         type: GET_ERRORS,
         payload: err.response.data
-      })}
+      })
+    }
     );
 };
 
-export const getProfile = userData =>dispatch=> {
+export const getProfile = userData => dispatch => {
   axios
-  .get("user/profile/"+userData)
-  .then(res=>{
+    .get("user/profile/" + userData)
+    .then(res => {
       dispatch(setUserInfo(res.data));
-  })
+    })
 }
 
 export const updateProfile = (userData) => {
   return dispatch => {
-     
-      axios.post("user/profile",userData)
+
+    axios.post("user/profile", userData)
       .then(resp => {
-          if(resp.data) {
-           return true;
-          } else {
-              
-          }
+        if (resp.data) {
+          return true;
+        } else {
+
+        }
       }, err => {
-         // dispatch(stopLoader());
-          
+        // dispatch(stopLoader());
+
       });
   };
 }
 
 
 
-export const updateProfile1 = userData =>dispatch=> {
-  
+export const updateProfile1 = userData => dispatch => {
+
   axios
     .post("user/profile", userData)
-    .then(res => {        
-       dispatch(setUserInfo({name:"Namanananan"}))
-     
-      
+    .then(res => {
+      dispatch(setUserInfo({ name: "Namanananan" }))
+
+
     })
-    .catch(err =>
-      {
-        dispatch({
+    .catch(err => {
+      dispatch({
         type: GET_ERRORS,
         payload: err.response.data
-      })}
+      })
+    }
     );
 }
 // Set logged in user
@@ -170,7 +167,7 @@ export const setUserLoading = () => {
 // Logout
 export const logoutUser = (history) => dispatch => {
   // Remove token from local storage
-  
+
   localStorage.removeItem("jwtToken");
   // Remove auth header for future requests
   setAuthToken(false);
@@ -180,10 +177,12 @@ export const logoutUser = (history) => dispatch => {
     type: RESET_ALL_STATE
   });
 
-  history.push({
-    pathname: "/",
-    comingFrom: "logout"
-  });
+  if (history) {
+    history.push({
+      pathname: "/",
+      comingFrom: "logout"
+    });
+  }
 };
 
 export const updateUser = userInfo => async dispatch => {
@@ -213,19 +212,19 @@ export const fetchManagerProfile = userId => async dispatch => {
       });
     });
 };
-export const startLoading = ()=>async dispatch=>{
+export const startLoading = () => async dispatch => {
   dispatch({ type: '_REQUEST' })
 
 }
-export const endLoading = ()=>async dispatch=>{
+export const endLoading = () => async dispatch => {
   dispatch({ type: '_SUCCESS' })
 }
 export const fetchTesterprojects = testerId => async dispatch => {
-  
+
   await axios
     .get(`/project/tester/${testerId}`)
     .then(response => {
-      dispatch({ type: "TESTER_PROJECTS",payload: response.data });
+      dispatch({ type: "TESTER_PROJECTS", payload: response.data });
     })
     .catch(err => {
       dispatch({
