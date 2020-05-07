@@ -94,6 +94,7 @@ class Cart extends Component {
         let cart_items = this.state.cart_items;
         let index = cart_items.findIndex((item => item.id === product_id));
         cart_items[index].quantity = newQuantity;
+        cart_items[index].total_price = cart_items[index].price * newQuantity
         await this.setState({
             cart_items
         });
@@ -117,6 +118,47 @@ class Cart extends Component {
 
         // TODO axios call for placing order
         // TODO - if delivery true - redirect to My Orders; else redirect to Pickup Orders page.
+        const { user } = this.props.auth;
+        var type_of_pickup;
+        if(!delivery) {
+            type_of_pickup = "self";
+        }
+        else {
+            type_of_pickup = "other"
+        }
+        
+        const orderData = {
+            store_id: localStorage.getItem('cart_store_id'),
+            order_details: JSON.parse(localStorage.getItem('cart_items')),
+            type_of_pickup: type_of_pickup
+        }
+
+        axios.post("/order", orderData)
+        .then(res => {
+            console.log(res);
+            if(res.status == 200) {
+                console.log("Success");
+                this.clearCart();
+                this.onHide();
+            }
+        })
+        .catch(e => {
+            console.log(e.response);
+            if (e.response && e.response.data)
+                this.setState({
+                    error_message: e.response.data.message
+            });
+        })
+
+        if(delivery) {
+            this.props.history.push('/orders/myorders')    
+        }
+        else {
+            this.props.history.push({
+                pathname:'/order/poolorders',
+                state: { user: this.props.auth.user}
+            });
+        }
         this.setState({
             showModal: false
         });
