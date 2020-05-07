@@ -4,7 +4,7 @@ import { Nav } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import MyOrders from "./MyOrders";
-import PickUpOrders from "./PickUpOrders";
+import PickupOrders from "./PickUpOrders";
 import DeliveredOrders from './DeliveredOrders';
 import PoolersOrders from './PoolersOrders';
 
@@ -38,18 +38,18 @@ class Orders extends Component {
                         </Nav.Item>
                         <Nav.Item>
                             <Nav.Link eventKey="2" as={NavLink} to="/orders/pickup">
-                                Orders to Deliver
+                                Pickup Orders
                             </Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
-                            <Nav.Link eventKey="3" as={NavLink} to="/orders/delivered">
-                                Delivered Orders
+                            <Nav.Link eventKey="3" as={NavLink} to="/orders/deliver">
+                                Deliver Orders
                             </Nav.Link>
                         </Nav.Item>
                     </Nav>
                     <Route path="/orders/myorders" component={MyOrders} exact />
-                    <Route path="/orders/pickup" component={PickUpOrders} exact />
-                    <Route path="/orders/delivered" component={DeliveredOrders} exact />
+                    <Route path="/orders/pickup" component={PickupOrders} exact />
+                    <Route path="/orders/deliver" component={DeliveredOrders} exact />
                     <Route path="/orders/poolorders" component={PoolersOrders} exact />
                 </BrowserRouter>
             </div>

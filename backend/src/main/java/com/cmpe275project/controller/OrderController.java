@@ -32,6 +32,7 @@ import com.cmpe275project.model.User;
 import com.cmpe275project.responseObjects.OrderResponse;
 import com.cmpe275project.service.EmailService;
 import com.cmpe275project.service.OrderService;
+import com.cmpe275project.service.PoolService;
 import com.cmpe275project.service.ProductService;
 import com.cmpe275project.service.StoreService;
 import com.cmpe275project.service.UserService;
@@ -47,6 +48,9 @@ public class OrderController {
 
 	@Autowired
 	private OrderService orderService;
+	
+	@Autowired
+	private PoolService poolService;
 	
 	@Autowired
 	private StoreService storeService;
@@ -133,42 +137,32 @@ public class OrderController {
 		 return new ResponseEntity<>(response,status);
 	}
 	
-	@GetMapping("/self/{order_id}/{num_of_orders}")
-	public ResponseEntity<?> ordersAssignment(@PathVariable Long order_id,@PathVariable Integer num_of_orders,HttpServletRequest request)
+	@PostMapping("/assign/{store_id}/{num_of_orders}")
+	public ResponseEntity<?> ordersAssignment(@PathVariable Long store_id,@PathVariable Integer num_of_orders,HttpServletRequest request)
 	{
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		OrderResponse response = new OrderResponse();
 		List<Order> ordersToBePicked=null;
-		Order myOrder = null;
 		
-		if(orderService.isOrderIdExists(order_id)) {
-		        
-				Long user_id = (Long) request.getAttribute("user_id");
-				User user = userService.getUserInfoById(user_id);
-				
-				myOrder = orderService.getOrderInfoById(order_id);
+		Long user_id = (Long) request.getAttribute("user_id");
+		User user = userService.getUserInfoById(user_id);
+		
+		if(storeService.isStoreIdExists(store_id)) {
 			
-			if(myOrder.getStatus().equals("placed")) {
-				
-				if(myOrder.getType_of_pickup().equals("self")) {
+			if(poolService.isPoolIdExist(user.getPool().getId())) {
 					
-					if(num_of_orders>=2)
-					      ordersToBePicked = orderService.getSelfOrders(user.getPool().getId(),myOrder.getStore_id(),num_of_orders-1);
+					if(num_of_orders>=1)
+					      ordersToBePicked = orderService.getAvailableOrders(user.getPool().getId(),store_id, num_of_orders);
 					
-					orderService.assignPicker(myOrder,ordersToBePicked);
+					orderService.assignPicker(user_id,ordersToBePicked);
 						
-				}else {
-					response.setMessage("Orders is not for Self Pickup, thus picker could not be assigned");
-					return new ResponseEntity<>(response,status);
-				}
-				
-			}else {
-				response.setMessage("Sorry, Picker already Assigned to the order");
+			} else {
+				response.setMessage("Pool Id does not exists");
 				return new ResponseEntity<>(response,status);
 			}
 
 		}else {
-			response.setMessage("Orders Id Not exists");
+			response.setMessage("Store Id does not exists");
 			return new ResponseEntity<>(response,status);
 		}
 		
@@ -191,10 +185,13 @@ public class OrderController {
 												
 		availableOrders = orderService.getAvailableOrdersForAssignment(user.getPool().getId(),store_id);
 								
-		if(availableOrders!=null && availableOrders.size()>0) {
+		if(availableOrders!=null) {
 			response.setMessage("Available Orders");
 			response.setOrders(availableOrders);
 			status = HttpStatus.OK;
+		} else {
+			response.setMessage("Orders Not Found");
+			status = HttpStatus.NOT_FOUND;
 		}
 		
 		return new ResponseEntity<>(response,status);

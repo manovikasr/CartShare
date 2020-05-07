@@ -9,17 +9,13 @@ class OrderProductsModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            
+
         };
     }
 
-    onHide = (e) => {
-        this.props.onHide();
-    }
-
     render() {
-        var products_list, productsTable, products;
-        if(this.props.order.order_details && this.props.order.order_details.length) {
+        var products_list, products;
+        if (this.props.order.order_details && this.props.order.order_details.length) {
             products_list = this.props.order.order_details.map(product => {
                 return (
                     <tr>
@@ -33,43 +29,32 @@ class OrderProductsModal extends Component {
                     </tr>
                 )
             });
-            productsTable = (
-                <Table borderless striped>
-                    <thead align="center">
-                        <th>Product id</th>
-                        <th>SKU</th>
-                        <th>Product Name</th>
-                        <th>Product Brand</th>
-                        <th>Product Price</th>
-                        <th>quantity</th>
-                        <th>Total Price</th>
-                    </thead>
-                    <tbody>
-                        {products_list}
-                    </tbody>   
-                </Table>
-            );
-            products = (
-                <div>
-                    {productsTable}
-                </div>
-            );
-        } 
+        }
         return (
-            <Modal show={this.props.showModal} onHide={this.onHide} size="lg">
+            <Modal show={this.props.showModal} onHide={this.props.onHide} size="lg">
                 <Modal.Header closeButton>
-                    <Modal.Title><b>List of Products</b></Modal.Title>
+                    <Modal.Title>Order Details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
-                        {products}
-
-                        <center>
-                            <Button variant="secondary" onClick={this.props.onHide}>
-                                <b>Close</b>
-                            </Button>
-                        </center>
-                    </Form>
+                    <Table borderless striped>
+                        <thead align="center">
+                            <th>Product id</th>
+                            <th>SKU</th>
+                            <th>Product Name</th>
+                            <th>Product Brand</th>
+                            <th>Product Price</th>
+                            <th>Quantity</th>
+                            <th>Total Price</th>
+                        </thead>
+                        <tbody>
+                            {products_list}
+                        </tbody>
+                    </Table>
+                    <center>
+                        <Button variant="secondary" onClick={this.props.onHide}>
+                            <b>Close</b>
+                        </Button>
+                    </center>
                 </Modal.Body>
             </Modal>
         );

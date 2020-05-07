@@ -12,7 +12,7 @@ public interface OrderDao {
 	
 	public Order getOrderInfoById(Long order_id);
 	
-	public List<Order> getSelfOrders(Long pool_id ,Long store_id ,Integer num_of_orders);
+	public List<Order> getAvailableOrders(Long pool_id ,Long store_id ,Integer num_of_orders);
 	
 	public Boolean isOrderIdExists(Long id);
 	

@@ -121,9 +121,9 @@ class Cart extends Component {
             return item;
         });
         var pickup_type = delivery ? "other" : "self";
-
+        var store_id = this.state.store.id;
         const orderData = {
-            store_id: this.state.store.id,
+            store_id,
             order_details: order_items,
             type_of_pickup: pickup_type
         }
@@ -138,7 +138,7 @@ class Cart extends Component {
                     else
                         this.props.history.push({
                             pathname: '/orders/poolorders',
-                            state: { store: this.state.store }
+                            state: { store_id: store_id }
                         });
                 }
             })

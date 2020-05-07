@@ -14,11 +14,11 @@ public interface OrderService {
 	
 	public Order getOrderInfoById(Long order_id);
 	
-	public List<Order> getSelfOrders(Long pool_id ,Long store_id, Integer num_of_orders);
+	public List<Order> getAvailableOrders(Long pool_id ,Long store_id, Integer num_of_orders);
 	
 	public List<Order> getAvailableOrdersForAssignment(Long pool_id,Long store_id);
 	
-	public void assignPicker(Order order,List<Order> orders);
+	public void assignPicker(Long user_id,List<Order> orders);
 	
 	public Boolean isOrderIdExists(Long id);
 	

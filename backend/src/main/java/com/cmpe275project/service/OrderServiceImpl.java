@@ -53,9 +53,9 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public List<Order> getSelfOrders(Long pool_id,Long store_id ,Integer num_of_orders){
+	public List<Order> getAvailableOrders(Long pool_id,Long store_id ,Integer num_of_orders){
 		// TODO Auto-generated method stub
-		return orderDao.getSelfOrders(pool_id,store_id,num_of_orders);
+		return orderDao.getAvailableOrders(pool_id,store_id,num_of_orders);
 	}
 
 	@Override
@@ -66,22 +66,19 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	@Transactional
-	public void assignPicker(Order order, List<Order> orders) {
+	public void assignPicker(Long user_id, List<Order> orders) {
 		// TODO Auto-generated method stub
 		
 		if(orders!=null) {
 
 			for(Order placedOrder : orders) {
-				placedOrder.setPicker_user_id(order.getUser_id());
-				placedOrder.setStatus("picker_assigned");
+				placedOrder.setPicker_user_id(user_id);
+				placedOrder.setStatus("PICKER_ASSIGNED");
 			    orderDao.edit(placedOrder);
 		      }
 			
 		}
 		
-		order.setPicker_user_id(order.getUser_id());
-		order.setStatus("picker_assigned");
-		orderDao.edit(order);
 	}
 
 	@Override

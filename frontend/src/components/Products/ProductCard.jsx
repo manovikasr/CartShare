@@ -153,7 +153,7 @@ class ProductCard extends Component {
         var buttons, store_name, onImageClick;
 
         // TODO
-        var imageSrc = `/image/product/${product.id}`;//product.product_img || productImage;
+        var imageSrc = productImage;  //`/image/product/${product.id}`;//product.product_img
 
         if (user.role === 'admin') {
             onImageClick = this.handleImageClick;

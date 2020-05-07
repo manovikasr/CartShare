@@ -54,7 +54,7 @@ public class OrderDaoImpl implements OrderDao {
 		return  order;
 	}
 	
-	public List<Order> getSelfOrders(Long pool_id,Long store_id ,Integer num_of_orders){
+	public List<Order> getAvailableOrders(Long pool_id,Long store_id ,Integer num_of_orders){
 		
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
@@ -72,9 +72,11 @@ public class OrderDaoImpl implements OrderDao {
 						                        		                root.get( "store_id" ), store_id
 						                        		              ),
 							                        		   builder.equal(
-						                        		                root.get( "status" ), "placed"
+						                        		                root.get( "status" ), "order_placed"
 						                        		              ),
-							                        		   builder.equal(root.get( "type_of_pickup" ), "other")
+							                        		   builder.equal(
+							                        				   root.get( "type_of_pickup" ), "other"
+							                        				  )
 				                        		              )
 				                         );
 		
@@ -236,9 +238,11 @@ public class OrderDaoImpl implements OrderDao {
 						                        		                root.get( "store_id" ), store_id
 						                        		              ),
 							                        		   builder.equal(
-						                        		                root.get( "status" ), "placed"
+						                        		                root.get( "status" ), "ORDER_PLACED"
 						                        		              ),
-							                        		   builder.equal(root.get( "type_of_pickup" ), "other")
+							                        		   builder.equal(
+							                        				   root.get( "type_of_pickup" ), "other"
+							                        				  )
 				                        		              )
 				                         );
 		

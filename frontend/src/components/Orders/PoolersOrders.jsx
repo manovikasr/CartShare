@@ -14,12 +14,8 @@ class PoolersOrders extends Component {
             showModal: false,
             store: {},
             order_count: 0,
-            pending_orders: [{
-                order_id: 1,
-                no_products: 5,
-                store_name: "abc",
-                status: "Placed"
-            }]
+            clickedOrder: {},
+            pending_orders: []
         };
     }
 
@@ -33,9 +29,10 @@ class PoolersOrders extends Component {
             }
         }
         if (this.props.location.state) {
-            const store = this.props.location.state.store;
-            this.setState({ store });
-            this.getPoolersOrders(store.id);
+            const store_id = this.props.location.state.store_id;
+            this.setState({ store_id });
+            this.getStore(store_id);
+            this.getPoolersOrders(store_id);
         } else {
             //this.props.history.push("/orders/myorders");
         }
@@ -45,6 +42,16 @@ class PoolersOrders extends Component {
         this.setState({
             [e.target.name]: e.target.value
         });
+    }
+
+    clickOrder = (e) => {
+        const order_id = parseInt(e.target.id);
+        const orders = this.state.pending_orders;
+        var clickedOrder = orders.find(order => order.id === order_id);
+        this.setState({
+            clickedOrder,
+            showModal: true
+        })
     }
 
     handleToggle = () => {
@@ -59,11 +66,24 @@ class PoolersOrders extends Component {
         });
     }
 
+    getStore = store_id => {
+        axios.get(`/store/${store_id}`)
+            .then(res => {
+                if (res.data) {
+                    this.setState({
+                        store: res.data.store
+                    });
+                }
+            })
+            .catch(e => {
+                console.log(e);
+            })
+    };
+
     getPoolersOrders = store_id => {
         axios.get(`/order/available/${store_id}`)
             .then(res => {
                 if (res.data) {
-                    console.log(res.data);
                     this.setState({
                         pending_orders: res.data.orders
                     });
@@ -79,26 +99,40 @@ class PoolersOrders extends Component {
     onSubmit = e => {
         e.preventDefault();
 
+        const store_id = this.state.store.id;
+        const order_count = this.state.order_count;
+
+        axios.post(`/order/assign/${store_id}/${order_count}`)
+        .then(res => {
+            if(res.status === 200){
+                this.props.history.push("/orders/pickup");
+            }
+        })
+        .catch(e => {
+            console.log(e);
+        });
+
+
 
     }
 
     render() {
         var store, store_name, address, address2;
-        var ordersTable, orders_list, form, status, store;
+        var ordersTable, orders_list, form, store;
 
         if (this.state.store.id) {
             store_name = this.state.store.store_name;
             address = this.state.store.address;
             address2 = this.state.store.city + ", " + this.state.store.state + " - " + this.state.store.zip;
             store = (
-                <Card bg="info" text="white" style={{ width: "70rem", height: "15rem", margin: "4%" }}>
+                <Card bg="info" text="white" style={{ width: "70rem", height: "8rem", margin: "4%" }}>
                     <Row>
-                        <Col>
-                            <Card.Img style={{ width: "18rem", height: "15rem" }} src={storeImage} />
+                        <Col sm={2}></Col>
+                        <Col sm={3}>
+                            <Card.Img style={{ width: "7rem", height: "8rem" }} src={storeImage} />
                         </Col>
                         <Card.Body>
                             <Card.Title><h1>{store_name}</h1></Card.Title>
-                            <br />
                             <Card.Text>
                                 <h4>
                                     {address}<br />
@@ -113,12 +147,16 @@ class PoolersOrders extends Component {
 
         if (this.state.pending_orders.length) {
             orders_list = this.state.pending_orders.map(order => {
+                var count = 0;
+                order.order_details.forEach(item => {
+                    count += item.quantity;
+                });
                 return (
-                    <tr onClick={this.handleToggle}>
-                        <td align="center">{order.order_id}</td>
-                        <td align="center">{order.products}</td>
-                        <td align="center">{order.order_date}</td>
-                        <td align="center">{order.status}</td>
+                    <tr id={order.id} onClick={this.clickOrder}>
+                        <td align="center" id={order.id}>{order.id}</td>
+                        <td align="center" id={order.id}>{count}</td>
+                        <td align="center" id={order.id}>{(new Date(order.created_on)).toLocaleDateString("en-US")}</td>
+                        <td align="center" id={order.id}>{order.status}</td>
                     </tr>
                 )
             });
@@ -149,7 +187,7 @@ class PoolersOrders extends Component {
                                 value={this.state.order_count}
                                 onChange={this.onChange}
                                 min="0"
-                                max="10"
+                                max={Math.min(this.state.pending_orders.length, 10)}
                                 autoFocus
                                 size="text"
                             />
@@ -187,7 +225,7 @@ class PoolersOrders extends Component {
                         </center>
                     </div>
                 </div>
-                {/* <OrderProductsModal showModal={this.state.showModal} onHide={this.hideModal} /> */}
+                <OrderProductsModal order={this.state.clickedOrder} showModal={this.state.showModal} onHide={this.handleToggle} />
             </div>
         );
     }
