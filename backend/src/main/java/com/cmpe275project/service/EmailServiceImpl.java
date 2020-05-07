@@ -158,7 +158,7 @@ public class EmailServiceImpl implements EmailService{
 	}
 	
 	@Override
-	public void sendEmailForPickUpConfirmation(String to, Map<String, Object> map) throws TemplateNotFoundException,
+	public void sendEmailForOrderConfirmation(String to, Map<String, Object> map) throws TemplateNotFoundException,
 			MalformedTemplateNameException, ParseException, IOException, TemplateException {
 		// TODO Auto-generated method stub
 		try {
@@ -167,8 +167,8 @@ public class EmailServiceImpl implements EmailService{
 			
 			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
 			
-			Template t = freeMarkerConfig.getTemplate("PickUpConfirmation.ftl");
-            String subject = "Cart Share - Your Order will be picked up.";
+			Template t = freeMarkerConfig.getTemplate("OrderConfirmation.ftl");
+            String subject = "Cart Share - Your Order is placed";
 			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
 			
 			helper.setTo(to);

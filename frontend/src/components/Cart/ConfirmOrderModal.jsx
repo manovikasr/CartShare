@@ -37,7 +37,7 @@ class ConfirmOrderModal extends Component {
     onSubmit = (e) => {
         e.preventDefault();
         var placeOrder = true;
-        if(this.state.delivery && this.props.credits <= 0){
+        if(this.state.delivery && this.props.credits <= -4){
             placeOrder = window.confirm("You have only " + this.props.credits + " Contribution credits. Do you still want your fellow poolers to deliver your order?");
         }
         if(placeOrder){

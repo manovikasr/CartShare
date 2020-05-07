@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import MyOrders from "./MyOrders";
 import PickUpOrders from "./PickUpOrders";
 import DeliveredOrders from './DeliveredOrders';
+import PoolersOrders from './PoolersOrders';
 
 class Orders extends Component {
     constructor(props) {
@@ -49,6 +50,7 @@ class Orders extends Component {
                     <Route path="/orders/myorders" component={MyOrders} exact />
                     <Route path="/orders/pickup" component={PickUpOrders} exact />
                     <Route path="/orders/delivered" component={DeliveredOrders} exact />
+                    <Route path="/orders/poolorders" component={PoolersOrders} exact />
                 </BrowserRouter>
             </div>
         );

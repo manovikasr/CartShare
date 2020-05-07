@@ -115,53 +115,39 @@ class Cart extends Component {
     }
 
     placeOrder = (delivery) => {
+        var order_items = JSON.parse(localStorage.getItem('cart_items'));
+        order_items = order_items.map(item => {
+            item.product_id = item.id;
+            return item;
+        });
+        var pickup_type = delivery ? "other" : "self";
 
-        // TODO axios call for placing order
-        // TODO - if delivery true - redirect to My Orders; else redirect to Pickup Orders page.
-        const { user } = this.props.auth;
-        var type_of_pickup;
-        if(!delivery) {
-            type_of_pickup = "self";
-        }
-        else {
-            type_of_pickup = "other"
-        }
-        
         const orderData = {
-            store_id: localStorage.getItem('cart_store_id'),
-            order_details: JSON.parse(localStorage.getItem('cart_items')),
-            type_of_pickup: type_of_pickup
+            store_id: this.state.store.id,
+            order_details: order_items,
+            type_of_pickup: pickup_type
         }
 
         axios.post("/order", orderData)
-        .then(res => {
-            console.log(res);
-            if(res.status == 200) {
-                console.log("Success");
-                this.clearCart();
-                this.onHide();
-            }
-        })
-        .catch(e => {
-            console.log(e.response);
-            if (e.response && e.response.data)
-                this.setState({
-                    error_message: e.response.data.message
+            .then(res => {
+                if (res.status == 200) {
+                    this.clearCart();
+                    this.onHideModal();
+                    if (delivery)
+                        this.props.history.push('/orders/myorders');
+                    else
+                        this.props.history.push({
+                            pathname: '/orders/poolorders',
+                            state: { store: this.state.store }
+                        });
+                }
+            })
+            .catch(e => {
+                if (e.response && e.response.data)
+                    this.setState({
+                        error_message: e.response.data.message
+                    });
             });
-        })
-
-        if(delivery) {
-            this.props.history.push('/orders/myorders')    
-        }
-        else {
-            this.props.history.push({
-                pathname:'/order/poolorders',
-                state: { user: this.props.auth.user}
-            });
-        }
-        this.setState({
-            showModal: false
-        });
     };
 
     removeItem = async (e) => {

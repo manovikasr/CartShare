@@ -102,27 +102,27 @@ public class OrderController {
 					orderDetail.setProduct_img(product.getProduct_img());
 					orderDetail.setProduct_price(product.getPrice());
 					orderDetail.setSku(product.getSku());
-					orderDetail.setUnit_type(product.getSku());
+					orderDetail.setUnit_type(product.getUnit_type());
 					
 				}else {
-					response.setMessage("Unable to Place Order, Product Id not exits or Total Price Not Available");
+					response.setMessage("Unable to Place Order, Product Id does not exits or Total Price of a product is not available");
 					return new ResponseEntity<>(response, status);
 				}
 				
 			}//for loop close
 			
 			orderService.addAllInfo(orderRequest);
+
 			
-			//TODO --------------Email Shoot-------------------------------------
 			if(orderRequest.getType_of_pickup().equals("other"))
 			 {	
 				user.setContribution_credits(user.getContribution_credits() - 1);
 				String user_email = user.getEmail();
 				Map<String, Object> map = new HashMap<>();
 				map.put("pooler_name", user.getScreen_name());
-				emailService.sendEmailForPickUpConfirmation(user_email, map);
+				emailService.sendEmailForOrderConfirmation(user_email, map);
 			 }
-				response.setMessage("Order Successfully Placed");
+			response.setMessage("Order Successfully Placed");
 				
 		}else {
 			response.setMessage("Unable to Place Order, Store Id not exits");
@@ -177,55 +177,27 @@ public class OrderController {
 		 return new ResponseEntity<>(response,status);
 	}
 	
-	@GetMapping("/available_orders/{order_id}")
-	public ResponseEntity<?> availableOrdersForAssignment(@PathVariable Long order_id,HttpServletRequest request)
+	@GetMapping("/available/{store_id}")
+	public ResponseEntity<?> availableOrdersForAssignment(@PathVariable Long store_id,HttpServletRequest request)
 	{
 		OrderResponse response = new OrderResponse();
-		List<Order> availableOrdersToBePicked=null;
+		List<Order> availableOrders=null;
 		Order myOrder = null;
 		
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		
-				Long user_id = (Long) request.getAttribute("user_id");
-				User user = userService.getUserInfoById(user_id);
-						
-		      if(orderService.isOrderIdExists(order_id)) {
-				
-		    	  myOrder = orderService.getOrderInfoById(order_id);
-		    	  
-						if(myOrder.getStatus().equals("placed")) {
-							
-							if(myOrder.getType_of_pickup().equals("self")) {
-							
-								availableOrdersToBePicked = orderService.getAvailableOrdersForAssignment(user.getPool().getId(),myOrder.getStore_id());
+		Long user_id = (Long) request.getAttribute("user_id");
+		User user = userService.getUserInfoById(user_id);
+												
+		availableOrders = orderService.getAvailableOrdersForAssignment(user.getPool().getId(),store_id);
 								
-								if(availableOrdersToBePicked!=null && availableOrdersToBePicked.size()>0) {
-									response.setMessage("Available Orders");
-									response.setOrders(availableOrdersToBePicked);
-									status = HttpStatus.OK;
-								}else {
-									response.setMessage("Sorry No orders are available");
-							 	}
-								
-								
-							}else {
-								response.setMessage("Orders is not for Self Pickup, thus picker could not be assigned");
-								return new ResponseEntity<>(response,status);
-							}
-							
-						}else {
-							response.setMessage("Sorry, Picker already Assigned to the order");
-							return new ResponseEntity<>(response,status);
-						}
-				
-		      }else {
-					response.setMessage("Orders Id Not exists");
-					return new ResponseEntity<>(response,status);
-				}
-				
-				
-				
-		 return new ResponseEntity<>(response,status);
+		if(availableOrders!=null && availableOrders.size()>0) {
+			response.setMessage("Available Orders");
+			response.setOrders(availableOrders);
+			status = HttpStatus.OK;
+		}
+		
+		return new ResponseEntity<>(response,status);
 	}
 	
 	
