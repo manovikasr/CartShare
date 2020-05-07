@@ -53,9 +53,9 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public List<Order> getSelfOrders(Long pool_id ,Integer num_of_orders){
+	public List<Order> getSelfOrders(Long pool_id,Long store_id ,Integer num_of_orders){
 		// TODO Auto-generated method stub
-		return orderDao.getSelfOrders(pool_id,num_of_orders);
+		return orderDao.getSelfOrders(pool_id,store_id,num_of_orders);
 	}
 
 	@Override
@@ -99,6 +99,12 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public List<Order> getOrdersForDelivery(Long user_id){
 		return orderDao.getOrdersForDelivery(user_id);
+	}
+
+	@Override
+	public List<Order> getAvailableOrdersForAssignment(Long pool_id,Long store_id) {
+		// TODO Auto-generated method stub
+		return orderDao.getAvailableOrdersForAssignment(pool_id,store_id);
 	}
 	
 }

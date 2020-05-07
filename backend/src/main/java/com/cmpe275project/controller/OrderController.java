@@ -153,7 +153,7 @@ public class OrderController {
 				if(myOrder.getType_of_pickup().equals("self")) {
 					
 					if(num_of_orders>=2)
-					      ordersToBePicked = orderService.getSelfOrders(user.getPool().getId(), num_of_orders-1);
+					      ordersToBePicked = orderService.getSelfOrders(user.getPool().getId(),myOrder.getStore_id(),num_of_orders-1);
 					
 					orderService.assignPicker(myOrder,ordersToBePicked);
 						
@@ -176,6 +176,58 @@ public class OrderController {
 		 status = HttpStatus.OK;
 		 return new ResponseEntity<>(response,status);
 	}
+	
+	@GetMapping("/available_orders/{order_id}")
+	public ResponseEntity<?> availableOrdersForAssignment(@PathVariable Long order_id,HttpServletRequest request)
+	{
+		OrderResponse response = new OrderResponse();
+		List<Order> availableOrdersToBePicked=null;
+		Order myOrder = null;
+		
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		
+				Long user_id = (Long) request.getAttribute("user_id");
+				User user = userService.getUserInfoById(user_id);
+						
+		      if(orderService.isOrderIdExists(order_id)) {
+				
+		    	  myOrder = orderService.getOrderInfoById(order_id);
+		    	  
+						if(myOrder.getStatus().equals("placed")) {
+							
+							if(myOrder.getType_of_pickup().equals("self")) {
+							
+								availableOrdersToBePicked = orderService.getAvailableOrdersForAssignment(user.getPool().getId(),myOrder.getStore_id());
+								
+								if(availableOrdersToBePicked!=null && availableOrdersToBePicked.size()>0) {
+									response.setMessage("Available Orders");
+									response.setOrders(availableOrdersToBePicked);
+									status = HttpStatus.OK;
+								}else {
+									response.setMessage("Sorry No orders are available");
+							 	}
+								
+								
+							}else {
+								response.setMessage("Orders is not for Self Pickup, thus picker could not be assigned");
+								return new ResponseEntity<>(response,status);
+							}
+							
+						}else {
+							response.setMessage("Sorry, Picker already Assigned to the order");
+							return new ResponseEntity<>(response,status);
+						}
+				
+		      }else {
+					response.setMessage("Orders Id Not exists");
+					return new ResponseEntity<>(response,status);
+				}
+				
+				
+				
+		 return new ResponseEntity<>(response,status);
+	}
+	
 	
 	@GetMapping("/orders_for_pickup")
 	public ResponseEntity<?> ordersForPickup(HttpServletRequest request)

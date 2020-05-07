@@ -12,7 +12,7 @@ public interface OrderDao {
 	
 	public Order getOrderInfoById(Long order_id);
 	
-	public List<Order> getSelfOrders(Long pool_id ,Integer num_of_orders);
+	public List<Order> getSelfOrders(Long pool_id ,Long store_id ,Integer num_of_orders);
 	
 	public Boolean isOrderIdExists(Long id);
 	
@@ -21,4 +21,6 @@ public interface OrderDao {
 	 public List<Order> getOrdersForPickup(Long user_id);
 	 
 	 public List<Order> getOrdersForDelivery(Long user_id);
+	 
+	 public List<Order> getAvailableOrdersForAssignment(Long pool_id,Long store_id);
 }
