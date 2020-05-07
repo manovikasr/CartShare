@@ -288,7 +288,7 @@ public class OrderController {
 	}
 	
 	@PutMapping("/change_order_status/{order_id}/{status}")
-	public ResponseEntity<?> changeOrderStatus(@PathVariable Long order_id ,@PathVariable String status, HttpServletRequest request)
+	public ResponseEntity<?> changeOrderStatus(@PathVariable Long order_id ,@PathVariable String status, HttpServletRequest request) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException
 	{
 		HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 		OrderResponse response = new OrderResponse();
@@ -303,6 +303,29 @@ public class OrderController {
 				orderService.edit(order);
 				
 				///-------------TODO --------------------Mail to be Send
+				if(order.getStatus().toLowerCase().equals("delivered")) {
+					String user_email = order.getUser().getEmail();
+					String user_screen_name = order.getUser().getScreen_name();
+					Map<String, Object> map = new HashMap<String, Object>();
+					map.put("pooler_name", user_screen_name);
+					map.put("order_id", order_id);
+					
+					emailService.sendEmailforOrderDelivered(user_email, map);
+				}
+				
+				if(order.getStatus().toLowerCase().equals("delivered-not-received")) {
+					Long deliverer_id = order.getPicker_user_id();
+					String user_screen_name = order.getUser().getScreen_name();
+					String deliverer_screen_name = userService.getUserInfoById(deliverer_id).getScreen_name();
+					String deliverer_email = userService.getUserInfoById(deliverer_id).getScreen_name();
+					
+					Map<String, Object> map = new HashMap<>();
+					map.put("deliverer", deliverer_screen_name);
+					map.put("pooler_screen_name", user_screen_name);
+					map.put("order_id", order_id);
+					
+					emailService.sendEmailforOrderNotDelivered(deliverer_email, map);
+				}
 				
 				httpStatus =HttpStatus.OK;
 				response.setMessage("Order Status Updated Successfully..");
