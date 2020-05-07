@@ -39,6 +39,7 @@ import com.cmpe275project.service.UserService;
 import freemarker.core.ParseException;
 import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
 
 @RestController
 @RequestMapping("/order")
@@ -113,8 +114,9 @@ public class OrderController {
 			orderService.addAllInfo(orderRequest);
 			
 			//TODO --------------Email Shoot-------------------------------------
-			if(orderRequest.getType_of_pickup()=="other")
+			if(orderRequest.getType_of_pickup().equals("other"))
 			 {	
+				user.setContribution_credits(user.getContribution_credits() - 1);
 				String user_email = user.getEmail();
 				Map<String, Object> map = new HashMap<>();
 				map.put("pooler_name", user.getScreen_name());
