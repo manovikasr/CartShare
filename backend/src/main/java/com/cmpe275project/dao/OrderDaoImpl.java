@@ -54,7 +54,7 @@ public class OrderDaoImpl implements OrderDao {
 		return  order;
 	}
 	
-	public List<Order> getSelfOrders(Long pool_id ,Integer num_of_orders){
+	public List<Order> getSelfOrders(Long pool_id,Long store_id ,Integer num_of_orders){
 		
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
@@ -67,6 +67,9 @@ public class OrderDaoImpl implements OrderDao {
 				                           builder.and(
 							                        		   builder.equal(
 						                        		                root.get( "pool_id" ), pool_id
+						                        		              ),
+							                        		   builder.equal(
+						                        		                root.get( "store_id" ), store_id
 						                        		              ),
 							                        		   builder.equal(
 						                        		                root.get( "status" ), "placed"
@@ -208,6 +211,45 @@ public class OrderDaoImpl implements OrderDao {
 			orders = query.getResultList();
 		}catch(Exception ex) {
 			System.out.println("Error in Order Dao Impl -Orders Picked"+ex.getMessage());
+		}
+
+		
+		return orders;
+	}
+
+	@Override
+	public List<Order> getAvailableOrdersForAssignment(Long pool_id,Long store_id) {
+		// TODO Auto-generated method stub
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+		CriteriaQuery<Order> criteriaQuery = builder.createQuery(Order.class);
+		Root<Order> root = criteriaQuery.from( Order.class );
+		criteriaQuery.select(root);
+		criteriaQuery.orderBy(builder.asc(root.get("created_on")));
+		
+		criteriaQuery.where(
+				                           builder.and(
+							                        		   builder.equal(
+						                        		                root.get( "pool_id" ), pool_id
+						                        		              ),
+							                        		   builder.equal(
+						                        		                root.get( "store_id" ), store_id
+						                        		              ),
+							                        		   builder.equal(
+						                        		                root.get( "status" ), "placed"
+						                        		              ),
+							                        		   builder.equal(root.get( "type_of_pickup" ), "other")
+				                        		              )
+				                         );
+		
+		TypedQuery<Order> query = entityManager.createQuery(criteriaQuery); 
+		
+		List<Order> orders= null;
+		
+		try{
+			orders = query.getResultList();
+		}catch(Exception ex) {
+			System.out.println("Error in Order Dao Impl Available Orders For Assignment"+ex.getMessage());
 		}
 
 		
