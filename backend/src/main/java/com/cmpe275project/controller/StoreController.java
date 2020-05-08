@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -31,6 +32,7 @@ public class StoreController {
 
 	@Autowired
 	private StoreService storeService;
+	
 	
 	@PostMapping("")
 	public ResponseEntity<?> addStore(@Valid @RequestBody Store storeRequest, Errors errors)
@@ -125,6 +127,7 @@ public class StoreController {
 			store = storeService.getStoreInfoById(id);
 			response.setMessage("Store Details");
 			response.setStore(store);
+			//response.set
 			status = HttpStatus.OK;
 		}else {
 			response.setMessage("Store Details Not Available");
@@ -133,6 +136,7 @@ public class StoreController {
 		return new ResponseEntity<>(response,status);
 	}
 	
+	//@PreAuthorize("hasAuthority('pooler')")
 	@GetMapping("")
 	public ResponseEntity<?> getAllStores()
 	{

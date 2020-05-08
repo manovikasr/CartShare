@@ -1,6 +1,8 @@
 package com.cmpe275project.service;
 
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,12 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
+	public Boolean chkSkuAndStoreIdExists(String sku, Long store_id) {
+		// TODO Auto-generated method stub
+		return productDao.chkSkuAndStoreIdExists(sku, store_id);
+	}
+	
+	@Override
 	public Boolean chkSKUExists(String sku) {
 		// TODO Auto-generated method stub
 		return productDao.chkSKUExists(sku);
@@ -36,9 +44,9 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public Boolean isSKUAvailable(String sku, Long id) {
+	public Boolean isSkuAndStoreIdAvailable(String sku,Long store_id, Long product_id) {
 		// TODO Auto-generated method stub
-		return productDao.isSKUAvailable(sku, id);
+		return productDao.isSkuAndStoreIdAvailable(sku, store_id, product_id);
 	}
 
 	@Override
@@ -51,6 +59,15 @@ public class ProductServiceImpl implements ProductService{
 	public Long add(Product product) {
 		// TODO Auto-generated method stub
 		return productDao.add(product);
+	}
+	
+	@Override
+	@Transactional
+	public void addAll(List<Product> products) {
+		
+		for(Product product:products)
+			productDao.add(product);
+		
 	}
 
 	@Override
@@ -70,6 +87,10 @@ public class ProductServiceImpl implements ProductService{
 		// TODO Auto-generated method stub
 		return productDao.getProductInfoById(id);
 	}
+
+	
+
+	
 
 	
 }

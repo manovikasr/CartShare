@@ -2,66 +2,57 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Button, Modal, Form, Col, Alert } from "react-bootstrap";
+import { Button, Modal, Form, Col, Alert, Table } from "react-bootstrap";
 import axios from "axios";
 
 class OrderProductsModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            
+
         };
     }
 
-
-    onHide = (e) => {
-        this.props.onHide();
-    }
-
     render() {
+        var products_list, products;
+        if (this.props.order.order_details && this.props.order.order_details.length) {
+            products_list = this.props.order.order_details.map(product => {
+                return (
+                    <tr>
+                        <td align="center">{product.sku}</td>
+                        <td align="center">{product.product_name}</td>
+                        <td align="center">{product.product_brand}</td>
+                        <td align="center">{product.product_price}</td>
+                        <td align="center">{product.quantity}</td>
+                        <td align="center">{product.total_price}</td>
+                    </tr>
+                )
+            });
+        }
         return (
-            <Modal show={this.props.showModal} onHide={this.onHide}>
+            <Modal show={this.props.showModal} onHide={this.props.onHide} size="lg">
                 <Modal.Header closeButton>
-                    <Modal.Title><b>List of Products</b></Modal.Title>
+                    <Modal.Title>Order Details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
-                        <Form.Row>
-                            <Form.Group as={Col} controlId="produt_id">
-                                <Form.Label><b>Product id</b></Form.Label>
-                                <Form.Control name="product_id"
-                                    type="text"
-                                    defaultValue="123"
-                                    readOnly/>
-                            </Form.Group>
-                        </Form.Row>
-
-                        <Form.Row>
-                            <Form.Group as={Col} controlId="product_name">
-                                <Form.Label><b>Product Name</b></Form.Label>
-                                <Form.Control name="product_name"
-                                    type="text"
-                                    defaultValue="Milk"
-                                    readOnly/>
-                            </Form.Group>
-                        </Form.Row>
-
-                        <Form.Row>
-                            <Form.Group as={Col} controlId="product_description">
-                                <Form.Label><b>Product Description</b></Form.Label>
-                                <Form.Control name="product_description"
-                                    type="text"
-                                    defaultValue="Reduced Fat"
-                                    readOnly/>
-                            </Form.Group>
-                        </Form.Row>
-
-                        <center>
-                            <Button variant="secondary" onClick={this.props.onHide}>
-                                <b>Close</b>
-                            </Button>
-                        </center>
-                    </Form>
+                    <Table borderless striped>
+                        <thead align="center">
+                            <th>SKU</th>
+                            <th>Product Name</th>
+                            <th>Product Brand</th>
+                            <th>Product Price</th>
+                            <th>Quantity</th>
+                            <th>Total Price</th>
+                        </thead>
+                        <tbody>
+                            {products_list}
+                        </tbody>
+                    </Table>
+                    <center>
+                        <Button variant="secondary" onClick={this.props.onHide}>
+                            <b>Close</b>
+                        </Button>
+                    </center>
                 </Modal.Body>
             </Modal>
         );

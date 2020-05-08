@@ -4,13 +4,16 @@ package com.cmpe275project.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +22,7 @@ import com.cmpe275project.model.User;
 import com.cmpe275project.requestObjects.JwtRequest;
 import com.cmpe275project.responseObjects.JwtResponse;
 import com.cmpe275project.responseObjects.UserAuthResult;
+import com.cmpe275project.responseObjects.UserResponse;
 import com.cmpe275project.service.EmailService;
 import com.cmpe275project.service.UserService;
 
@@ -185,7 +189,71 @@ public class JwtAuthenticationController {
 		
 		return new ResponseEntity<>(result,status);
 	}
+	
+	@GetMapping("/profile")
+	public ResponseEntity<?> getUserInfo(HttpServletRequest request)
+	{
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		UserResponse response = new UserResponse();
+		User user = userService.getUserInfoById((Long) request.getAttribute("user_id"));
+		
+		if(user!=null) {
+			status = HttpStatus.OK;
+			response.setMessage("User Details");
+			response.setUser(user);
+		}else {
+			response.setMessage("User Not Found");
+		}
+		
+		return new ResponseEntity<>(response,status);
+	}
 
+	@PutMapping("/profile/{user_id}")
+	public ResponseEntity<?> updateUserProfile(@Valid @RequestBody User userRequest, @PathVariable Long user_id, Errors errors)
+	{
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+	    UserResponse response = new UserResponse();
+	    
+		if (errors.hasErrors()) {
+
+			Map<String, String> errorMap = new HashMap<String, String>();
+
+			for (ObjectError error : errors.getAllErrors()) {
+				String fieldError = ((FieldError) error).getField();
+				errorMap.put(fieldError, error.getDefaultMessage());
+			}
+			response.setErrors(errorMap);
+			response.setMessage("Unable to update User Profile");
+
+			return new ResponseEntity<>(response, status);
+		}
+
+		User user = userService.getUserInfoById(user_id);
+		
+		if(!userService.isNickNameAvailable(userRequest.getNick_name(), user_id)) {
+			
+			user.setAddress(userRequest.getAddress());
+			user.setCity(userRequest.getCity());
+			user.setState(userRequest.getState());
+			user.setZip(userRequest.getZip());
+			user.setContribution_credits(userRequest.getContribution_credits());
+			user.setContribution_status(userRequest.getContribution_status());
+			user.setNick_name(userRequest.getNick_name());
+			
+			userService.edit(user);
+			String token = jwtTokenUtil.generateToken(user);
+			response.setMessage("User Profile Successfully Edited");
+			response.setToken(token);
+			status = HttpStatus.OK;
+		}else {
+			status = HttpStatus.CONFLICT;
+			response.setMessage("Unable to update User Profile, Nick Name not available");
+			return new ResponseEntity<>(response, status);
+		}
+		
+		return new ResponseEntity<>(response,status);
+	}
+	
 	/*private void authenticate(String email, String password) throws Exception {
 		try {
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));

@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import AdminHome from "./AdminHome";
 import PoolerHome from "./PoolerHome";
+import homeImage from "../../images/CartShare3.png"
 
 class Home extends Component {
   constructor(props) {
@@ -18,23 +19,28 @@ class Home extends Component {
     else {
       if (!this.props.auth.user.email_verified) {
         this.props.history.push("/verify");
-      } 
+      }
     }
   }
 
   render() {
-    const {user} = this.props.auth;
+    const { user } = this.props.auth;
     var homeComponent;
 
-    if(user.role === "admin"){
+    if (user.role === "admin") {
       homeComponent = <AdminHome />
     } else {
       homeComponent = <PoolerHome />
     }
 
     return (
-      <div>
-        {homeComponent}
+      <div className="container" style={{ width: "75%" }}>
+        <h2 className="p-4">Welcome to CartShare!</h2>
+        <img
+          className="d-block w-100"
+          src={homeImage}
+          alt="Cart Share"
+        />
       </div>
     );
   }

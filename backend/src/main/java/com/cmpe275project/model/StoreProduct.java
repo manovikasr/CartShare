@@ -9,8 +9,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 
-@Entity
-@Table(name="store_products")
+//@Entity
+//@Table(name="store_products")
 public class StoreProduct {
 
 	@Id

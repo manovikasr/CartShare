@@ -11,6 +11,8 @@ public class UserResponse {
 	private Map<String, String> errors; 
 	
 	private User user;
+	
+	private String token;
 
 	public String getMessage() {
 		return message;
@@ -35,6 +37,15 @@ public class UserResponse {
 	public void setUser(User user) {
 		this.user = user;
 	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
 	
 	
 }

@@ -3,6 +3,7 @@ import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import axios from "axios";
+import ConfirmOrderModal from "./ConfirmOrderModal";
 import { Alert, Button, Card, ListGroup, ListGroupItem, Table } from "react-bootstrap";
 
 class Cart extends Component {
@@ -14,7 +15,9 @@ class Cart extends Component {
             taxPercent: 9.75,
             taxAmount: 0,
             subTotal: 0,
-            total: 0
+            total: 0,
+            showModal: false,
+            user: {}
         };
     }
 
@@ -37,24 +40,9 @@ class Cart extends Component {
             });
         }
 
-        // this.setState({
-        //     cart_items: [{
-        //         id: 1,
-        //         product_name: "A",
-        //         sku: "123",
-        //         quantity: 2,
-        //         price: 20
-        //     },
-        //     {
-        //         id: 2,
-        //         product_name: "B",
-        //         sku: "XYZ",
-        //         quantity: 4,
-        //         price: 50
-        //     }]
-        // })
-
         this.calculateTotals();
+
+        this.getProfile();
     }
 
     getStoreDetails = store_id => {
@@ -71,6 +59,20 @@ class Cart extends Component {
                 console.log(e);
             })
     };
+
+    getProfile = () => {
+        axios.get("/profile")
+            .then(res => {
+                if (res.data) {
+                    this.setState({
+                        user: res.data.user
+                    });
+                }
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    }
 
     calculateTotals = () => {
         const cart_items = this.state.cart_items;
@@ -92,6 +94,7 @@ class Cart extends Component {
         let cart_items = this.state.cart_items;
         let index = cart_items.findIndex((item => item.id === product_id));
         cart_items[index].quantity = newQuantity;
+        cart_items[index].total_price = cart_items[index].price * newQuantity
         await this.setState({
             cart_items
         });
@@ -100,7 +103,51 @@ class Cart extends Component {
     };
 
     confirmOrder = (e) => {
+        this.setState({
+            showModal: true
+        });
+    };
 
+    onHideModal = (e) => {
+        this.setState({
+            showModal: false
+        });
+    }
+
+    placeOrder = (delivery) => {
+        var order_items = JSON.parse(localStorage.getItem('cart_items'));
+        order_items = order_items.map(item => {
+            item.product_id = item.id;
+            return item;
+        });
+        var pickup_type = delivery ? "other" : "self";
+        var store_id = this.state.store.id;
+        const orderData = {
+            store_id,
+            order_details: order_items,
+            type_of_pickup: pickup_type
+        }
+
+        axios.post("/order", orderData)
+            .then(res => {
+                if (res.status == 200) {
+                    this.clearCart();
+                    this.onHideModal();
+                    if (delivery)
+                        this.props.history.push('/orders/myorders');
+                    else
+                        this.props.history.push({
+                            pathname: '/orders/poolorders',
+                            state: { store_id: store_id }
+                        });
+                }
+            })
+            .catch(e => {
+                if (e.response && e.response.data)
+                    this.setState({
+                        error_message: e.response.data.message
+                    });
+            });
     };
 
     removeItem = async (e) => {
@@ -129,6 +176,7 @@ class Cart extends Component {
 
     render() {
         var cart, store, cartTable, productsList, actionButtons;
+        const user = this.state.user;
         if (this.state.store && this.state.cart_items.length) {
             store = (
                 <center>
@@ -221,6 +269,8 @@ class Cart extends Component {
                 <br />
                 <h2>Your Cart</h2>
                 {cart}
+                <ConfirmOrderModal showModal={this.state.showModal} onHide={this.onHideModal} credits={user.contribution_credits} placeOrder={this.placeOrder}
+                />
             </div>
         );
     }

@@ -43,14 +43,14 @@ public class FileHandlingRestController {
     private ProductService productService; 
     
 
-    @PostMapping("/uploadProductImage/{product_id}")
+    @PostMapping("/upload/product/{product_id}")
     public ResponseEntity<?> uploadFile(@PathVariable Long product_id, @RequestParam("file") MultipartFile file,HttpServletRequest request) {
     	
     	FileUploadResponse response = new FileUploadResponse();
     	HttpStatus status = HttpStatus.BAD_GATEWAY;
     	
     	if(!productService.isProductIdExists(product_id)) {
-    		response.setMessage("Product Id Not Exists....");
+    		response.setMessage("Product Id does not exists....");
     	}else {
     	       
     		String fileName = fileStorageService.storeFile(file,product_id);
@@ -64,9 +64,9 @@ public class FileHandlingRestController {
             product.setProduct_img(fileName);
             
             productService.edit(product);
-            response.setMessage("Image Uploading Successfull....");
+            response.setMessage("Image Uploading Successful....");
             response.setFileName(fileName);
-    		status = status.OK;
+    		status = HttpStatus.OK;
     	}
     	
         
@@ -74,7 +74,7 @@ public class FileHandlingRestController {
     }
 
         
-    @GetMapping("/downloadProductImage/{product_id}")
+    @GetMapping("/image/product/{product_id}")
     public ResponseEntity<?> downloadFile(@PathVariable Long product_id, HttpServletRequest request) {
     	
     	if(!productService.isProductIdExists(product_id)) {
@@ -105,7 +105,7 @@ public class FileHandlingRestController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_TYPE, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
 

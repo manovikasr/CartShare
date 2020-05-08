@@ -156,4 +156,160 @@ public class EmailServiceImpl implements EmailService{
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public void sendEmailForOrderConfirmation(String to, Map<String, Object> map) throws TemplateNotFoundException,
+			MalformedTemplateNameException, ParseException, IOException, TemplateException {
+		// TODO Auto-generated method stub
+		try {
+			MimeMessage message = emailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message);
+			
+			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
+			
+			Template t = freeMarkerConfig.getTemplate("OrderConfirmation.ftl");
+            String subject = "Cart Share - Your Order is placed";
+			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
+			
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(text, true);
+			
+			emailSender.send(message);
+			
+		} catch (MessagingException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void sendEmailOfSelfAndPoolerOrderDetails(String to, Map<String, Object> map) throws TemplateNotFoundException,
+			MalformedTemplateNameException, ParseException, IOException, TemplateException {
+		// TODO Auto-generated method stub
+		try {
+			MimeMessage message = emailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message);
+			
+			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
+			
+			Template t = freeMarkerConfig.getTemplate("SelfAndPoolerOrderDetails.ftl");
+            String subject = "Cart Share - Information related to the orders to be delivered.";
+			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
+			
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(text, true);
+			
+			emailSender.send(message);
+			
+		} catch (MessagingException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void sendEmailForPickedUpConfirmation(String to, Map<String, Object> map) throws TemplateNotFoundException,
+			MalformedTemplateNameException, ParseException, IOException, TemplateException {
+		// TODO Auto-generated method stub
+		try {
+			MimeMessage message = emailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message);
+			
+			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
+			
+			Template t = freeMarkerConfig.getTemplate("PickedUpConfirmation.ftl");
+            String subject = "Cart Share - Your Order is picked up.";
+			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
+			
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(text, true);
+			
+			emailSender.send(message);
+			
+		} catch (MessagingException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void sendEmailOfUserOrderDetails(String to, Map<String, Object> map) throws TemplateNotFoundException,
+			MalformedTemplateNameException, ParseException, IOException, TemplateException {
+		// TODO Auto-generated method stub
+		try {
+			MimeMessage message = emailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message);
+			
+			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
+			
+			Template t = freeMarkerConfig.getTemplate("UserOrderDetailsEmail.ftl");
+            String subject = "Cart Share - Details of the orders to be delivered.";
+			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
+			
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(text, true);
+			
+			emailSender.send(message);
+			
+		} catch (MessagingException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void sendEmailforOrderDelivered(String to, Map<String, Object> map) throws TemplateNotFoundException,
+			MalformedTemplateNameException, ParseException, IOException, TemplateException {
+		// TODO Auto-generated method stub
+		try {
+			MimeMessage message = emailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message);
+			
+			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
+			
+			Template t = freeMarkerConfig.getTemplate("OrderDeliveredEmail.ftl");
+            String subject = "Cart Share - Order Delivered";
+			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
+			
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(text, true);
+			
+			emailSender.send(message);
+			
+		} catch (MessagingException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void sendEmailforOrderNotDelivered(String to, Map<String, Object> map) throws TemplateNotFoundException,
+			MalformedTemplateNameException, ParseException, IOException, TemplateException {
+		// TODO Auto-generated method stub
+		try {
+			MimeMessage message = emailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message);
+			
+			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
+			
+			Template t = freeMarkerConfig.getTemplate("OrderNotDeliveredEmail.ftl");
+            String subject = "Cart Share - Order not delivered to the fellow pooler";
+			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
+			
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(text, true);
+			
+			emailSender.send(message);
+			
+		} catch (MessagingException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
 }

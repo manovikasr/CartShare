@@ -41,7 +41,7 @@ public class ProductController {
 	private StoreService storeService;
 	
 	@PostMapping("")
-	public ResponseEntity<?> addProduct(@Valid @RequestBody Product productRequest, Errors errors)
+	public ResponseEntity<?> addProduct(@Valid @RequestBody Product productRequest,@RequestParam Set<Long> store_ids, Errors errors)
 	{
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		ProductResponse response = new ProductResponse();
@@ -59,24 +59,31 @@ public class ProductController {
 			
 			return new ResponseEntity<>(response, status);
 		}
+		List<Product> products = new ArrayList<>();
 		
-        if(!productService.chkProductNameExists(productRequest.getProduct_name())){
-        	
-        	if(!productService.chkSKUExists(productRequest.getSku())) {
-        	      
-        		productService.add(productRequest);
-            	response.setMessage("Product Successfully Added");
-            	response.setStore(productRequest);
-        		
-        	}else {
-        		status = HttpStatus.CONFLICT;
-            	response.setMessage("SKU Already In Use");
-        	}
-        	
-        }else {
-        	status = HttpStatus.CONFLICT;
-        	response.setMessage("Product Name Already In Use");
+        for(long store_id : store_ids) {
+        
+        		System.out.println(store_id);
+		        if(storeService.isStoreIdExists(store_id)) {
+		        	
+		        	if(!productService.chkSkuAndStoreIdExists(productRequest.getSku(), store_id)) {
+		        		Product product = new Product(productRequest.getProduct_name(),productRequest.getSku(),store_id,productRequest.getProduct_desc(),productRequest.getProduct_img(),productRequest.getProduct_brand(),productRequest.getUnit_type(),productRequest.getPrice());
+		         	    products.add(product);	
+		        	}else {
+		        		 status = HttpStatus.CONFLICT;
+		        		 response.setMessage("Unable to add Product. SKU : "+productRequest.getSku()+" and Store Id : "+store_id+" already Exists");
+		        		 return new ResponseEntity<>(response,status);
+		        	}
+		        	
+		        }else {
+		        	response.setMessage("Store Id : "+store_id+" does not exists");
+		   		    return new ResponseEntity<>(response,status);
+		        }
         }
+        
+        productService.addAll(products);
+        response.setMessage("Product Successfully Added");
+        status = HttpStatus.OK;
         
 		return new ResponseEntity<>(response,status);
 	}
@@ -103,17 +110,23 @@ public class ProductController {
 		
 		if(!productService.isProductIdExists(id)) {
 			status = HttpStatus.NOT_FOUND;
-			response.setMessage("Product Id in Invalid");
+			response.setMessage("Product Id is Invalid");
 			return new ResponseEntity<>(response,status);
 		}
 		
-		if(!productService.isProductNameAvailable(productRequest.getProduct_name(), id)) {
-		   
-			if(!productService.isSKUAvailable(productRequest.getSku(),id)) {
+		if(productRequest.getStore_id()==null || !storeService.isStoreIdExists(productRequest.getStore_id())) {
+			status = HttpStatus.NOT_FOUND;
+			response.setMessage("Store Id is Invalid");
+			return new ResponseEntity<>(response,status);
+		}
+		
+		
+			if(!productService.isSkuAndStoreIdAvailable(productRequest.getSku(),productRequest.getStore_id(), id)) {
 				
 				Product product = productService.getProductInfoById(id);
 				product.setProduct_name(productRequest.getProduct_name());
 				product.setSku(productRequest.getSku());
+				product.setStore_id(productRequest.getStore_id());
 				product.setProduct_desc(productRequest.getProduct_desc());
 				product.setPrice(productRequest.getPrice());
 				product.setUnit_type(productRequest.getUnit_type());
@@ -127,15 +140,9 @@ public class ProductController {
 				
 			}else {
 				status = HttpStatus.CONFLICT;
-            	response.setMessage("SKU Already In Use");
+            	response.setMessage("SKU and Store Id Already In Use");
 			}
 					
-			
-		}else {
-			status = HttpStatus.CONFLICT;
-			response.setMessage("Product Name is Already in Use");
-			return new ResponseEntity<>(response,status);
-		}
 		
 		return new ResponseEntity<>(response,status);
 	}
@@ -159,7 +166,7 @@ public class ProductController {
 		return new ResponseEntity<>(response,status);
 	}
 	
-	@PostMapping("/map_products_with_stores/{store_id}")
+	/*@PostMapping("/map_products_with_stores/{store_id}")
 	public ResponseEntity<?> mapProductsWithStores(@PathVariable Long store_id, @RequestParam Set<Long> product_ids)
 	{
 		HttpStatus status = HttpStatus.NOT_FOUND;
@@ -195,9 +202,9 @@ public class ProductController {
 		}
 		
 		return new ResponseEntity<>(response,status);
-	}
+	}*/
 	
-	@PutMapping("/map_products_with_stores/{store_id}")
+	/*@PutMapping("/map_products_with_stores/{store_id}")
 	public ResponseEntity<?> updateProductsWithStoresMapping(@PathVariable Long store_id, @RequestParam Set<Long> product_ids)
 	{
 		HttpStatus status = HttpStatus.NOT_FOUND;
@@ -229,6 +236,6 @@ public class ProductController {
 		}
 		
 		return new ResponseEntity<>(response,status);
-	}
+	}*/
 	
 }
