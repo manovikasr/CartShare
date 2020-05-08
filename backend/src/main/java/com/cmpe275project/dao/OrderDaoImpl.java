@@ -72,7 +72,7 @@ public class OrderDaoImpl implements OrderDao {
 						                        		                root.get( "store_id" ), store_id
 						                        		              ),
 							                        		   builder.equal(
-						                        		                root.get( "status" ), "order_placed"
+						                        		                root.get( "status" ), "ORDER_PLACED"
 						                        		              ),
 							                        		   builder.equal(
 							                        				   root.get( "type_of_pickup" ), "other"
@@ -167,7 +167,7 @@ public class OrderDaoImpl implements OrderDao {
 						                        		                root.get( "picker_user_id" ), user_id
 						                        		              ),
 							                        		   builder.equal(
-						                        		                root.get( "status" ), "picker_assigned"
+						                        		                root.get( "status" ), "PICKER_ASSIGNED"
 						                        		              )
 				                        		              )
 				                         );

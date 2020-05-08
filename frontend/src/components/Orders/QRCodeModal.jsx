@@ -44,7 +44,7 @@ class QRCodeModal extends Component {
                     fgColor="#000000"
                     level="Q"
                     style={{ width: 200 }}
-                    value={this.props.orders.toString()}
+                    value={order_ids.toString()}
                 />
             </div>
         );

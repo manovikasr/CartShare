@@ -80,9 +80,12 @@ class Cart extends Component {
         cart_items.forEach(item => {
             subTotal += (item.quantity * item.price);
         });
-
-        taxAmount = (subTotal * this.state.taxPercent / 100).toFixed(2);
-        total = (subTotal + subTotal * this.state.taxPercent / 100).toFixed(2);
+;
+        taxAmount = (subTotal * this.state.taxPercent / 100);
+        total = subTotal + ((subTotal * this.state.taxPercent) / 100);
+        subTotal = subTotal.toFixed(2);
+        taxAmount = taxAmount.toFixed(2);
+        total = total.toFixed(2);
         this.setState({
             subTotal, taxAmount, total
         });
@@ -205,7 +208,7 @@ class Cart extends Component {
                         <td align="center">
                             <i class="fas fa-trash-alt" name={item.id} onClick={this.removeItem} alt="" />
                         </td>
-                        <td align="center">$ {item.price * item.quantity}</td>
+                        <td align="center">$ {(item.price * item.quantity).toFixed(2)}</td>
                     </tr>
                 );
             });

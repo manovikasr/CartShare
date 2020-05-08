@@ -85,6 +85,9 @@ public class OrderController {
 			return new ResponseEntity<>(response, status);
 		}
 		
+		String order_status = orderRequest.getType_of_pickup().equals("other") ? "ORDER_PLACED" : "PICKER_ASSIGNED";
+		Long picker_user_id = orderRequest.getType_of_pickup().equals("self") ? (Long)request.getAttribute("user_id") : null;
+		
 		if(storeService.isStoreIdExists(orderRequest.getStore_id())) {
 			
 			Store store = storeService.getStoreInfoById(orderRequest.getStore_id());
@@ -92,7 +95,8 @@ public class OrderController {
 			orderRequest.setStore_name(store.getStore_name());
 			orderRequest.setUser_id(user.getId());
 			orderRequest.setPool_id(user.getPool().getId());
-			orderRequest.setStatus("placed");
+			orderRequest.setStatus(order_status);
+			orderRequest.setPicker_user_id(picker_user_id);
 			
 			for(OrderDetail orderDetail:orderRequest.getOrder_details()) {
 				
@@ -121,11 +125,12 @@ public class OrderController {
 			if(orderRequest.getType_of_pickup().equals("other"))
 			 {	
 				user.setContribution_credits(user.getContribution_credits() - 1);
+				userService.edit(user);
 				String user_email = user.getEmail();
 				Map<String, Object> map = new HashMap<>();
 				map.put("pooler_name", user.getScreen_name());
 				emailService.sendEmailForOrderConfirmation(user_email, map);
-			 }
+			 } 
 			response.setMessage("Order Successfully Placed");
 				
 		}else {
