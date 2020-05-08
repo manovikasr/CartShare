@@ -282,7 +282,7 @@ public class OrderController {
 		return new ResponseEntity<>(response,httpStatus);
 	}
 	
-	@PutMapping("/change_order_status/{order_id}/{status}")
+	@PutMapping("/status/{order_id}/{status}")
 	public ResponseEntity<?> changeOrderStatus(@PathVariable Long order_id ,@PathVariable String status, HttpServletRequest request) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException
 	{
 		HttpStatus httpStatus = HttpStatus.BAD_REQUEST;

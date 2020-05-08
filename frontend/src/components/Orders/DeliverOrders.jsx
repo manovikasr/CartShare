@@ -27,11 +27,14 @@ class DeliveredOrders extends Component {
     }
 
     getDeliveryOrders = () => {
+        const { user } = this.props.auth;
         axios.get("/order/delivery")
-            .then(res => {
+            .then(async res => {
                 if (res.data) {
+                    console.log(res.data);
+                    let orders = res.data.orders.filter(order => order.user_id != user.id)
                     this.setState({
-                        delivery_orders: res.data.orders
+                        delivery_orders: orders
                     });
                 }
             })
@@ -54,7 +57,7 @@ class DeliveredOrders extends Component {
             order_cards = this.state.delivery_orders.map(order => {
                 return (
                     <Col sm={3}>
-                        <OrderCard order={order} showAddress={true} />
+                        <OrderCard order={order} showAddress={true} getOrders={this.getDeliveryOrders}/>
                     </Col>
                 )
             });

@@ -12,7 +12,7 @@ class OrderCard extends Component {
         this.state = {
             showModal: false,
             showStatusModal: false,
-            order:{}
+            order: {}
         };
     }
 
@@ -25,53 +25,40 @@ class OrderCard extends Component {
 
     handleToggle = () => {
         this.setState({
-            showModal:!this.state.showModal
+            showModal: !this.state.showModal
         });
     }
 
-    handleStatusModalToggle = () => {
+    handleStatusToggle = () => {
         this.setState({
-            showStatusModal:!this.state.showStatusModal
-        });
-    }
-
-    hideModal = () => {
-        this.setState({
-            showModal:false
-        });
-    }
-
-    hideStatusModal = () => {
-        this.setState({
-            showStatusModal:false
+            showStatusModal: !this.state.showStatusModal
         });
     }
 
     render() {
-        const { user } = this.props.auth;
-        var editButton;
-       
-        if(this.props.order.user_id == user.id) {
-            editButton = (
-                <Button variant="info" size="sm"  onClick={this.handleStatusModalToggle}><b>Edit Status</b></Button>    
-            )
+        var updateButton;
+
+        if (this.props.showAddress) {
+            updateButton = (
+                <Button variant="info" size="sm" onClick={this.handleStatusToggle}>Update Status</Button>
+            );
         }
         return (
             <div>
-            <Card bg="white" style={{ width: "18rem", margin: "5%" }}>
-                <Card.Body>
-                    <Card.Title><b>Order #{this.state.order.id}</b></Card.Title>
-                    <Card.Text>
-                        <b>Store:</b> {this.props.order.store_name} <br/>
-                        <b>Order Date:</b> {(new Date(this.props.order.created_on)).toLocaleDateString("en-US")} <br/>
-                        <b>Status:</b> {this.props.order.status}<br />
-                    </Card.Text>
-                    {/* {editButton}&nbsp;&nbsp; */}
+                <Card bg="white" style={{ width: "18rem", margin: "5%" }}>
+                    <Card.Body>
+                        <Card.Title><b>Order #{this.state.order.id}</b></Card.Title>
+                        <Card.Text>
+                            <b>Store:</b> {this.props.order.store_name} <br />
+                            <b>Order Date:</b> {(new Date(this.props.order.created_on)).toLocaleDateString("en-US")} <br />
+                            <b>Status:</b> {this.props.order.status}<br />
+                        </Card.Text>
+                        {updateButton}&nbsp;&nbsp;
                     <Button variant="success" size="sm" onClick={this.handleToggle}><b>View Products</b></Button>
-                </Card.Body>
-            </Card>
-            <OrderProductsModal showModal = {this.state.showModal} onHide = {this.hideModal} order = {this.state.order}/> 
-            <EditStatusModal showModal = {this.state.showStatusModal} onHide = {this.hideStatusModal} order = {this.state.order}/> 
+                    </Card.Body>
+                </Card>
+                <OrderProductsModal showModal={this.state.showModal} onHide={this.handleToggle} order={this.state.order} />
+                <EditStatusModal showModal={this.state.showStatusModal} onHide={this.handleStatusToggle} order={this.state.order} getOrders={this.props.getOrders}/>
             </div>
         );
     }

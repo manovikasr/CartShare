@@ -9,16 +9,8 @@ class EditStatusModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            state:""    
+            status: ""
         };
-    }
-
-    componentDidMount() {
-
-    }
-
-    onHide = (e) => {
-        this.props.onHide();
     }
 
     onChange = (e) => {
@@ -27,14 +19,15 @@ class EditStatusModal extends Component {
         });
     }
 
-    editOrder = () => {
-        axios.put(`/order/change_order_status/${this.props.order.id}/${this.state.status}`)
-        .then(res => {
-            if (res.status === 200) {
-                this.props.onHide();
-            }
-        })
-        .catch(e => {
+    updateOrderStatus = () => {
+        axios.put(`/order/status/${this.props.order.id}/${this.state.status}`)
+            .then(res => {
+                if (res.status === 200) {
+                    this.props.onHide();
+                    this.props.getOrders();
+                }
+            })
+            .catch(e => {
                 console.log(e.response);
                 if (e.response && e.response.data)
                     this.setState({
@@ -45,9 +38,9 @@ class EditStatusModal extends Component {
 
     render() {
         return (
-            <Modal show={this.props.showModal} onHide={this.onHide}>
+            <Modal show={this.props.showModal} onHide={this.props.onHide}>
                 <Modal.Header closeButton>
-                    <Modal.Title><b>Edit Status of your Order - {this.props.order.id}</b></Modal.Title>
+                    <Modal.Title><b>Update Status for Order #{this.props.order.id}</b></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
@@ -58,18 +51,15 @@ class EditStatusModal extends Component {
                                     as="select"
                                     defaultValue={this.props.order.status}
                                     onChange={this.onChange}>
-                                    <option>Placed</option>
-                                    <option>Self-Pickedup</option>
-                                    <option>Pickedup</option>
-                                    <option>Delivered</option>
-                                    <option>Delivered-Not-Received</option>
+                                    <option value="ORDER_PICKED_UP">Picked up</option>
+                                    <option value="DELIVERED">Delivered</option>
                                 </Form.Control>
                             </Form.Group>
                         </Form.Row>
 
                         <center>
-                            <Button variant="success" onClick = {this.editOrder}>
-                                <b>Edit</b>
+                            <Button variant="success" onClick={this.updateOrderStatus}>
+                                <b>Update</b>
                             </Button>&nbsp;&nbsp;
                             <Button variant="secondary" onClick={this.props.onHide}>
                                 <b>Close</b>
