@@ -198,7 +198,7 @@ public class OrderController {
 	}
 	
 	
-	@GetMapping("/orders_for_pickup")
+	@GetMapping("/pickup")
 	public ResponseEntity<?> ordersForPickup(HttpServletRequest request)
 	{
 		HttpStatus status = HttpStatus.NOT_FOUND;
@@ -217,7 +217,7 @@ public class OrderController {
 	    return new ResponseEntity<>(response,status);
 	}
 	
-	@GetMapping("/orders_for_delivery")
+	@GetMapping("/delivery")
 	public ResponseEntity<?> ordersForDelivery(HttpServletRequest request)
 	{
 		HttpStatus status = HttpStatus.NOT_FOUND;
@@ -225,9 +225,7 @@ public class OrderController {
 		
 		List<Order> ordersToBeDelivered=orderService.getOrdersForDelivery((Long)request.getAttribute("user_id"));
 		
-		if(ordersToBeDelivered==null) {
-			response.setMessage("Sorry, There are no orders for delivery");
-		}else {
+		if(ordersToBeDelivered != null) {
 			status =HttpStatus.OK;
 			response.setMessage("Orders To be Delivered");
 			response.setOrders(ordersToBeDelivered);
@@ -236,7 +234,7 @@ public class OrderController {
 	    return new ResponseEntity<>(response,status);
 	}
 	
-	@GetMapping("/my_orders")
+	@GetMapping("/myorders")
 	public ResponseEntity<?> myOrders(HttpServletRequest request)
 	{
 		HttpStatus status = HttpStatus.NOT_FOUND;
@@ -254,6 +252,34 @@ public class OrderController {
 		
 		
 	    return new ResponseEntity<>(response,status);
+	}
+	
+	@PutMapping("/pickup")
+	public ResponseEntity<?> pickupOrders(@RequestParam Set<Long> order_ids, HttpServletRequest request) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException
+	{
+		HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+		OrderResponse response = new OrderResponse();
+		Order order = null;
+		
+		for(long order_id : order_ids) {
+			if(orderService.isOrderIdExists(order_id)) {
+				order = orderService.getOrderInfoById(order_id);
+				order.setStatus("ORDER_PICKEDUP");
+				orderService.edit(order);
+				
+				//TODO Send Email order picked up
+			}
+			else {
+					httpStatus = HttpStatus.NOT_FOUND;
+					response.setMessage("Order Id Not Found");
+					return new ResponseEntity<>(response, httpStatus);
+			}
+		}
+				
+		httpStatus =HttpStatus.OK;
+		response.setMessage("Orders Pickedup");
+		
+		return new ResponseEntity<>(response,httpStatus);
 	}
 	
 	@PutMapping("/change_order_status/{order_id}/{status}")

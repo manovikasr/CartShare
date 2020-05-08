@@ -19,7 +19,6 @@ class OrderProductsModal extends Component {
             products_list = this.props.order.order_details.map(product => {
                 return (
                     <tr>
-                        <td align="center">{product.id}</td>
                         <td align="center">{product.sku}</td>
                         <td align="center">{product.product_name}</td>
                         <td align="center">{product.product_brand}</td>
@@ -38,7 +37,6 @@ class OrderProductsModal extends Component {
                 <Modal.Body>
                     <Table borderless striped>
                         <thead align="center">
-                            <th>Product id</th>
                             <th>SKU</th>
                             <th>Product Name</th>
                             <th>Product Brand</th>

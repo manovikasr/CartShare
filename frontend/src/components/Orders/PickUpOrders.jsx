@@ -2,17 +2,18 @@ import React, { Component } from "react";
 import { withRouter, BrowserRouter, NavLink, Route } from "react-router-dom";
 import { Nav, Container, Row, Col, Alert, Table, Form, Button, Card } from "react-bootstrap";
 import PropTypes from "prop-types";
+import axios from "axios";
 import QRCodeModal from "./QRCodeModal";
 import { connect } from "react-redux";
-import OrderCard from "./OrdersCard";
-import axios from "axios";
+import OrderCard from "./OrderCard";
+import storeImage from "../../images/StoreImage.png";
 
 class PickUpOrders extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pending_orders:[],
-            showQRcodeModal: false
+            pickup_orders:[],
+            showModal: false
         };
     }
 
@@ -25,15 +26,15 @@ class PickUpOrders extends Component {
                 this.props.history.push("/verify");
             }
         }
-        this.getOrderToDeliver();
+        this.getPickupOrders();
     }
 
-    getOrderToDeliver = () => {
-         axios.get("/order/orders_for_delivery")
+    getPickupOrders = () => {
+        axios.get("/order/pickup")
         .then(res => {
-            if(res.data.orders) {
+            if(res.data) {
                 this.setState({
-                    pending_orders:res.data.orders
+                    pickup_orders:res.data.orders
                 });
             }
         })
@@ -41,53 +42,59 @@ class PickUpOrders extends Component {
             if(e.response) {
                 console.log(e.response.data);
             }
-        })
-    }
-
-    handleQRcodeModalToggle = () => {
-        this.setState({
-            showQRcodeModal:!this.state.showQRcodeModal
         });
     }
 
-    hideBarcodeModal = () => {
+    handleToggle = () => {
         this.setState({
-            showQRcodeModal:false
+            showModal:!this.state.showModal
         });
     }
 
     render() {
-        const { user } = this.props.auth;
-        var orders_list, ordersTable, orders, actionButtons;
-        if(this.state.pending_orders && this.state.pending_orders.length) {
-            orders_list = this.state.pending_orders.map(order => {
+        var order_cards, store, store_name;
+        if(this.state.pickup_orders.length) {
+            store_name = this.state.pickup_orders[0].store_name;
+            store = (
+                    <Card bg="info" text="white" style={{ width: "70rem", height: "8rem", margin: "4%" }}>
+                        <Row>
+                            <Col sm={2}></Col>
+                            <Col sm={3}>
+                                <Card.Img style={{ width: "7rem", height: "8rem" }} src={storeImage} />
+                            </Col>
+                            <Card.Body>
+                                <Card.Title><h1>{store_name}</h1></Card.Title>
+                            </Card.Body>
+                            <Col>
+                                <br/><br/>
+                                <Button variant="primary" onClick={this.handleToggle}>Pickup All Orders</Button>
+                            </Col>
+                        </Row>
+                    </Card>
+            );
+            order_cards = this.state.pickup_orders.map(order => {
                 return (
                     <Col sm={3}>
                         <OrderCard order = {order}/>
                     </Col>
-                ) 
+                );
             });
-            actionButtons = (
-                <div>
-                    <Button variant="success" onClick = {this.handleQRcodeModalToggle}>Confirm</Button> &nbsp;&nbsp;&nbsp;
-                    <Button variant="danger" onClick = {this.clearDetails}>Clear</Button> 
-                </div>
-            );
         }
         else {
-            orders_list = (
-                <Alert variant="info">You don't have any orders to deliver yet.</Alert>
+            store = (
+                <Alert variant="info">You don't have any orders to pickup</Alert>
             );   
         }
 
 
         return (
             <div className = "container" style = {{ width: "75%"}}>
-                <h2 className = "p-4">Orders to Deliver</h2>
-                <Row>{orders_list}</Row> 
-                <br/><br/>
-                <div className = "mx-3">{actionButtons}</div>    
-                <QRCodeModal showModal = {this.state.showQRcodeModal} onHide = {this.hideBarcodeModal} />
+                <h2 className="p-4">Pickup Orders</h2>
+                {store}
+                <Row>
+                    {order_cards}
+                </Row>
+                <QRCodeModal orders={this.state.pickup_orders} showModal = {this.state.showModal} onHide = {this.handleToggle} />
             </div>
         );
     }

@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import MyOrders from "./MyOrders";
 import PickupOrders from "./PickUpOrders";
-import DeliveredOrders from './DeliveredOrders';
+import DeliverOrders from './DeliverOrders';
 import PoolersOrders from './PoolersOrders';
 
 class Orders extends Component {
@@ -49,7 +49,7 @@ class Orders extends Component {
                     </Nav>
                     <Route path="/orders/myorders" component={MyOrders} exact />
                     <Route path="/orders/pickup" component={PickupOrders} exact />
-                    <Route path="/orders/deliver" component={DeliveredOrders} exact />
+                    <Route path="/orders/deliver" component={DeliverOrders} exact />
                     <Route path="/orders/poolorders" component={PoolersOrders} exact />
                 </BrowserRouter>
             </div>

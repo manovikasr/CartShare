@@ -1,16 +1,16 @@
 import React, { Component } from "react";
-import { withRouter, BrowserRouter, NavLink, Route } from "react-router-dom";
-import { Nav, Container, Row, Col, Alert, Table, Form, Button } from "react-bootstrap";
+import { withRouter } from "react-router-dom";
+import { Row, Col, Alert } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import OrderCard from "./OrderCard";
 import axios from "axios";
+import OrderCard from "./OrderCard";
 
-class MyOrders extends Component {
+class DeliveredOrders extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            orders: []
+            delivery_orders: []
         };
     }
 
@@ -23,15 +23,15 @@ class MyOrders extends Component {
                 this.props.history.push("/verify");
             }
         }
-        this.getMyOrders();
+        this.getDeliveryOrders();
     }
 
-    getMyOrders = () => {
-        axios.get("/order/myorders")
+    getDeliveryOrders = () => {
+        axios.get("/order/delivery")
             .then(res => {
-                if (res.data.orders) {
+                if (res.data) {
                     this.setState({
-                        orders: res.data.orders
+                        delivery_orders: res.data.orders
                     });
                 }
             })
@@ -39,24 +39,30 @@ class MyOrders extends Component {
                 if (e.response) {
                     console.log(e.response.data);
                 }
-            })
+            });
+    }
+
+    handleToggle = () => {
+        this.setState({
+            showModal: !this.state.showModal
+        });
     }
 
     render() {
-        var orders_list, message;
-        if (this.state.orders.length) {
-            orders_list = this.state.orders.map(order => {
+        var order_cards, message;
+        if (this.state.delivery_orders.length) {
+            order_cards = this.state.delivery_orders.map(order => {
                 return (
                     <Col sm={3}>
-                        <OrderCard order={order} />
+                        <OrderCard order={order} showAddress={true} />
                     </Col>
                 )
             });
         }
         else {
             message = (
-                <div>
-                    <Alert variant="info">You don't have any orders yet.</Alert>
+                <div className="py-4">
+                    <Alert variant="info">You don't have any orders to deliver.</Alert>
                 </div>
             );
         }
@@ -64,16 +70,16 @@ class MyOrders extends Component {
 
         return (
             <div className="container" style={{ width: "75%" }}>
-                <h2 className="p-4">My Orders</h2>
+                <h2 className="p-4">Deliver Orders</h2>
                 {message}
-                <Row>{orders_list}</Row>
+                <Row>{order_cards}</Row>
                 <br /><br />
             </div>
         );
     }
 }
 
-MyOrders.propTypes = {
+DeliveredOrders.propTypes = {
     auth: PropTypes.object.isRequired
 };
 
@@ -82,4 +88,4 @@ const mapStateToProps = state => ({
 });
 
 
-export default connect(mapStateToProps, {})(withRouter(MyOrders));
+export default connect(mapStateToProps, {})(withRouter(DeliveredOrders));

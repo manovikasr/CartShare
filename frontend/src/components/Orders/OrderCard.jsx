@@ -1,13 +1,12 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Card, Button } from "react-bootstrap";
-import storeImage from "../../images/StoreImage.png";
 import OrderProductsModal from "./OrderProductsModal";
 import EditStatusModal from "./EditStatusModal";
 
-class OrdersCard extends Component {
+class OrderCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -50,22 +49,8 @@ class OrdersCard extends Component {
 
     render() {
         const { user } = this.props.auth;
-        var actionButtons, store_name, editButton, order_date;
-        var { created_on } = this.state.order;
-        if(created_on){
-            order_date = (
-                <div>
-                    Order Date - {created_on.substr(0,10)}
-                </div>
-            );
-        }
-        if(this.props.order.store_name) {
-            store_name = (
-                <div>
-                    Store Name: {this.state.order.store_name}
-                </div>
-            )
-        }
+        var editButton;
+       
         if(this.props.order.user_id == user.id) {
             editButton = (
                 <Button variant="info" size="sm"  onClick={this.handleStatusModalToggle}><b>Edit Status</b></Button>    
@@ -75,13 +60,13 @@ class OrdersCard extends Component {
             <div>
             <Card bg="white" style={{ width: "18rem", margin: "5%" }}>
                 <Card.Body>
-                    <Card.Title><b>Order id - {this.state.order.id}</b></Card.Title>
+                    <Card.Title><b>Order #{this.state.order.id}</b></Card.Title>
                     <Card.Text>
-                        {order_date}
-                        {store_name}
-                        Status: {this.state.order.status}<br />
+                        <b>Store:</b> {this.props.order.store_name} <br/>
+                        <b>Order Date:</b> {(new Date(this.props.order.created_on)).toLocaleDateString("en-US")} <br/>
+                        <b>Status:</b> {this.props.order.status}<br />
                     </Card.Text>
-                    {editButton}&nbsp;&nbsp;
+                    {/* {editButton}&nbsp;&nbsp; */}
                     <Button variant="success" size="sm" onClick={this.handleToggle}><b>View Products</b></Button>
                 </Card.Body>
             </Card>
@@ -92,7 +77,7 @@ class OrdersCard extends Component {
     }
 }
 
-OrdersCard.propTypes = {
+OrderCard.propTypes = {
     auth: PropTypes.object.isRequired
 };
 
@@ -101,4 +86,4 @@ const mapStateToProps = state => ({
 });
 
 
-export default connect(mapStateToProps, {})(withRouter(OrdersCard));
+export default connect(mapStateToProps, {})(withRouter(OrderCard));
