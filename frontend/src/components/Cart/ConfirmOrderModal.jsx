@@ -78,7 +78,7 @@ class ConfirmOrderModal extends Component {
                                 <Form.Label><b>How do you want this order to be delivered?</b></Form.Label>
                                 <Form.Check name="delivery"
                                     type="radio"
-                                    label="I want pool members to deliver."
+                                    label="I want a fellow pooler to pickup and deliver."
                                     id="delivery"
                                     value={true}
                                     onChange={this.onCheck}

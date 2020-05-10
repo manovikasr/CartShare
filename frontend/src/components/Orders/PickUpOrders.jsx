@@ -67,7 +67,7 @@ class PickUpOrders extends Component {
                             </Card.Body>
                             <Col>
                                 <br/><br/>
-                                <Button variant="primary" onClick={this.handleToggle}>Pickup All Orders</Button>
+                                <Button variant="primary" onClick={this.handleToggle}>Checkout All Orders</Button>
                             </Col>
                         </Row>
                     </Card>

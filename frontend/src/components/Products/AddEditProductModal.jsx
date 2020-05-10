@@ -205,7 +205,7 @@ class AddEditProductModal extends Component {
                                     onChange={this.onChange}
                                     defaultValue={product_name}
                                     placeholder="Enter the product name"
-                                    pattern="^[A-Za-z0-9 ]+$"
+                                    pattern="^[A-Za-z0-9.,- ]+$"
                                     required
                                 />
                             </Form.Group>
@@ -219,7 +219,7 @@ class AddEditProductModal extends Component {
                                     onChange={this.onChange}
                                     defaultValue={product_brand}
                                     placeholder="Enter the Product Brand"
-                                    pattern="^[A-Za-z0-9 ]+$"
+                                    pattern="^[A-Za-z0-9.,- ]+$"
                                 />
                             </Form.Group>
                         </Form.Row>
@@ -245,7 +245,7 @@ class AddEditProductModal extends Component {
                                     onChange={this.onChange}
                                     defaultValue={product_desc}
                                     placeholder="Enter the description"
-                                    pattern="^[A-Za-z ]+$"
+                                    pattern="^[A-Za-z., ]+$"
                                     required />
                             </Form.Group>
                         </Form.Row>
@@ -265,13 +265,13 @@ class AddEditProductModal extends Component {
 
                         <Form.Row>
                             <Form.Group as={Col} controlId="price">
-                                <Form.Label><b>Price per unit</b></Form.Label>
+                                <Form.Label><b>Price per unit (in $)</b></Form.Label>
                                 <Form.Control name="price"
                                     type="text"
                                     onChange={this.onChange}
                                     defaultValue={price}
                                     placeholder="Enter the price"
-                                    pattern="^[0-9. ]+$"
+                                    pattern="^[0-9](\.[0-9]+)?$"
                                     required
                                 />
                             </Form.Group>
