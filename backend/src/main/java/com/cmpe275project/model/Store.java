@@ -71,6 +71,11 @@ public class Store {
 	@JsonManagedReference
 	private List<Product> products;
 	
+	@OneToMany(fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<Order> orders;
+	
+	
 	public Store() {
 		super();
 	}
@@ -131,9 +136,12 @@ public class Store {
 		this.products = products;
 	}
 
-	
+	public List<Order> getOrders() {
+		return orders;
+	}
 
-	
-	
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
 	 
 }

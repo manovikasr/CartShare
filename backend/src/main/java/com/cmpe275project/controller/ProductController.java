@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cmpe275project.model.Order;
 import com.cmpe275project.model.Product;
 import com.cmpe275project.model.StoreProduct;
 import com.cmpe275project.requestObjects.ProductStoreRequest;
@@ -165,6 +167,36 @@ public class ProductController {
 		
 		return new ResponseEntity<>(response,status);
 	}
+	
+	/*@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteProduct(@PathVariable Long id)
+	{
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		Product product = null;
+		ProductResponse response = new ProductResponse();
+		if(productService.isProductIdExists(id)) {
+			
+			product = productService.getProductInfoById(id);
+			
+			List<Order> orders = product.getStore().getOrders();
+			
+			for(Order order:orders) {
+				
+				if(!order.getStatus().equals("DELIVERED"));
+				     
+			}
+			
+			
+			response.setMessage("Product Details");
+			response.setStore(product);
+		    status = HttpStatus.OK;
+		}else {
+			response.setMessage("Product Details Not Available");
+		}
+		
+		return new ResponseEntity<>(response,status);
+	}*/
+	
 	
 	/*@PostMapping("/map_products_with_stores/{store_id}")
 	public ResponseEntity<?> mapProductsWithStores(@PathVariable Long store_id, @RequestParam Set<Long> product_ids)
