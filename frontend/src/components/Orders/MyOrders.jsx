@@ -30,9 +30,18 @@ class MyOrders extends Component {
         axios.get("/order/myorders")
             .then(res => {
                 if (res.data.orders) {
-                    this.setState({
-                        orders: res.data.orders
+                    var orders = res.data.orders;
+                    var cancelled_orders = [];
+                    orders.forEach(order => {
+                        if(Math.ceil((new Date() - new Date(order.created_on))/(1000*60*60*24)) > 2){
+                            order.status = "ORDER_CANCELLED";
+                            cancelled_orders.push(order.id);
+                        }
                     });
+                    this.setState({
+                        orders
+                    });
+                    this.cancelOrders(cancelled_orders);
                 }
             })
             .catch(e => {
@@ -40,6 +49,18 @@ class MyOrders extends Component {
                     console.log(e.response.data);
                 }
             })
+    }
+
+    cancelOrders = async orders => {
+        orders.forEach(async order_id => {
+            await axios.put(`/order/status/${order_id}/ORDER_CANCELLED`)
+                .then(res => {
+                })
+                .catch(e => {
+                    if (e.response && e.response.data)
+                        console.log(e.response);
+                });
+        });
     }
 
     render() {

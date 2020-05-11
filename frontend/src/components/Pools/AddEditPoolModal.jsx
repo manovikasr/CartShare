@@ -126,7 +126,7 @@ class AddEditPoolModal extends Component {
                                     onChange={this.onChange}
                                     defaultValue={pool_id}
                                     placeholder="Enter the pool id"
-                                    pattern="^[A-Za-z0-9 ]+$"
+                                    pattern="^[A-Za-z0-9]+$"
                                     required
                                     readOnly={updateMode} />
                             </Form.Group>
@@ -166,7 +166,7 @@ class AddEditPoolModal extends Component {
                                     onChange={this.onChange}
                                     defaultValue={neighbourhood_name}
                                     placeholder="Enter the neighbourhood name"
-                                    pattern="^[A-Za-z0-9,# ]+$"
+                                    pattern="^[A-Za-z0-9.,# ]+$"
                                     required />
                             </Form.Group>
                         </Form.Row>
@@ -179,7 +179,7 @@ class AddEditPoolModal extends Component {
                                     onChange={this.onChange}
                                     defaultValue={pool_zip}
                                     placeholder="Enter the zip code"
-                                    pattern="^[0-9 ]+$"
+                                    pattern="^[0-9]{5}$"
                                     required
                                     readOnly={updateMode} />
                             </Form.Group>

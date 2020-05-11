@@ -64,8 +64,7 @@ public class ProductController {
 		List<Product> products = new ArrayList<>();
 		
         for(long store_id : store_ids) {
-        
-        		System.out.println(store_id);
+       
 		        if(storeService.isStoreIdExists(store_id)) {
 		        	
 		        	if(!productService.chkSkuAndStoreIdExists(productRequest.getSku(), store_id)) {

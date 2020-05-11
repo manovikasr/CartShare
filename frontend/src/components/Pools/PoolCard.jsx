@@ -27,10 +27,6 @@ class PoolCard extends Component {
     render() {
         const pool = this.props.pool;
         var actionButton;
-        if ((pool.user.length >= 4))
-            actionButton = (
-                <Button variant="secondary">Full</Button>
-            )
         if (!this.props.alreadyPoolMember) {
             if (pool.user.length === 4) {
                 actionButton = (

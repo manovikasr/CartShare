@@ -112,7 +112,7 @@ class AddEditStoreModal extends Component {
                                     onChange={this.onChange}
                                     defaultValue={store_name}
                                     placeholder="Enter the store name"
-                                    pattern="^[A-Za-z0-9 ]+$"
+                                    pattern="^[A-Za-z0-9., ]+$"
                                     required />
                             </Form.Group>
                         </Form.Row>
@@ -125,7 +125,7 @@ class AddEditStoreModal extends Component {
                                     onChange={this.onChange}
                                     defaultValue={address}
                                     placeholder="Enter the street address"
-                                    pattern="^[A-Za-z0-9,# ]+$"
+                                    pattern="^[A-Za-z0-9.,# ]+$"
                                     required />
                             </Form.Group>
                         </Form.Row>
@@ -162,7 +162,7 @@ class AddEditStoreModal extends Component {
                                     onChange={this.onChange}
                                     defaultValue={zip}
                                     placeholder="Enter the zip code"
-                                    pattern="^[0-9 ]+$"
+                                    pattern="^[0-9]{5}(?:-[0-9]{4})?$"
                                     required />
                             </Form.Group>
                         </Form.Row>

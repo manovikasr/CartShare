@@ -57,7 +57,7 @@ class DeliveredOrders extends Component {
             order_cards = this.state.delivery_orders.map(order => {
                 return (
                     <Col sm={3}>
-                        <OrderCard order={order} showAddress={true} getOrders={this.getDeliveryOrders}/>
+                        <OrderCard order={order} getOrders={this.getDeliveryOrders}/>
                     </Col>
                 )
             });

@@ -145,7 +145,7 @@ class Register extends Component {
                         type="text"
                         onChange={this.onChange}
                         placeholder="Enter your street address"
-                        pattern="^[A-Za-z0-9 ]+$"
+                        pattern="^[A-Za-z0-9,.#- ]+$"
                         required />
                     </Form.Group>
                   </Form.Row>
@@ -179,7 +179,7 @@ class Register extends Component {
                         type="text"
                         onChange={this.onChange}
                         placeholder="Enter your zip code"
-                        pattern="^[0-9 ]+$"
+                        pattern="^[0-9]{5}(?:-[0-9]{4})?$"
                         required />
                     </Form.Group>
                   </Form.Row>

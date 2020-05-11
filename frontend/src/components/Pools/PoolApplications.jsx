@@ -124,7 +124,7 @@ class PoolApplications extends Component {
                             buttons = (
                                 <>
                                     <Button variant="primary" id={application.id} name={application.requserid} value={true} onClick={this.onSupportClick}>Support</Button>&nbsp;&nbsp;&nbsp;
-                                    <Button variant="secondary" id={application.id} name={application.requserid} value={false} onClick={this.onSupportClick}>Remove</Button>
+                                    <Button variant="secondary" id={application.id} name={application.requserid} value={false} onClick={this.onSupportClick}>Reject</Button>
                                 </>
                             );
                         } else {
@@ -139,9 +139,11 @@ class PoolApplications extends Component {
                                 <Row>
                                     <Card.Body>
                                         <Card.Title>{application.requserscreenname}</Card.Title>
-                                        <Card.Text>
-                                            <b>Reference Name: </b>{application.refusername}<br />
-                                        </Card.Text>
+                                        {application.refusername !== user.screen_name &&
+                                            <Card.Text>
+                                                <b>Reference Name: </b>{application.refusername}<br />
+                                            </Card.Text>
+                                        }
                                     </Card.Body>
                                     <Col>
                                         <br />

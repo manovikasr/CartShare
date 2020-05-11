@@ -37,7 +37,7 @@ class Profile extends Component {
                 error_message: props.errors.message,
                 success_message: ""
             });
-        } if(props.success.message) {
+        } if (props.success.message) {
             this.setState({
                 success_message: "Profile updated",
                 error_message: ""
@@ -90,7 +90,7 @@ class Profile extends Component {
     };
 
     render() {
-        var errorMessage, successMessage, contri_status = "";
+        var errorMessage, successMessage, contri_status = "", contri_status_color = "";
         var user = this.state.profile;
         if (this.state.error_message) {
             errorMessage = (
@@ -105,12 +105,18 @@ class Profile extends Component {
 
         if (this.state.profile.id) {
             let contri_credits = this.state.profile.contribution_credits;
-            if (contri_credits >= 0)
+            if (contri_credits >= 0) {
                 contri_status = "GREEN";
-            else if (contri_credits > -4)
+                contri_status_color = "#03fc6b";
+            }
+            else if (contri_credits > -4) {
                 contri_status = "YELLOW";
-            else
+                contri_status_color = "#fcfc03";
+            }
+            else {
                 contri_status = "RED";
+                contri_status_color = "#e66722";
+            }
         }
 
         return (
@@ -183,6 +189,7 @@ class Profile extends Component {
                                                 <Form.Label><b>Status</b></Form.Label>
                                                 <Form.Control name="status"
                                                     type="text"
+                                                    style={{ backgroundColor: contri_status_color }}
                                                     value={contri_status}
                                                     readOnly />
                                             </Form.Group>
@@ -197,7 +204,7 @@ class Profile extends Component {
                                                 onChange={this.onChange}
                                                 defaultValue={user.address}
                                                 placeholder="Enter your street address"
-                                                pattern="^[A-Za-z0-9 ]+$"
+                                                pattern="^[A-Za-z0-9,.#- ]+$"
                                                 required />
                                         </Form.Group>
                                     </Form.Row>
@@ -234,7 +241,7 @@ class Profile extends Component {
                                                 onChange={this.onChange}
                                                 defaultValue={user.zip}
                                                 placeholder="Enter your zip code"
-                                                pattern="^[0-9 ]+$"
+                                                pattern="^[0-9]{5}(?:-[0-9]{4})?$"
                                                 required />
                                         </Form.Group>
                                     </Form.Row>

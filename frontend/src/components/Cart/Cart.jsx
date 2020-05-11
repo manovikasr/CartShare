@@ -203,7 +203,7 @@ class Cart extends Component {
                         <td align="center">{item.sku}</td>
                         <td align="center">$ {item.price}</td>
                         <td align="center">
-                            <input type="number" name={item.id} min="1" max="10" width="10%" onChange={this.onQuantityChange} defaultValue={item.quantity}></input>
+                            <input type="number" name={item.id} min="1" max="10" width="10%" onChange={this.onQuantityChange} defaultValue={item.quantity}></input> {item.unit_type}
                         </td>
                         <td align="center">
                             <i class="fas fa-trash-alt" name={item.id} onClick={this.removeItem} alt="" />
@@ -230,7 +230,7 @@ class Cart extends Component {
                             <td align="center"><b>$ {this.state.subTotal}</b></td>
                         </tr>
                         <tr>
-                            <td colSpan="4">Service Fees ({this.state.taxPercent}%)</td><td></td>
+                            <td colSpan="4">Tax & Fees ({this.state.taxPercent}%)</td><td></td>
                             <td align="center">$ {this.state.taxAmount}</td>
                         </tr>
                         <tr>
