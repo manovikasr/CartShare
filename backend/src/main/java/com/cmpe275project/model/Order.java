@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -72,6 +73,10 @@ public class Order {
 	@OneToOne
 	@JoinColumn(name = "user_id",insertable=false,updatable=false)
 	private User user;
+	
+	@ManyToOne
+	@JoinColumn(name = "store_id",insertable=false,updatable=false)
+	private Store store;
 	
 	public long getId() {
 		return id;
@@ -169,9 +174,13 @@ public class Order {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
-	
-	
-	
+
+	public Store getStore() {
+		return store;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
+	}
 	
 }

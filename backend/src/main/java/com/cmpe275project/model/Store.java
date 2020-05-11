@@ -3,6 +3,7 @@ package com.cmpe275project.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -66,12 +67,12 @@ public class Store {
 	//@JsonIgnore
 	private List<Product> store_products;*/
 
-	@OneToMany(fetch = FetchType.LAZY,mappedBy = "store")
+	@OneToMany(fetch = FetchType.LAZY,mappedBy = "store",cascade = CascadeType.REMOVE)
 	//@JsonIgnore
 	@JsonManagedReference
 	private List<Product> products;
 	
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY,mappedBy = "store")
 	@JsonIgnore
 	private List<Order> orders;
 	

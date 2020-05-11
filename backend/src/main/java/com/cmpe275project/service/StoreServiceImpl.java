@@ -21,6 +21,9 @@ public class StoreServiceImpl implements StoreService{
 	@Autowired 
 	private StoreDao storeDao;
 	
+	@Autowired 
+	private ProductService productService;
+	
 	@Override
 	public Boolean chkStoreNameExists(String store_name) {
 		// TODO Auto-generated method stub
@@ -92,6 +95,16 @@ public class StoreServiceImpl implements StoreService{
 	public List<Store> getAllStores() {
 		// TODO Auto-generated method stub
 		return storeDao.getAllStores();
+	}
+
+	@Override
+	@Transactional
+	public void deleteStoreAndProduct(Store store, Product product) {
+		// TODO Auto-generated method stub
+		if(product!=null)
+			 productService.delete(product);
+		
+		storeDao.delete(store);
 	}
 	
 }

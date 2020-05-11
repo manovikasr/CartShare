@@ -25,10 +25,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cmpe275project.model.Order;
+import com.cmpe275project.model.OrderDetail;
 import com.cmpe275project.model.Product;
 import com.cmpe275project.model.StoreProduct;
 import com.cmpe275project.requestObjects.ProductStoreRequest;
 import com.cmpe275project.responseObjects.ProductResponse;
+import com.cmpe275project.service.OrderDetailService;
+import com.cmpe275project.service.OrderService;
 import com.cmpe275project.service.ProductService;
 import com.cmpe275project.service.StoreService;
 
@@ -41,6 +44,13 @@ public class ProductController {
 	
 	@Autowired
 	private StoreService storeService;
+	
+	@Autowired
+	private OrderService orderService;
+	
+	@Autowired
+	private OrderDetailService orderDetailService;
+	
 	
 	@PostMapping("")
 	public ResponseEntity<?> addProduct(@Valid @RequestBody Product productRequest,@RequestParam Set<Long> store_ids, Errors errors)
@@ -167,7 +177,7 @@ public class ProductController {
 		return new ResponseEntity<>(response,status);
 	}
 	
-	/*@DeleteMapping("/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteProduct(@PathVariable Long id)
 	{
 		HttpStatus status = HttpStatus.NOT_FOUND;
@@ -175,26 +185,29 @@ public class ProductController {
 		ProductResponse response = new ProductResponse();
 		if(productService.isProductIdExists(id)) {
 			
-			product = productService.getProductInfoById(id);
-			
-			List<Order> orders = product.getStore().getOrders();
-			
-			for(Order order:orders) {
+		    List<OrderDetail> orderDetails = orderDetailService.getOrderIdsByProductId(id);
+		    
+			for(OrderDetail orderDetail:orderDetails) {
 				
-				if(!order.getStatus().equals("DELIVERED"));
+				if(!orderService.getOrderInfoById(orderDetail.getOrder_id()).getStatus().equals("DELIVERED")) {
+					status = HttpStatus.BAD_REQUEST;
+					response.setMessage("Cannot Delete Product, Some orders are not delivered...");
+					return new ResponseEntity<>(response,status);
+				}
 				     
 			}
 			
+			product = productService.getProductInfoById(id);
+			productService.delete(product);
 			
-			response.setMessage("Product Details");
-			response.setStore(product);
-		    status = HttpStatus.OK;
+			response.setMessage("Product Successfully Deleted ");
+			status = HttpStatus.OK;
 		}else {
 			response.setMessage("Product Details Not Available");
 		}
 		
 		return new ResponseEntity<>(response,status);
-	}*/
+	}
 	
 	
 	/*@PostMapping("/map_products_with_stores/{store_id}")
