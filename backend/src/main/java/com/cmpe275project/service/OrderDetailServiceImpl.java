@@ -12,7 +12,7 @@ import com.cmpe275project.model.OrderDetail;
 
 @Service
 @Transactional
-public class OrdersDetailServiceImpl implements OrderDetailService {
+public class OrderDetailServiceImpl implements OrderDetailService {
 
 	@Autowired
 	private OrderDetailDao orderDetailDao;
@@ -29,6 +29,13 @@ public class OrdersDetailServiceImpl implements OrderDetailService {
 		// TODO Auto-generated method stub
 		for(OrderDetail orderDetail:orderDetails)
 			             orderDetailDao.add(orderDetail);
+	}
+
+	@Override
+	public List<OrderDetail> getOrderIdsByProductId(Long product_id) {
+		// TODO Auto-generated method stub
+		
+		return orderDetailDao.getOrderIdsByProductId(product_id);
 	}
 
 }

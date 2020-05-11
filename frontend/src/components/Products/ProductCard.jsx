@@ -6,6 +6,8 @@ import axios from "axios";
 import { Card, Button, Row, Col, Modal } from "react-bootstrap";
 import AddEditProductModal from "./AddEditProductModal";
 import productImage from "../../images/ProductThumbnail.jpg";
+import config from '../../config/app-config';
+
 
 class ProductCard extends Component {
     constructor(props) {
@@ -110,6 +112,8 @@ class ProductCard extends Component {
                     fileText: "Choose Image..",
                     showImageModal: false
                 });
+                window.location.reload(true);
+                //this.props.history.replace(this.props.location.pathname);
                 this.props.getProducts();  
             })
             .catch(err => {
@@ -151,10 +155,10 @@ class ProductCard extends Component {
         const { user } = this.props.auth;
         const product = this.props.product;
         var buttons, store_name, onImageClick;
-
+        var imageSrc;
         // TODO
-        var imageSrc = productImage;  //`/image/product/${product.id}`;//product.product_img
-
+        imageSrc = product.product_img!=null ? `${config.api_host}/image/product/${product.id}` :  productImage;
+        
         if (user.role === 'admin') {
             onImageClick = this.handleImageClick;
             buttons = (
