@@ -184,7 +184,7 @@ public class StoreController {
 			
 			for(Order order:orders) {
 				
-				if(!order.getStatus().equals("DELIVERED")) {
+				if(!order.getStatus().equals("ORDER_DELIVERED")) {
 					status = HttpStatus.BAD_REQUEST;
 					response.setMessage("Cannot Delete Store, Some orders are not delivered...");
 					return new ResponseEntity<>(response,status);

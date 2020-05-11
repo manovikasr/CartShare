@@ -78,7 +78,6 @@ class AdminStores extends Component {
   }
 
   render() {
-    const { user } = this.props.auth;
     var alertMessage, stores;
     if (this.state.error_message) {
       alertMessage = (

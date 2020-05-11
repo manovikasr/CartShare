@@ -118,7 +118,7 @@ class PoolersOrders extends Component {
 
     render() {
         var store, store_name, address, address2;
-        var ordersTable, orders_list, form, store;
+        var ordersTable, orders_list, form;
 
         if (this.state.store.id) {
             store_name = this.state.store.store_name;

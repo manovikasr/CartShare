@@ -71,7 +71,6 @@ class AddEditProductModal extends Component {
 
     addProduct = (e) => {
         e.preventDefault();
-        const { user } = this.props.auth;
         var store_ids = "";
         if (this.props.store) {
             store_ids = this.props.store.id
@@ -152,7 +151,7 @@ class AddEditProductModal extends Component {
     }
 
     render() {
-        var title = "Add Product", onSubmit = this.addProduct, updateMode = false, storesField;
+        var title = "Add Product", onSubmit = this.addProduct, storesField;
         var errorMessage, product_name, product_brand, sku, product_desc, unit_type, price;
         if (this.state.error_message) {
             errorMessage = (
@@ -161,7 +160,6 @@ class AddEditProductModal extends Component {
         }
 
         if (this.props.product) {
-            updateMode = true;
             title = "Update Product";
             onSubmit = this.updateProduct;
             product_name = this.props.product.product_name;

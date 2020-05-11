@@ -1,6 +1,7 @@
 package com.cmpe275project.controller;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,8 +125,6 @@ public class OrderController {
 			
 			if(orderRequest.getType_of_pickup().equals("other"))
 			 {	
-				user.setContribution_credits(user.getContribution_credits() - 1);
-				userService.edit(user);
 				String user_email = user.getEmail();
 				Map<String, Object> map = new HashMap<>();
 				map.put("pooler_name", user.getScreen_name());
@@ -244,12 +243,21 @@ public class OrderController {
 	{
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		OrderResponse response = new OrderResponse();
+		Date today = new Date();
 		
 		List<Order> myOrders=orderService.getMyAllOrders((Long)request.getAttribute("user_id"));
 		
 		if(myOrders==null) {
 			response.setMessage("Sorry, There are no orders");
-		}else {
+		} else {
+			
+			for(Order order : myOrders) {
+				if(((order.getCreated_on().getTime() - today.getTime())/(24*60*60*1000)) > 2 ) {
+					order.setStatus("ORDER_CANCELLED");
+					orderService.edit(order);
+				}
+			}
+			
 			status =HttpStatus.OK;
 			response.setMessage("My Orders");
 			response.setOrders(myOrders);
@@ -302,8 +310,18 @@ public class OrderController {
 				order.setStatus(status);
 				orderService.edit(order);
 				
+				User user = order.getUser();
+				User delivery_man = userService.getUserInfoById(order.getPicker_user_id());
+				
 				///-------------TODO --------------------Mail to be Send
-				if(order.getStatus().toLowerCase().equals("delivered")) {
+				if(order.getStatus().toLowerCase().equals("ORDER_DELIVERED")) {
+					if(order.getUser().getId() != order.getPicker_user_id()) {
+						user.setContribution_credits((user.getContribution_credits() - 1));
+						userService.edit(user);
+						delivery_man.setContribution_credits((delivery_man.getContribution_credits() + 1));
+						userService.edit(delivery_man);
+					}
+					
 					String user_email = order.getUser().getEmail();
 					String user_screen_name = order.getUser().getScreen_name();
 					Map<String, Object> map = new HashMap<String, Object>();
@@ -313,7 +331,12 @@ public class OrderController {
 					emailService.sendEmailforOrderDelivered(user_email, map);
 				}
 				
-				if(order.getStatus().toLowerCase().equals("delivered-not-received")) {
+				if(order.getStatus().toLowerCase().equals("ORDER_NOT_DELIVERED")) {
+					user.setContribution_credits((user.getContribution_credits() + 1));
+					userService.edit(user);
+					delivery_man.setContribution_credits((delivery_man.getContribution_credits() - 1));
+					userService.edit(delivery_man);
+					
 					Long deliverer_id = order.getPicker_user_id();
 					String user_screen_name = order.getUser().getScreen_name();
 					String deliverer_screen_name = userService.getUserInfoById(deliverer_id).getScreen_name();

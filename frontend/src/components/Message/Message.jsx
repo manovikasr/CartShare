@@ -75,7 +75,6 @@ class Message extends Component {
     }
 
     render() {
-        const { user } = this.props.auth;
         var alertMessage;
 
         if (this.state.alert_message) {

@@ -203,7 +203,7 @@ class ProductCard extends Component {
                 <Card bg="white" style={{ width: "55rem", margin: "10%" }}>
                     <Row>
                         <Col>
-                            <Card.Img style={{ width: "12rem", height: "12rem" }} alt="" src={imageSrc} onClick={onImageClick} />
+                            <Card.Img style={{ width: "12rem", height: "12rem" }} alt="" src={imageSrc} onClick={onImageClick} onError={productImage}/>
                         </Col>
                         <Card.Body>
                             <Card.Title>{product.product_name}</Card.Title>

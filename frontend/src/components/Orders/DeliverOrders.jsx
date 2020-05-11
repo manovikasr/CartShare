@@ -32,7 +32,7 @@ class DeliveredOrders extends Component {
             .then(async res => {
                 if (res.data) {
                     console.log(res.data);
-                    let orders = res.data.orders.filter(order => order.user_id != user.id)
+                    let orders = res.data.orders.filter(order => order.user_id !== user.id)
                     this.setState({
                         delivery_orders: orders
                     });

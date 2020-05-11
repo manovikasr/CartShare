@@ -189,7 +189,7 @@ public class ProductController {
 		    
 			for(OrderDetail orderDetail:orderDetails) {
 				
-				if(!orderService.getOrderInfoById(orderDetail.getOrder_id()).getStatus().equals("DELIVERED")) {
+				if(!orderService.getOrderInfoById(orderDetail.getOrder_id()).getStatus().equals("ORDER_DELIVERED")) {
 					status = HttpStatus.BAD_REQUEST;
 					response.setMessage("Cannot Delete Product, Some orders are not delivered...");
 					return new ResponseEntity<>(response,status);

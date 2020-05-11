@@ -92,7 +92,6 @@ class AllPools extends Component {
     };
 
     render() {
-        const { user } = this.props.auth;
         var poolData;
 
         if (this.state.pools.length) {

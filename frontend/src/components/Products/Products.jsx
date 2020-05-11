@@ -3,9 +3,8 @@ import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import axios from "axios";
-import { Alert, Card, Row, Col, InputGroup, FormControl, Button } from "react-bootstrap";
+import { Alert, Row, Col, InputGroup, FormControl, Button } from "react-bootstrap";
 import ProductCard from "./ProductCard";
-import storeImage from "../../images/StoreImage.png";
 import AddEditProductModal from "./AddEditProductModal";
 
 class Products extends Component {

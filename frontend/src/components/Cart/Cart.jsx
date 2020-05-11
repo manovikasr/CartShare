@@ -133,7 +133,7 @@ class Cart extends Component {
 
         axios.post("/order", orderData)
             .then(res => {
-                if (res.status == 200) {
+                if (res.status === 200) {
                     this.clearCart();
                     this.onHideModal();
                     if (delivery)

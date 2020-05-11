@@ -93,7 +93,7 @@ class AddEditPoolModal extends Component {
 
     render() {
         var title = "Add Pool", onSubmit = this.addPool, updateMode = false;
-        var errorMessage, pool_id, pool_name, neighbourhood_name, pool_desc, state, pool_zip;
+        var errorMessage, pool_id, pool_name, neighbourhood_name, pool_desc, pool_zip;
         if (this.state.error_message) {
             errorMessage = (
                 <Alert variant="warning">{this.state.error_message}</Alert>

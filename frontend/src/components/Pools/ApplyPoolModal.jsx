@@ -43,7 +43,7 @@ class ApplyPoolModal extends Component {
         e.preventDefault();
         const { user } = this.props.auth;
         const pool = this.props.pool;
-        const knows_leader = this.state.know_pool_leader;
+        var knows_leader = this.state.know_pool_leader;
         var ref_name = this.state.ref_name;
         var pool_leader_id = pool.pool_leader_id;
         var pool_leader = pool.user.find(member => member.id === pool_leader_id);

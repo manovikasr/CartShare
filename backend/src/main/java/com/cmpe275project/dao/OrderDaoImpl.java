@@ -129,13 +129,10 @@ public class OrderDaoImpl implements OrderDao {
 		Root<Order> root = criteriaQuery.from( Order.class );
 		criteriaQuery.select(root);
 		criteriaQuery.orderBy(builder.asc(root.get("created_on")));
-		
 		criteriaQuery.where(
-				                           builder.and(
 							                        		   builder.equal(
 						                        		                root.get( "user_id" ), user_id
 						                        		              )
-				                        		              )
 				                         );
 		
 		TypedQuery<Order> query = entityManager.createQuery(criteriaQuery); 

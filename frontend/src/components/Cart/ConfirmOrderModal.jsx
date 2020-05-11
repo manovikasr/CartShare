@@ -3,7 +3,6 @@ import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Button, Modal, Form, Col, Alert } from "react-bootstrap";
-import axios from "axios";
 
 class ConfirmOrderModal extends Component {
     constructor(props) {
