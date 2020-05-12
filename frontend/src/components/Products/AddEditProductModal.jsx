@@ -17,7 +17,8 @@ class AddEditProductModal extends Component {
             unit_type: "",
             product_desc: "",
             stores: [],
-            selected_stores: []
+            selected_stores: [],
+            disableButton: false
         };
     }
 
@@ -71,7 +72,9 @@ class AddEditProductModal extends Component {
 
     addProduct = (e) => {
         e.preventDefault();
-        const { user } = this.props.auth;
+        this.setState({
+            disableButton: true
+        });
         var store_ids = "";
         if (this.props.store) {
             store_ids = this.props.store.id
@@ -104,12 +107,16 @@ class AddEditProductModal extends Component {
                 if (res.status === 200) {
                     this.onHide();
                     this.props.getProducts();
+                    this.setState({
+                        disableButton: false
+                    });
                 }
             })
             .catch(e => {
                 console.log(e.response);
                 if (e.response && e.response.data)
                     this.setState({
+                        disableButton: false,
                         error_message: e.response.data.message
                     });
             })
@@ -118,7 +125,9 @@ class AddEditProductModal extends Component {
     updateProduct = (e) => {
         e.preventDefault();
         var id, product_name, product_brand, sku, store_id, product_desc, product_img, unit_type, price;
-
+        this.setState({
+            disableButton: true
+        });
         if (this.props.product) {
             id = this.props.product.id;
             store_id = this.props.product.store_id;
@@ -139,20 +148,24 @@ class AddEditProductModal extends Component {
                 if (res.status === 200) {
                     this.onHide();
                     this.props.getProducts();
+                    this.setState({
+                        disableButton: false
+                    });
                 }
             })
             .catch(e => {
                 console.log(e.response);
                 if (e.response && e.response.data)
                     this.setState({
-                        error_message: e.response.data.message
+                        error_message: e.response.data.message,
+                        disableButton: false
                     });
             })
 
     }
 
     render() {
-        var title = "Add Product", onSubmit = this.addProduct, updateMode = false, storesField;
+        var title = "Add Product", onSubmit = this.addProduct, storesField;
         var errorMessage, product_name, product_brand, sku, product_desc, unit_type, price;
         if (this.state.error_message) {
             errorMessage = (
@@ -161,7 +174,6 @@ class AddEditProductModal extends Component {
         }
 
         if (this.props.product) {
-            updateMode = true;
             title = "Update Product";
             onSubmit = this.updateProduct;
             product_name = this.props.product.product_name;
@@ -205,7 +217,7 @@ class AddEditProductModal extends Component {
                                     onChange={this.onChange}
                                     defaultValue={product_name}
                                     placeholder="Enter the product name"
-                                    pattern="^[A-Za-z0-9 ]+$"
+                                    pattern="^[A-Za-z0-9.,- ]+$"
                                     required
                                 />
                             </Form.Group>
@@ -219,7 +231,7 @@ class AddEditProductModal extends Component {
                                     onChange={this.onChange}
                                     defaultValue={product_brand}
                                     placeholder="Enter the Product Brand"
-                                    pattern="^[A-Za-z0-9 ]+$"
+                                    pattern="^[A-Za-z0-9.,- ]+$"
                                 />
                             </Form.Group>
                         </Form.Row>
@@ -245,7 +257,7 @@ class AddEditProductModal extends Component {
                                     onChange={this.onChange}
                                     defaultValue={product_desc}
                                     placeholder="Enter the description"
-                                    pattern="^[A-Za-z ]+$"
+                                    pattern="^[A-Za-z., ]+$"
                                     required />
                             </Form.Group>
                         </Form.Row>
@@ -265,13 +277,13 @@ class AddEditProductModal extends Component {
 
                         <Form.Row>
                             <Form.Group as={Col} controlId="price">
-                                <Form.Label><b>Price per unit</b></Form.Label>
+                                <Form.Label><b>Price per unit (in $)</b></Form.Label>
                                 <Form.Control name="price"
                                     type="text"
                                     onChange={this.onChange}
                                     defaultValue={price}
                                     placeholder="Enter the price"
-                                    pattern="^[0-9. ]+$"
+                                    pattern="^\d+\.?\d*$$"
                                     required
                                 />
                             </Form.Group>
@@ -280,10 +292,10 @@ class AddEditProductModal extends Component {
                         {storesField}
 
                         <center>
-                            <Button variant="primary" type="submit">
+                            <Button variant="primary" type="submit" disabled={this.state.disableButton}>
                                 <b>{title}</b>
                             </Button> &nbsp; &nbsp;
-                            <Button variant="secondary" onClick={this.onHide}>
+                            <Button variant="secondary" onClick={this.onHide} disabled={this.state.disableButton}>
                                 <b>Cancel</b>
                             </Button>
                         </center>

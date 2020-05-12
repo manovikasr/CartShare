@@ -47,8 +47,8 @@ public class Product {
 	@Column(name = "sku")
 	private String sku;
 	
-	@NotNull(message = "Store Id is Mandatory")
-	@Range(min=1, message="Store Id is Manadatory(Min 1 Digit)")
+//	@NotNull(message = "Store Id is Mandatory")
+//	@Range(min=1, message="Store Id is Manadatory(Min 1 Digit)")
 	@Column(name = "store_id")
 	private Long store_id;
 	

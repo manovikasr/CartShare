@@ -2,6 +2,7 @@ package com.cmpe275project.service;
 
 import java.util.List;
 
+import com.cmpe275project.model.Product;
 import com.cmpe275project.model.Store;
 import com.cmpe275project.model.StoreProduct;
 
@@ -30,4 +31,6 @@ public interface StoreService {
 	public void deleteAllStoreProducts(List<StoreProduct> existingStoreProducts);
 	
 	public List<Store> getAllStores();
+	
+	public void deleteStoreAndProduct(Store store,Product product);
 }

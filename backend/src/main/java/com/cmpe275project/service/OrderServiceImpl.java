@@ -73,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
 
 			for(Order placedOrder : orders) {
 				placedOrder.setPicker_user_id(user_id);
-				placedOrder.setStatus("PICKER_ASSIGNED");
+				placedOrder.setStatus("PICKUP_ASSIGNED");
 			    orderDao.edit(placedOrder);
 		      }
 			

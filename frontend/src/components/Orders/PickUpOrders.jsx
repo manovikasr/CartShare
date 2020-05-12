@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { withRouter, BrowserRouter, NavLink, Route } from "react-router-dom";
-import { Nav, Container, Row, Col, Alert, Table, Form, Button, Card } from "react-bootstrap";
+import { withRouter } from "react-router-dom";
+import { Row, Col, Alert, Button, Card } from "react-bootstrap";
 import PropTypes from "prop-types";
 import axios from "axios";
 import QRCodeModal from "./QRCodeModal";
@@ -67,7 +67,7 @@ class PickUpOrders extends Component {
                             </Card.Body>
                             <Col>
                                 <br/><br/>
-                                <Button variant="primary" onClick={this.handleToggle}>Pickup All Orders</Button>
+                                <Button variant="primary" onClick={this.handleToggle}>Checkout All Orders</Button>
                             </Col>
                         </Row>
                     </Card>

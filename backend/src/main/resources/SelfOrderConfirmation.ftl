@@ -3,7 +3,8 @@
 
 <body>
 	<p>Hi ${pooler_name},</p>
-	<p>Your <b>Order #${order_id}</b> has been delivered to you by <b>${deliverer}</b>.</p>
+	<p>Thank you for placing an Order in Cart Share.</p>
+	<p>Your order will be ready for pickup. Please come and collect your order within two days.</p>
 	<br/>
 			<table border="1">
 			<tr>
@@ -29,8 +30,7 @@
 				</tr>
 			</#list>
 		</table>
-	<br/>
-	<p>Please let us know if you haven't received your order.</p>
+		<br/>
 	<p>Thanks,</p>
 	<p>Cart Share Team</p>	
 </body>

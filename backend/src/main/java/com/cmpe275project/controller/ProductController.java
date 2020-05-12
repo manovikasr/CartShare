@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,10 +24,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cmpe275project.model.Order;
+import com.cmpe275project.model.OrderDetail;
 import com.cmpe275project.model.Product;
 import com.cmpe275project.model.StoreProduct;
 import com.cmpe275project.requestObjects.ProductStoreRequest;
 import com.cmpe275project.responseObjects.ProductResponse;
+import com.cmpe275project.service.OrderDetailService;
+import com.cmpe275project.service.OrderService;
 import com.cmpe275project.service.ProductService;
 import com.cmpe275project.service.StoreService;
 
@@ -39,6 +44,13 @@ public class ProductController {
 	
 	@Autowired
 	private StoreService storeService;
+	
+	@Autowired
+	private OrderService orderService;
+	
+	@Autowired
+	private OrderDetailService orderDetailService;
+	
 	
 	@PostMapping("")
 	public ResponseEntity<?> addProduct(@Valid @RequestBody Product productRequest,@RequestParam Set<Long> store_ids, Errors errors)
@@ -62,8 +74,7 @@ public class ProductController {
 		List<Product> products = new ArrayList<>();
 		
         for(long store_id : store_ids) {
-        
-        		System.out.println(store_id);
+       
 		        if(storeService.isStoreIdExists(store_id)) {
 		        	
 		        	if(!productService.chkSkuAndStoreIdExists(productRequest.getSku(), store_id)) {
@@ -165,6 +176,40 @@ public class ProductController {
 		
 		return new ResponseEntity<>(response,status);
 	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteProduct(@PathVariable Long id)
+	{
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		Product product = null;
+		ProductResponse response = new ProductResponse();
+		if(productService.isProductIdExists(id)) {
+			
+		    List<OrderDetail> orderDetails = orderDetailService.getOrderIdsByProductId(id);
+		    
+			for(OrderDetail orderDetail:orderDetails) {
+				
+				if(!orderService.getOrderInfoById(orderDetail.getOrder_id()).getStatus().equals("ORDER_DELIVERED") 
+						&& !orderService.getOrderInfoById(orderDetail.getOrder_id()).getStatus().equals("ORDER_PICKEDUP_SELF")) {
+					status = HttpStatus.BAD_REQUEST;
+					response.setMessage("Product cannot be deleted. There are some undelivered orders with this product.");
+					return new ResponseEntity<>(response,status);
+				}
+				     
+			}
+			
+			product = productService.getProductInfoById(id);
+			productService.delete(product);
+			
+			response.setMessage("Product Successfully Deleted ");
+			status = HttpStatus.OK;
+		}else {
+			response.setMessage("Product Details Not Available");
+		}
+		
+		return new ResponseEntity<>(response,status);
+	}
+	
 	
 	/*@PostMapping("/map_products_with_stores/{store_id}")
 	public ResponseEntity<?> mapProductsWithStores(@PathVariable Long store_id, @RequestParam Set<Long> product_ids)

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { withRouter, BrowserRouter, NavLink, Route } from "react-router-dom";
-import { Nav, Container, Row, Col, Alert, Table, Form, Button } from "react-bootstrap";
+import { withRouter } from "react-router-dom";
+import { Row, Col, Alert } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import OrderCard from "./OrderCard";
@@ -47,8 +47,8 @@ class MyOrders extends Component {
         if (this.state.orders.length) {
             orders_list = this.state.orders.map(order => {
                 return (
-                    <Col sm={3}>
-                        <OrderCard order={order} />
+                    <Col sm={3} key={order.id}>
+                        <OrderCard order={order} getOrders={this.getMyOrders}/>
                     </Col>
                 )
             });

@@ -6,6 +6,8 @@ import axios from "axios";
 import { Card, Button, Row, Col, Modal } from "react-bootstrap";
 import AddEditProductModal from "./AddEditProductModal";
 import productImage from "../../images/ProductThumbnail.jpg";
+import config from '../../config/app-config';
+
 
 class ProductCard extends Component {
     constructor(props) {
@@ -16,12 +18,9 @@ class ProductCard extends Component {
             showCartModal: false,
             purchase_quantity: 1,
             file: null,
-            fileText: "Choose image.."
+            fileText: "Choose image..",
+            disableButton: false
         };
-    }
-
-    componentDidMount() {
-
     }
 
     handleToggle = () => {
@@ -95,6 +94,9 @@ class ProductCard extends Component {
     uploadImage = (e) => {
         e.preventDefault();
 
+        this.setState({
+            disableButton: true
+        });
         const product_id = this.props.product.id;
         const formData = new FormData();
         formData.append("file", this.state.file);
@@ -108,19 +110,18 @@ class ProductCard extends Component {
                 this.setState({
                     file: null,
                     fileText: "Choose Image..",
-                    showImageModal: false
+                    showImageModal: false,
+                    disableButton: false
                 });
+                window.location.reload(true);
+                //this.props.history.replace(this.props.location.pathname);
                 this.props.getProducts();  
             })
             .catch(err => {
                 console.log("Error uploading image");
-            });
-
-            // TODO Remove below code
-            this.setState({
-                file: null,
-                fileText: "Choose Image..",
-                showImageModal: false
+                this.setState({
+                    disableButton: false
+                });
             });
     };
 
@@ -151,16 +152,16 @@ class ProductCard extends Component {
         const { user } = this.props.auth;
         const product = this.props.product;
         var buttons, store_name, onImageClick;
-
+        var imageSrc;
         // TODO
-        var imageSrc = productImage;  //`/image/product/${product.id}`;//product.product_img
-
+        imageSrc = product.product_img!=null ? `${config.api_host}/image/product/${product.id}` :  productImage;
+        
         if (user.role === 'admin') {
             onImageClick = this.handleImageClick;
             buttons = (
                 <>
-                    <Button variant="link" onClick={this.handleToggle}>Update</Button><br />
-                    <Button variant="link" onClick={this.deleteProduct}>Delete</Button>
+                    <Button variant="link" onClick={this.handleToggle} disabled={this.state.disableButton}>Update</Button><br />
+                    <Button variant="link" onClick={this.deleteProduct} disabled={this.state.disableButton}>Delete</Button>
                 </>
             );
         } else if (user.role === 'pooler') {
@@ -199,7 +200,7 @@ class ProductCard extends Component {
                 <Card bg="white" style={{ width: "55rem", margin: "10%" }}>
                     <Row>
                         <Col>
-                            <Card.Img style={{ width: "12rem", height: "12rem" }} alt="" src={imageSrc} onClick={onImageClick} />
+                            <Card.Img style={{ width: "12rem", height: "12rem" }} alt="" src={imageSrc} onClick={onImageClick} onError={productImage}/>
                         </Col>
                         <Card.Body>
                             <Card.Title>{product.product_name}</Card.Title>

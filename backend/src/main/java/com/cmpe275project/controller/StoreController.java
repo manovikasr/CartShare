@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,9 +22,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cmpe275project.model.Order;
+import com.cmpe275project.model.OrderDetail;
+import com.cmpe275project.model.Product;
 import com.cmpe275project.model.Store;
 import com.cmpe275project.responseObjects.StoreListResponse;
 import com.cmpe275project.responseObjects.StoreResponse;
+import com.cmpe275project.service.OrderDetailService;
+import com.cmpe275project.service.OrderService;
+import com.cmpe275project.service.ProductService;
 import com.cmpe275project.service.StoreService;
 
 @RestController
@@ -33,6 +40,14 @@ public class StoreController {
 	@Autowired
 	private StoreService storeService;
 	
+	@Autowired
+	private OrderDetailService orderDetailService;
+	
+	@Autowired
+	private OrderService orderService;
+	
+	@Autowired
+	private ProductService productService;
 	
 	@PostMapping("")
 	public ResponseEntity<?> addStore(@Valid @RequestBody Store storeRequest, Errors errors)
@@ -148,6 +163,39 @@ public class StoreController {
 			response.setMessage("All Stores Details");
 			response.setStore(stores);
 			status = HttpStatus.OK;
+		}else {
+			response.setMessage("Store Details Not Available");
+		}
+		
+		return new ResponseEntity<>(response,status);
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteStore(@PathVariable Long id)
+	{
+		HttpStatus status = HttpStatus.NOT_FOUND;
+		Store store = null;
+		StoreResponse response = new StoreResponse();
+		if(storeService.isStoreIdExists(id)) {
+			
+			store = storeService.getStoreInfoById(id);
+			
+			List<Order> orders = store.getOrders();
+			
+			for(Order order:orders) {
+				
+				if(!order.getStatus().equals("ORDER_DELIVERED") && !order.getStatus().equals("ORDER_PICKEDUP_SELF")) {
+					status = HttpStatus.BAD_REQUEST;
+					response.setMessage("Cannot Delete Store. There are some undelivered orders.");
+					return new ResponseEntity<>(response,status);
+				}
+				
+			}
+			     
+			   storeService.delete(store);
+			
+			    response.setMessage("Store Successfully Deleted...");
+			    status = HttpStatus.OK;
 		}else {
 			response.setMessage("Store Details Not Available");
 		}

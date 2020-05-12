@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Button, Modal, Form, Col, Alert, Table } from "react-bootstrap";
-import axios from "axios";
+import { Button, Modal, Table } from "react-bootstrap";
+import productImage from "../../images/ProductThumbnail.jpg";
+import config from '../../config/app-config';
 
 class OrderProductsModal extends Component {
     constructor(props) {
@@ -14,11 +15,14 @@ class OrderProductsModal extends Component {
     }
 
     render() {
-        var products_list, products;
+        var products_list, product_image;
+
         if (this.props.order.order_details && this.props.order.order_details.length) {
             products_list = this.props.order.order_details.map(product => {
+                product_image = product.product_img != null ? `${config.api_host}/image/product/${product.id}` : productImage;
                 return (
                     <tr>
+                        <td align="center"><img src={product_image} width="50" onError={productImage}/></td>
                         <td align="center">{product.sku}</td>
                         <td align="center">{product.product_name}</td>
                         <td align="center">{product.product_brand}</td>
@@ -37,6 +41,7 @@ class OrderProductsModal extends Component {
                 <Modal.Body>
                     <Table borderless striped>
                         <thead align="center">
+                            <th>Product Image</th>
                             <th>SKU</th>
                             <th>Product Name</th>
                             <th>Product Brand</th>

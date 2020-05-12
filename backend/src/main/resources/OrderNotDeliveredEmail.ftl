@@ -2,9 +2,9 @@
 <head></head>
 
 <body>
-	<p>Hi ${pooler_name},</p>
-	<p>Your <b>Order #${order_id}</b> has been delivered to you by <b>${deliverer}</b>.</p>
-	<br/>
+	<p>Hi ${deliverer},</p>
+	<p>${pooler_screen_name} has not received the <b>Order #${order_id}</b> from you. Please deliver this order to ${pooler_screen_name}.</p>
+			<br/>
 			<table border="1">
 			<tr>
 				<th>SKU</th>
@@ -29,8 +29,7 @@
 				</tr>
 			</#list>
 		</table>
-	<br/>
-	<p>Please let us know if you haven't received your order.</p>
+		<br/>
 	<p>Thanks,</p>
 	<p>Cart Share Team</p>	
 </body>

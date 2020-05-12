@@ -31,8 +31,7 @@ class DeliveredOrders extends Component {
         axios.get("/order/delivery")
             .then(async res => {
                 if (res.data) {
-                    console.log(res.data);
-                    let orders = res.data.orders.filter(order => order.user_id != user.id)
+                    let orders = res.data.orders.filter(order => order.user_id !== user.id)
                     this.setState({
                         delivery_orders: orders
                     });
@@ -56,8 +55,8 @@ class DeliveredOrders extends Component {
         if (this.state.delivery_orders.length) {
             order_cards = this.state.delivery_orders.map(order => {
                 return (
-                    <Col sm={3}>
-                        <OrderCard order={order} showAddress={true} getOrders={this.getDeliveryOrders}/>
+                    <Col sm={3} key={order.id}>
+                        <OrderCard order={order} getOrders={this.getDeliveryOrders}/>
                     </Col>
                 )
             });

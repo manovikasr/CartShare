@@ -2,22 +2,21 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import axios from "axios";
 import { Card, Button } from "react-bootstrap";
 import OrderProductsModal from "./OrderProductsModal";
-import EditStatusModal from "./EditStatusModal";
 
 class OrderCard extends Component {
     constructor(props) {
         super(props);
         this.state = {
             showModal: false,
-            showStatusModal: false,
-            order: {}
+            order: {},
+            disableButton: false
         };
     }
 
     componentDidMount() {
-        console.log(this.props.order)
         this.setState({
             order: this.props.order
         });
@@ -29,18 +28,65 @@ class OrderCard extends Component {
         });
     }
 
-    handleStatusToggle = () => {
+    markNotDelivered = (e) => {
+        if (window.confirm("Are you sure your order was not delivered? We will check with the assigned pooler.")) {
+            this.setState({
+                disableButton: true
+            });
+            axios.put(`/order/status/${this.props.order.id}/ORDER_NOT_DELIVERED`)
+                .then(res => {
+                    if (res.status === 200) {
+                        this.setState({
+                            disableButton: false
+                        });
+                        this.props.getOrders();
+                    }
+                })
+                .catch(e => {
+                    if (e.response && e.response.data)
+                        console.log(e.response);
+                });
+        }
+    }
+
+    markDelivered = (e) => {
         this.setState({
-            showStatusModal: !this.state.showStatusModal
+            disableButton: true
+        });
+        axios.put(`/order/status/${this.props.order.id}/ORDER_DELIVERED`)
+        .then(res => {
+            if (res.status === 200) {
+                this.setState({
+                    disableButton: false
+                });
+                this.props.getOrders();
+            }
+        })
+        .catch(e => {
+            if (e.response && e.response.data)
+                console.log(e.response);
         });
     }
 
     render() {
-        var updateButton;
+        var actionButton, address;
+        const { user } = this.props.auth;
 
-        if (this.props.showAddress) {
-            updateButton = (
-                <Button variant="info" size="sm" onClick={this.handleStatusToggle}>Update Status</Button>
+        if ((this.props.order.status === "ORDER_PICKEDUP" || this.props.order.status === "ORDER_NOT_DELIVERED") && user.id !== this.props.order.user.id) {
+            address = (
+                <>
+                    <b>Name: </b>{this.props.order.user.nick_name}<br/>
+                    <b>Delivery Address: </b>{this.props.order.user.address}<br />
+                    {this.props.order.user.city}, {this.props.order.user.state} - {this.props.order.user.zip}
+                </>
+            );
+            actionButton = (
+                <Button variant="info" size="sm" onClick={this.markDelivered} disabled={this.state.disableButton}>Mark Delivered</Button>
+            );
+        }
+        if (this.props.order.status === "ORDER_DELIVERED" && user.id === this.props.order.user.id) {
+            actionButton = (
+                <Button variant="link" size="sm" onClick={this.markNotDelivered} disabled={this.state.disableButton}>Order Not Received?</Button>
             );
         }
         return (
@@ -52,13 +98,13 @@ class OrderCard extends Component {
                             <b>Store:</b> {this.props.order.store_name} <br />
                             <b>Order Date:</b> {(new Date(this.props.order.created_on)).toLocaleDateString("en-US")} <br />
                             <b>Status:</b> {this.props.order.status}<br />
+                            {address}
                         </Card.Text>
-                        {updateButton}&nbsp;&nbsp;
-                    <Button variant="success" size="sm" onClick={this.handleToggle}><b>View Products</b></Button>
+                        <Button variant="success" size="sm" onClick={this.handleToggle} disabled={this.state.disableButton}>View Products</Button>
+                    &nbsp;&nbsp;&nbsp; {actionButton}
                     </Card.Body>
                 </Card>
                 <OrderProductsModal showModal={this.state.showModal} onHide={this.handleToggle} order={this.state.order} />
-                <EditStatusModal showModal={this.state.showStatusModal} onHide={this.handleStatusToggle} order={this.state.order} getOrders={this.props.getOrders}/>
             </div>
         );
     }

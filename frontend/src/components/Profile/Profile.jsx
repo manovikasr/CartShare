@@ -19,7 +19,8 @@ class Profile extends Component {
             zip: "",
             profile: {},
             success_message: "",
-            error_message: ""
+            error_message: "",
+            disableButton: false
         };
     }
 
@@ -35,12 +36,14 @@ class Profile extends Component {
         if (props.errors.message) {
             this.setState({
                 error_message: props.errors.message,
-                success_message: ""
+                success_message: "",
+                disableButton: false
             });
-        } if(props.success.message) {
+        } if (props.success.message) {
             this.setState({
                 success_message: "Profile updated",
-                error_message: ""
+                error_message: "",
+                disableButton: false
             });
         }
     }
@@ -73,6 +76,9 @@ class Profile extends Component {
 
     onSubmit = e => {
         e.preventDefault();
+        this.setState({
+            disableButton: true
+        });
         const { user } = this.props.auth;
         const userData = {
             user_id: user.id,
@@ -90,7 +96,7 @@ class Profile extends Component {
     };
 
     render() {
-        var errorMessage, successMessage, contri_status = "";
+        var errorMessage, successMessage, contri_status = "", contri_status_color = "";
         var user = this.state.profile;
         if (this.state.error_message) {
             errorMessage = (
@@ -104,13 +110,19 @@ class Profile extends Component {
         }
 
         if (this.state.profile.id) {
-            let contri_credits = this.state.profile.contribution_credits;
-            if (contri_credits >= 0)
+            let contri_credits = user.contribution_credits;
+            if (contri_credits >= -4) {
                 contri_status = "GREEN";
-            else if (contri_credits > -4)
+                contri_status_color = "#03fc6b";
+            }
+            else if (contri_credits > -6) {
                 contri_status = "YELLOW";
-            else
+                contri_status_color = "#fcfc03";
+            }
+            else {
                 contri_status = "RED";
+                contri_status_color = "#e66722";
+            }
         }
 
         return (
@@ -126,7 +138,7 @@ class Profile extends Component {
                                 {errorMessage}
                                 {successMessage}
 
-                                <Form onSubmit={this.onSubmit} autoComplete="off">
+                                <Form onSubmit={this.onSubmit}>
                                     <Form.Row>
                                         <Form.Group as={Col} controlId="screen_name">
                                             <Form.Label><b>Screen Name</b></Form.Label>
@@ -176,13 +188,14 @@ class Profile extends Component {
                                                 <Form.Label><b>Credits</b></Form.Label>
                                                 <Form.Control name="credits"
                                                     type="text"
-                                                    value={user.credits || 0}
+                                                    value={user.contribution_credits || 0}
                                                     readOnly />
                                             </Form.Group>
                                             <Form.Group as={Col} controlId="status">
                                                 <Form.Label><b>Status</b></Form.Label>
                                                 <Form.Control name="status"
                                                     type="text"
+                                                    style={{ backgroundColor: contri_status_color }}
                                                     value={contri_status}
                                                     readOnly />
                                             </Form.Group>
@@ -197,7 +210,7 @@ class Profile extends Component {
                                                 onChange={this.onChange}
                                                 defaultValue={user.address}
                                                 placeholder="Enter your street address"
-                                                pattern="^[A-Za-z0-9 ]+$"
+                                                pattern="^[A-Za-z0-9,.#- ]+$"
                                                 required />
                                         </Form.Group>
                                     </Form.Row>
@@ -234,7 +247,7 @@ class Profile extends Component {
                                                 onChange={this.onChange}
                                                 defaultValue={user.zip}
                                                 placeholder="Enter your zip code"
-                                                pattern="^[0-9 ]+$"
+                                                pattern="^[0-9]{5}(?:-[0-9]{4})?$"
                                                 required />
                                         </Form.Group>
                                     </Form.Row>
@@ -242,8 +255,8 @@ class Profile extends Component {
                                     <div className="row">
                                         <div className="col-md-12 text-center p-2">
                                             <ButtonGroup aria-label="Third group">
-                                                <Button type="submit" variant="success">Update</Button>&nbsp;&nbsp;
-                                                <Button variant="secondary" onClick={() => { this.props.history.push("/"); }}>Cancel</Button>
+                                                <Button type="submit" variant="success" disabled={this.state.disableButton}>Update</Button>&nbsp;&nbsp;
+                                                <Button variant="secondary" onClick={() => { this.props.history.push("/"); }} disabled={this.state.disableButton}>Cancel</Button>
                                             </ButtonGroup>
                                         </div>
                                     </div>

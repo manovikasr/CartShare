@@ -3,29 +3,37 @@
 
 <body>
 	<p>Hi ${deliverer},</p>
-	<p>${no_of_orders} are to be delivered including yours. Details of such orders are as follows: </p>
-	<table>
-		<tr>
-			<th>User Screen Name</th>
-			<th>Address</th>
-			<th>City</th>
-			<th>Zip Code</th>
-			<th>Order Id</th>
-			<th>No of Products</th>
-			<th>Order Time</th>
-		</tr>
-		<#list orders as order>
-		<tr>
-			<td><center>${order.user_id.screen_name}</center></td>
-			<td><center>${order.user_id.address}</center></td>
-			<td><center>${order.user_id.city}</center></td>
-			<td><center>${order.user_id.zip}</center></td>
-			<td><center>${order.order_id}</center></td>
-			<td><center>${order.no_of_products}</center></td>
-			<td><center>${order.order_time}</center></td>
-		</tr>
-		</#list>
-	</table>
+	<p>${no_of_orders} order(s) to be delivered by you. Details of the orders to be delivered are as follows: </p>
+	
+	<#list orders as order>
+		<h3><b>Order Id : ${order.id}</b><h3>
+		<p><b>Name</b>: ${order.user.nick_name} </p>
+		<p><b>Address</b>: ${order.user.address}, ${order.user.city}, ${order.user.state} - ${order.user.zip} </p>
+		<table border="1">
+			<tr>
+				<th>SKU</th>
+				<th>Product Name</th>
+				<th>Product Brand</th>
+				<th>Product Description</th>
+				<th>Product Price</th>
+				<th>Quantity</th>
+				<th>Total Price</th>
+			</tr>
+		
+			
+			<#list order.order_details as order_detail>
+				<tr>
+					<td><center>${order_detail.sku}</center></td>
+					<td><center>${order_detail.product_name}</center></td>
+					<td><center>${order_detail.product_brand}</center></td>
+					<td><center>${order_detail.product_desc}</center></td>
+					<td><center>${order_detail.product_price}</center></td>
+					<td><center>${order_detail.quantity} ${order_detail.unit_type}</center></td>
+					<td><center>${order_detail.total_price}</center></td>
+				</tr>
+			</#list>
+		</table>
+	</#list>
 	<p>Thanks,</p>
 	<p>Cart Share Team</p>	
 </body>

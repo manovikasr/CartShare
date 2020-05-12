@@ -380,6 +380,7 @@ public class PoolController {
 			String pool_leader_name = poolLeader.getScreen_name();
 			
 			PoolRequest pool_application = poolService.getApplicationInfo(application_id);
+			String reference_name = pool_application.getRefusername();
 			User applicant = userService.getUserInfoById(pool_application.getRequserid());
 			String applicant_name = applicant.getScreen_name();
 			Pool pool = poolService.getPoolInfoById(pool_application.getReqpoolid());
@@ -389,6 +390,7 @@ public class PoolController {
 			map.put("applicant_screen_name", applicant_name);
 			map.put("pool_leader_name", pool_leader_name);
 			map.put("pool_name", pool_name);
+			map.put("ref_user_name", reference_name);
 			
 			emailService.sendEmailForLeaderApproval(email_id, map);
 

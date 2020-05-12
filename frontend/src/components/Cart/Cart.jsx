@@ -80,9 +80,12 @@ class Cart extends Component {
         cart_items.forEach(item => {
             subTotal += (item.quantity * item.price);
         });
-
-        taxAmount = (subTotal * this.state.taxPercent / 100).toFixed(2);
-        total = (subTotal + subTotal * this.state.taxPercent / 100).toFixed(2);
+;
+        taxAmount = (subTotal * this.state.taxPercent / 100);
+        total = subTotal + ((subTotal * this.state.taxPercent) / 100);
+        subTotal = subTotal.toFixed(2);
+        taxAmount = taxAmount.toFixed(2);
+        total = total.toFixed(2);
         this.setState({
             subTotal, taxAmount, total
         });
@@ -130,7 +133,7 @@ class Cart extends Component {
 
         axios.post("/order", orderData)
             .then(res => {
-                if (res.status == 200) {
+                if (res.status === 200) {
                     this.clearCart();
                     this.onHideModal();
                     if (delivery)
@@ -200,12 +203,12 @@ class Cart extends Component {
                         <td align="center">{item.sku}</td>
                         <td align="center">$ {item.price}</td>
                         <td align="center">
-                            <input type="number" name={item.id} min="1" max="10" width="10%" onChange={this.onQuantityChange} defaultValue={item.quantity}></input>
+                            <input type="number" name={item.id} min="1" max="10" width="10%" onChange={this.onQuantityChange} defaultValue={item.quantity}></input> {item.unit_type}
                         </td>
                         <td align="center">
                             <i class="fas fa-trash-alt" name={item.id} onClick={this.removeItem} alt="" />
                         </td>
-                        <td align="center">$ {item.price * item.quantity}</td>
+                        <td align="center">$ {(item.price * item.quantity).toFixed(2)}</td>
                     </tr>
                 );
             });
@@ -227,7 +230,7 @@ class Cart extends Component {
                             <td align="center"><b>$ {this.state.subTotal}</b></td>
                         </tr>
                         <tr>
-                            <td colSpan="4">Service Fees ({this.state.taxPercent}%)</td><td></td>
+                            <td colSpan="4">Tax & Fees ({this.state.taxPercent}%)</td><td></td>
                             <td align="center">$ {this.state.taxAmount}</td>
                         </tr>
                         <tr>

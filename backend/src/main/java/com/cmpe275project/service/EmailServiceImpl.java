@@ -116,7 +116,7 @@ public class EmailServiceImpl implements EmailService{
 			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
 			
 			Template t = freeMarkerConfig.getTemplate("ReferenceEmail.ftl");
-            String subject = "Cart Share - Request to refer for Pool joining application";
+            String subject = "Cart Share - Request to refer to join your Pool";
 			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
 			
 			helper.setTo(to);
@@ -142,7 +142,7 @@ public class EmailServiceImpl implements EmailService{
 			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
 			
 			Template t = freeMarkerConfig.getTemplate("ApproveRejectEmail.ftl");
-            String subject = "Cart Share - Pooler Application Approval pending";
+            String subject = "Cart Share - Pool Membership Application Approval pending";
 			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
 			
 			helper.setTo(to);
@@ -168,7 +168,7 @@ public class EmailServiceImpl implements EmailService{
 			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
 			
 			Template t = freeMarkerConfig.getTemplate("OrderConfirmation.ftl");
-            String subject = "Cart Share - Your Order is placed";
+            String subject = "Cart Share - Order placed";
 			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
 			
 			helper.setTo(to);
@@ -184,7 +184,7 @@ public class EmailServiceImpl implements EmailService{
 	}
 	
 	@Override
-	public void sendEmailOfSelfAndPoolerOrderDetails(String to, Map<String, Object> map) throws TemplateNotFoundException,
+	public void sendEmailForSelfOrderConfirmation(String to, Map<String, Object> map) throws TemplateNotFoundException,
 			MalformedTemplateNameException, ParseException, IOException, TemplateException {
 		// TODO Auto-generated method stub
 		try {
@@ -193,8 +193,60 @@ public class EmailServiceImpl implements EmailService{
 			
 			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
 			
-			Template t = freeMarkerConfig.getTemplate("SelfAndPoolerOrderDetails.ftl");
-            String subject = "Cart Share - Information related to the orders to be delivered.";
+			Template t = freeMarkerConfig.getTemplate("SelfOrderConfirmation.ftl");
+            String subject = "Cart Share - Order ready for pickup";
+			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
+			
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(text, true);
+			
+			emailSender.send(message);
+			
+		} catch (MessagingException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void sendEmailPoolerOrderDetails(String to, Map<String, Object> map) throws TemplateNotFoundException,
+			MalformedTemplateNameException, ParseException, IOException, TemplateException {
+		// TODO Auto-generated method stub
+		try {
+			MimeMessage message = emailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message);
+			
+			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
+			
+			Template t = freeMarkerConfig.getTemplate("PoolerOrderDetailsEmail.ftl");
+            String subject = "Cart Share - Orders to pick up";
+			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
+			
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(text, true);
+			
+			emailSender.send(message);
+			
+		} catch (MessagingException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void sendEmailForPickerAssigned(String to, Map<String, Object> map) throws TemplateNotFoundException,
+			MalformedTemplateNameException, ParseException, IOException, TemplateException {
+		// TODO Auto-generated method stub
+		try {
+			MimeMessage message = emailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message);
+			
+			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
+			
+			Template t = freeMarkerConfig.getTemplate("PickerAssignedConfirmation.ftl");
+            String subject = "Cart Share - Picker assigned to your Order";
 			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
 			
 			helper.setTo(to);
@@ -220,7 +272,33 @@ public class EmailServiceImpl implements EmailService{
 			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
 			
 			Template t = freeMarkerConfig.getTemplate("PickedUpConfirmation.ftl");
-            String subject = "Cart Share - Your Order is picked up.";
+            String subject = "Cart Share - Order picked up";
+			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
+			
+			helper.setTo(to);
+			helper.setSubject(subject);
+			helper.setText(text, true);
+			
+			emailSender.send(message);
+			
+		} catch (MessagingException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void sendEmailForSelfPickedUpConfirmation(String to, Map<String, Object> map) throws TemplateNotFoundException,
+			MalformedTemplateNameException, ParseException, IOException, TemplateException {
+		// TODO Auto-generated method stub
+		try {
+			MimeMessage message = emailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(message);
+			
+			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
+			
+			Template t = freeMarkerConfig.getTemplate("SelfPickedUpConfirmation.ftl");
+            String subject = "Cart Share - Order picked up";
 			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
 			
 			helper.setTo(to);
@@ -246,7 +324,7 @@ public class EmailServiceImpl implements EmailService{
 			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
 			
 			Template t = freeMarkerConfig.getTemplate("UserOrderDetailsEmail.ftl");
-            String subject = "Cart Share - Details of the orders to be delivered.";
+            String subject = "Cart Share - Order Delivery Details";
 			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
 			
 			helper.setTo(to);
@@ -298,7 +376,7 @@ public class EmailServiceImpl implements EmailService{
 			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
 			
 			Template t = freeMarkerConfig.getTemplate("OrderNotDeliveredEmail.ftl");
-            String subject = "Cart Share - Order not delivered to the fellow pooler";
+            String subject = "Cart Share - Order not delivered to fellow pooler";
 			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
 			
 			helper.setTo(to);

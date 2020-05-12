@@ -72,7 +72,7 @@ public class OrderDaoImpl implements OrderDao {
 						                        		                root.get( "store_id" ), store_id
 						                        		              ),
 							                        		   builder.equal(
-						                        		                root.get( "status" ), "order_placed"
+						                        		                root.get( "status" ), "ORDER_PLACED"
 						                        		              ),
 							                        		   builder.equal(
 							                        				   root.get( "type_of_pickup" ), "other"
@@ -129,13 +129,10 @@ public class OrderDaoImpl implements OrderDao {
 		Root<Order> root = criteriaQuery.from( Order.class );
 		criteriaQuery.select(root);
 		criteriaQuery.orderBy(builder.asc(root.get("created_on")));
-		
 		criteriaQuery.where(
-				                           builder.and(
 							                        		   builder.equal(
 						                        		                root.get( "user_id" ), user_id
 						                        		              )
-				                        		              )
 				                         );
 		
 		TypedQuery<Order> query = entityManager.createQuery(criteriaQuery); 
@@ -167,7 +164,7 @@ public class OrderDaoImpl implements OrderDao {
 						                        		                root.get( "picker_user_id" ), user_id
 						                        		              ),
 							                        		   builder.equal(
-						                        		                root.get( "status" ), "picker_assigned"
+						                        		                root.get( "status" ), "PICKUP_ASSIGNED"
 						                        		              )
 				                        		              )
 				                         );
@@ -200,10 +197,16 @@ public class OrderDaoImpl implements OrderDao {
 							                        		   builder.equal(
 						                        		                root.get( "picker_user_id" ), user_id
 						                        		              ),
-							                        		   builder.equal(
-						                        		                root.get( "status" ), "ORDER_PICKEDUP"
+							                        		   builder.or(
+							                        				   builder.equal(
+							                        						   root.get( "status" ), "ORDER_PICKEDUP"
+						                        		              ),
+							                        				   builder.equal(
+							                        						   root.get( "status" ), "ORDER_NOT_DELIVERED"
 						                        		              )
-				                        		              )
+							                        			)
+							                        		   
+				                        		         )
 				                         );
 		
 		TypedQuery<Order> query = entityManager.createQuery(criteriaQuery); 

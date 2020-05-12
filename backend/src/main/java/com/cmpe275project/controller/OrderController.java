@@ -1,6 +1,8 @@
 package com.cmpe275project.controller;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +87,9 @@ public class OrderController {
 			return new ResponseEntity<>(response, status);
 		}
 		
+		String order_status = orderRequest.getType_of_pickup().equals("other") ? "ORDER_PLACED" : "PICKUP_ASSIGNED";
+		Long picker_user_id = orderRequest.getType_of_pickup().equals("self") ? (Long)request.getAttribute("user_id") : null;
+		
 		if(storeService.isStoreIdExists(orderRequest.getStore_id())) {
 			
 			Store store = storeService.getStoreInfoById(orderRequest.getStore_id());
@@ -92,7 +97,8 @@ public class OrderController {
 			orderRequest.setStore_name(store.getStore_name());
 			orderRequest.setUser_id(user.getId());
 			orderRequest.setPool_id(user.getPool().getId());
-			orderRequest.setStatus("placed");
+			orderRequest.setStatus(order_status);
+			orderRequest.setPicker_user_id(picker_user_id);
 			
 			for(OrderDetail orderDetail:orderRequest.getOrder_details()) {
 				
@@ -120,12 +126,19 @@ public class OrderController {
 			
 			if(orderRequest.getType_of_pickup().equals("other"))
 			 {	
-				user.setContribution_credits(user.getContribution_credits() - 1);
 				String user_email = user.getEmail();
 				Map<String, Object> map = new HashMap<>();
 				map.put("pooler_name", user.getScreen_name());
+				map.put("order", orderRequest);
 				emailService.sendEmailForOrderConfirmation(user_email, map);
-			 }
+			 } 
+			else {
+				String user_email = user.getEmail();
+				Map<String, Object> map = new HashMap<>();
+				map.put("pooler_name", user.getScreen_name());
+				map.put("order", orderRequest);
+				emailService.sendEmailForSelfOrderConfirmation(user_email, map);
+			}
 			response.setMessage("Order Successfully Placed");
 				
 		}else {
@@ -138,7 +151,7 @@ public class OrderController {
 	}
 	
 	@PostMapping("/assign/{store_id}/{num_of_orders}")
-	public ResponseEntity<?> ordersAssignment(@PathVariable Long store_id,@PathVariable Integer num_of_orders,HttpServletRequest request)
+	public ResponseEntity<?> ordersAssignment(@PathVariable Long store_id,@PathVariable Integer num_of_orders,HttpServletRequest request) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException
 	{
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		OrderResponse response = new OrderResponse();
@@ -146,6 +159,8 @@ public class OrderController {
 		
 		Long user_id = (Long) request.getAttribute("user_id");
 		User user = userService.getUserInfoById(user_id);
+		Store store = storeService.getStoreInfoById(store_id);
+		String store_name = store.getStore_name();
 		
 		if(storeService.isStoreIdExists(store_id)) {
 			
@@ -154,7 +169,25 @@ public class OrderController {
 					if(num_of_orders>=1)
 					      ordersToBePicked = orderService.getAvailableOrders(user.getPool().getId(),store_id, num_of_orders);
 					
-					orderService.assignPicker(user_id,ordersToBePicked);
+					orderService.assignPicker(user_id, ordersToBePicked);
+					
+					Map<String, Object> map = new HashMap<>();
+					map.put("deliverer", user.getScreen_name());
+					map.put("no_of_orders", ordersToBePicked.size());
+					map.put("orders", ordersToBePicked);
+					map.put("store_name", store_name);
+					
+					emailService.sendEmailPoolerOrderDetails(user.getEmail(), map);
+					
+					for(Order order : ordersToBePicked) {
+						Map<String, Object> order_map = new HashMap<>();
+						User pooler = userService.getUserInfoById(order.getUser_id());
+						order_map.put("deliverer", user.getScreen_name());
+						order_map.put("order_id", order.getId());
+						order_map.put("pooler_name", pooler.getScreen_name());
+						order_map.put("order",order);
+						emailService.sendEmailForPickerAssigned(pooler.getEmail(), order_map);
+					}
 						
 			} else {
 				response.setMessage("Pool Id does not exists");
@@ -165,6 +198,7 @@ public class OrderController {
 			response.setMessage("Store Id does not exists");
 			return new ResponseEntity<>(response,status);
 		}
+
 		
 		 response.setMessage("Picker Successfully Assigned to Orders");	    	
 		 status = HttpStatus.OK;
@@ -239,12 +273,21 @@ public class OrderController {
 	{
 		HttpStatus status = HttpStatus.NOT_FOUND;
 		OrderResponse response = new OrderResponse();
+		Date today = new Date();
 		
 		List<Order> myOrders=orderService.getMyAllOrders((Long)request.getAttribute("user_id"));
 		
 		if(myOrders==null) {
 			response.setMessage("Sorry, There are no orders");
-		}else {
+		} else {
+			
+			for(Order order : myOrders) {
+				if(((order.getCreated_on().getTime() - today.getTime())/(24*60*60*1000)) > 2 ) {
+					order.setStatus("ORDER_CANCELLED");
+					orderService.edit(order);
+				}
+			}
+			
 			status =HttpStatus.OK;
 			response.setMessage("My Orders");
 			response.setOrders(myOrders);
@@ -260,20 +303,58 @@ public class OrderController {
 		HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 		OrderResponse response = new OrderResponse();
 		Order order = null;
+		List<Order> ordersTobeDelivered = new ArrayList<>();
+		User picker_user = null;
+		User to_deliver_user = null;
 		
 		for(long order_id : order_ids) {
 			if(orderService.isOrderIdExists(order_id)) {
 				order = orderService.getOrderInfoById(order_id);
-				order.setStatus("ORDER_PICKEDUP");
+				if(order.getPicker_user_id() == order.getUser_id()) {
+					order.setStatus("ORDER_PICKEDUP_SELF");
+				} else {
+					order.setStatus("ORDER_PICKEDUP");
+				}
 				orderService.edit(order);
 				
-				//TODO Send Email order picked up
+				picker_user = userService.getUserInfoById(order.getPicker_user_id());
+				to_deliver_user = userService.getUserInfoById(order.getUser_id());
+				
+				if(picker_user.getId() != to_deliver_user.getId()) {
+					ordersTobeDelivered.add(order);
+					Map<String, Object> map = new HashMap<>();
+					map.put("pooler_name", to_deliver_user.getScreen_name());
+					map.put("deliverer", picker_user.getScreen_name());
+					map.put("order_id", order.getId());
+					map.put("order",order);
+					
+					emailService.sendEmailForPickedUpConfirmation(to_deliver_user.getEmail(), map);
+				} else {
+					Map<String, Object> map = new HashMap<>();
+					map.put("deliverer", picker_user.getScreen_name());
+					map.put("order_id", order.getId());
+					map.put("store_name", order.getStore_name());
+					map.put("order",order);
+					
+					emailService.sendEmailForSelfPickedUpConfirmation(to_deliver_user.getEmail(), map);
+				}
+				
 			}
 			else {
 					httpStatus = HttpStatus.NOT_FOUND;
 					response.setMessage("Order Id Not Found");
 					return new ResponseEntity<>(response, httpStatus);
 			}
+		}
+		
+		if(order_ids.size() - 1 > 0) {
+			Map<String, Object> map = new HashMap<>();
+		
+			map.put("deliverer", picker_user.getScreen_name());
+			map.put("no_of_orders", order_ids.size() - 1);
+			map.put("orders", ordersTobeDelivered);
+	
+			emailService.sendEmailOfUserOrderDetails(picker_user.getEmail(), map);
 		}
 				
 		httpStatus =HttpStatus.OK;
@@ -297,27 +378,44 @@ public class OrderController {
 				order.setStatus(status);
 				orderService.edit(order);
 				
+				User user = order.getUser();
+				User delivery_man = userService.getUserInfoById(order.getPicker_user_id());
+				
 				///-------------TODO --------------------Mail to be Send
-				if(order.getStatus().toLowerCase().equals("delivered")) {
+				if(order.getStatus().equals("ORDER_DELIVERED")) {
+					if(order.getUser().getId() != order.getPicker_user_id()) {
+						user.setContribution_credits((user.getContribution_credits() - 1));
+						userService.edit(user);
+						delivery_man.setContribution_credits((delivery_man.getContribution_credits() + 1));
+						userService.edit(delivery_man);
+					}
+					
 					String user_email = order.getUser().getEmail();
 					String user_screen_name = order.getUser().getScreen_name();
 					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("pooler_name", user_screen_name);
+					map.put("deliverer", delivery_man.getNick_name());
 					map.put("order_id", order_id);
-					
+					map.put("order",order);					
 					emailService.sendEmailforOrderDelivered(user_email, map);
 				}
 				
-				if(order.getStatus().toLowerCase().equals("delivered-not-received")) {
+				if(order.getStatus().equals("ORDER_NOT_DELIVERED")) {
+					user.setContribution_credits((user.getContribution_credits() + 1));
+					userService.edit(user);
+					delivery_man.setContribution_credits((delivery_man.getContribution_credits() - 1));
+					userService.edit(delivery_man);
+					
 					Long deliverer_id = order.getPicker_user_id();
 					String user_screen_name = order.getUser().getScreen_name();
 					String deliverer_screen_name = userService.getUserInfoById(deliverer_id).getScreen_name();
-					String deliverer_email = userService.getUserInfoById(deliverer_id).getScreen_name();
+					String deliverer_email = userService.getUserInfoById(deliverer_id).getEmail();
 					
 					Map<String, Object> map = new HashMap<>();
 					map.put("deliverer", deliverer_screen_name);
 					map.put("pooler_screen_name", user_screen_name);
 					map.put("order_id", order_id);
+					map.put("order",order);
 					
 					emailService.sendEmailforOrderNotDelivered(deliverer_email, map);
 				}

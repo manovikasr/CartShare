@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import axios from "axios";
-import { Alert, Card, Row, Col, InputGroup, FormControl, Button } from "react-bootstrap";
+import { Alert, Card, Row, Col, InputGroup, FormControl } from "react-bootstrap";
 import ProductCard from "../Products/ProductCard";
 import storeImage from "../../images/StoreImage.png";
 
