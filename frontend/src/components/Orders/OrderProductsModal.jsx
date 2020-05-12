@@ -22,7 +22,7 @@ class OrderProductsModal extends Component {
                 product_image = product.product_img != null ? `${config.api_host}/image/product/${product.id}` : productImage;
                 return (
                     <tr>
-                        <td align="center"><img src={product_image} onError={productImage}/></td>
+                        <td align="center"><img src={product_image} width="50" onError={productImage}/></td>
                         <td align="center">{product.sku}</td>
                         <td align="center">{product.product_name}</td>
                         <td align="center">{product.product_brand}</td>

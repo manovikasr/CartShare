@@ -12,7 +12,8 @@ class Message extends Component {
             sender_screen_name: "",
             receiver_screen_name: "",
             message: "",
-            alert_message: ""
+            alert_message: "",
+            disableButton: false
         };
     }
 
@@ -48,6 +49,9 @@ class Message extends Component {
     onSubmit = (e) => {
         e.preventDefault();
 
+        this.setState({
+            disableButton: true
+        });
         const messageData = {
             sender_screen_name: this.state.sender_screen_name,
             receiver_screen_name: this.state.receiver_screen_name,
@@ -60,7 +64,8 @@ class Message extends Component {
                     this.setState({
                         receiver_screen_name: "",
                         message: "",
-                        alert_message: "Message Sent Successfully!"
+                        alert_message: "Message Sent Successfully!",
+                        disableButton: false
                     });
                 }
             })
@@ -134,8 +139,8 @@ class Message extends Component {
                                 <div className="row">
                                     <div className="col-md-12 text-center p-2">
                                         <ButtonGroup aria-label="Third group">
-                                            <Button type="submit" variant="success">Send</Button>&nbsp;&nbsp;
-                                                <Button variant="secondary" onClick={() => { this.props.history.push("/"); }}>Cancel</Button>
+                                            <Button type="submit" variant="success" disabled={this.state.disableButton}>Send</Button>&nbsp;&nbsp;
+                                            <Button variant="secondary" onClick={() => { this.props.history.push("/"); }} disabled={this.state.disableButton}>Cancel</Button>
                                         </ButtonGroup>
                                     </div>
                                 </div>

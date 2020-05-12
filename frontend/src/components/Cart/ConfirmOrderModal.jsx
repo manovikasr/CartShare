@@ -9,7 +9,8 @@ class ConfirmOrderModal extends Component {
         super(props);
         this.state = {
             delivery: false,
-            error_message: ""
+            error_message: "",
+            disableButton: false
         };
     }
 
@@ -35,13 +36,19 @@ class ConfirmOrderModal extends Component {
 
     onSubmit = (e) => {
         e.preventDefault();
+        this.setState({
+            disableButton: true
+        });
         var placeOrder = true;
-        if(this.state.delivery && this.props.credits <= -4){
+        if (this.state.delivery && this.props.credits <= -4) {
             placeOrder = window.confirm("You have only " + this.props.credits + " Contribution credits. Do you still want your fellow poolers to deliver your order?");
         }
-        if(placeOrder){
+        if (placeOrder) {
             this.props.placeOrder(this.state.delivery);
         } else {
+            this.setState({
+                disableButton: false
+            });
             return;
         }
     }
@@ -97,10 +104,10 @@ class ConfirmOrderModal extends Component {
                         {message}
 
                         <center>
-                            <Button variant="primary" type="submit">
+                            <Button variant="primary" type="submit" disabled={this.state.disableButton}>
                                 <b>Confirm Order</b>
                             </Button> &nbsp; &nbsp;
-                            <Button variant="secondary" onClick={this.onHide}>
+                            <Button variant="secondary" onClick={this.onHide} disabled={this.state.disableButton}>
                                 <b>Cancel</b>
                             </Button>
                         </center>

@@ -15,7 +15,8 @@ class PoolersOrders extends Component {
             store: {},
             order_count: 0,
             clickedOrder: {},
-            pending_orders: []
+            pending_orders: [],
+            disableButton: false
         };
     }
 
@@ -99,16 +100,25 @@ class PoolersOrders extends Component {
     onSubmit = e => {
         e.preventDefault();
 
+        this.setState({
+            disableButton: true
+        });
         const store_id = this.state.store.id;
         const order_count = this.state.order_count;
 
         axios.post(`/order/assign/${store_id}/${order_count}`)
         .then(res => {
             if(res.status === 200){
+                this.setState({
+                    disableButton: false
+                });
                 this.props.history.push("/orders/pickup");
             }
         })
         .catch(e => {
+            this.setState({
+                disableButton: false
+            });
             console.log(e);
         });
 
@@ -193,8 +203,8 @@ class PoolersOrders extends Component {
                             />
                         </Col>
                         <Col>
-                            <Button variant="success" type="submit">Confirm</Button> &nbsp;&nbsp;&nbsp;
-                            <Button variant="warning" onClick={this.clearForm}>Clear</Button>
+                            <Button variant="success" type="submit" disabled={this.state.disableButton}>Confirm</Button> &nbsp;&nbsp;&nbsp;
+                            <Button variant="warning" onClick={this.clearForm} disabled={this.state.disableButton}>Clear</Button>
                         </Col>
                     </Row>
                 </Form>

@@ -11,7 +11,8 @@ class ApplyPoolModal extends Component {
         this.state = {
             ref_name: "",
             know_pool_leader: true,
-            error_message: ""
+            error_message: "",
+            disableButton: false
         };
     }
 
@@ -34,13 +35,17 @@ class ApplyPoolModal extends Component {
         this.setState({
             know_pool_leader: true,
             ref_name: "",
-            error_message: ""
+            error_message: "",
+            disableButton: false
         });
         this.props.onHide();
     }
 
     onApply = (e) => {
         e.preventDefault();
+        this.setState({
+            disableButton: true
+        });
         const { user } = this.props.auth;
         const pool = this.props.pool;
         var knows_leader = this.state.know_pool_leader;
@@ -68,7 +73,7 @@ class ApplyPoolModal extends Component {
                     this.setState({
                         error_message: e.response.data.message
                     });
-            })
+            });
     }
 
     render() {
@@ -139,10 +144,10 @@ class ApplyPoolModal extends Component {
                         {referenceNameField}
 
                         <center>
-                            <Button variant="primary" type="submit">
+                            <Button variant="primary" type="submit" disabled={this.state.disableButton}>
                                 <b>Apply</b>
                             </Button> &nbsp; &nbsp;
-                            <Button variant="secondary" onClick={this.onHide}>
+                            <Button variant="secondary" onClick={this.onHide} disabled={this.state.disableButton}>
                                 <b>Cancel</b>
                             </Button>
                         </center>

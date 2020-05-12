@@ -87,7 +87,7 @@ public class OrderController {
 			return new ResponseEntity<>(response, status);
 		}
 		
-		String order_status = orderRequest.getType_of_pickup().equals("other") ? "ORDER_PLACED" : "PICKER_ASSIGNED";
+		String order_status = orderRequest.getType_of_pickup().equals("other") ? "ORDER_PLACED" : "PICKUP_ASSIGNED";
 		Long picker_user_id = orderRequest.getType_of_pickup().equals("self") ? (Long)request.getAttribute("user_id") : null;
 		
 		if(storeService.isStoreIdExists(orderRequest.getStore_id())) {
@@ -131,6 +131,12 @@ public class OrderController {
 				map.put("pooler_name", user.getScreen_name());
 				emailService.sendEmailForOrderConfirmation(user_email, map);
 			 } 
+			else {
+				String user_email = user.getEmail();
+				Map<String, Object> map = new HashMap<>();
+				map.put("pooler_name", user.getScreen_name());
+				emailService.sendEmailForSelfOrderConfirmation(user_email, map);
+			}
 			response.setMessage("Order Successfully Placed");
 				
 		}else {
@@ -151,6 +157,8 @@ public class OrderController {
 		
 		Long user_id = (Long) request.getAttribute("user_id");
 		User user = userService.getUserInfoById(user_id);
+		Store store = storeService.getStoreInfoById(store_id);
+		String store_name = store.getStore_name();
 		
 		if(storeService.isStoreIdExists(store_id)) {
 			
@@ -159,14 +167,15 @@ public class OrderController {
 					if(num_of_orders>=1)
 					      ordersToBePicked = orderService.getAvailableOrders(user.getPool().getId(),store_id, num_of_orders);
 					
-					orderService.assignPicker(user_id,ordersToBePicked);
+					orderService.assignPicker(user_id, ordersToBePicked);
 					
 					Map<String, Object> map = new HashMap<>();
 					map.put("deliverer", user.getScreen_name());
 					map.put("no_of_orders", ordersToBePicked.size());
 					map.put("orders", ordersToBePicked);
+					map.put("store_name", store_name);
 					
-					emailService.sendEmailOfSelfAndPoolerOrderDetails(user.getEmail(), map);
+					emailService.sendEmailPoolerOrderDetails(user.getEmail(), map);
 						
 			} else {
 				response.setMessage("Pool Id does not exists");
@@ -282,23 +291,22 @@ public class OrderController {
 		HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 		OrderResponse response = new OrderResponse();
 		Order order = null;
-		List<Order> ordersTobeDelivered = new ArrayList<>();
-		User picker_user = null;
-		User to_deliver_user = null;
 		
 		for(long order_id : order_ids) {
 			if(orderService.isOrderIdExists(order_id)) {
 				order = orderService.getOrderInfoById(order_id);
-				order.setStatus("ORDER_PICKEDUP");
+				if(order.getPicker_user_id() == order.getUser_id()) {
+					order.setStatus("ORDER_PICKEDUP_SELF");
+				} else {
+					order.setStatus("ORDER_PICKEDUP");
+				}
 				orderService.edit(order);
 				
-				
 				//TODO Send Email order picked up
-				picker_user = userService.getUserInfoById(order.getPicker_user_id());
-				to_deliver_user = userService.getUserInfoById(order.getUser_id());
+				User picker_user = userService.getUserInfoById(order.getPicker_user_id());
+				User to_deliver_user = userService.getUserInfoById(order.getUser_id());
 				
 				if(picker_user.getId() != to_deliver_user.getId()) {
-					ordersTobeDelivered.add(order);
 					Map<String, Object> map = new HashMap<>();
 					map.put("pooler_name", to_deliver_user.getScreen_name());
 					map.put("deliverer", picker_user.getScreen_name());
@@ -314,13 +322,6 @@ public class OrderController {
 					return new ResponseEntity<>(response, httpStatus);
 			}
 		}
-		
-		Map<String, Object> map = new HashMap<>();
-		map.put("deliverer", picker_user.getScreen_name());
-		map.put("no_of_orders", order_ids.size());
-		map.put("orders", ordersTobeDelivered);
-		
-		emailService.sendEmailOfUserOrderDetails(picker_user.getEmail(), map);
 				
 		httpStatus =HttpStatus.OK;
 		response.setMessage("Orders Pickedup");
@@ -373,7 +374,7 @@ public class OrderController {
 					Long deliverer_id = order.getPicker_user_id();
 					String user_screen_name = order.getUser().getScreen_name();
 					String deliverer_screen_name = userService.getUserInfoById(deliverer_id).getScreen_name();
-					String deliverer_email = userService.getUserInfoById(deliverer_id).getScreen_name();
+					String deliverer_email = userService.getUserInfoById(deliverer_id).getEmail();
 					
 					Map<String, Object> map = new HashMap<>();
 					map.put("deliverer", deliverer_screen_name);

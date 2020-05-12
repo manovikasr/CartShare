@@ -3,10 +3,11 @@
 
 <body>
 	<p>Hi ${deliverer},</p>
-	<p>${no_of_orders} are to be delivered. Details of such orders are as follows: </p>
+	<p>${no_of_orders} order(s) to be picked up by you at ${store_name} along with your orders. Details of those orders are as follows: </p>
 	
 	<#list orders as order>
 		<b>Order Id : ${order.id}</b>
+		<br/>
 		<table border="1">
 			<tr>
 				<th>Product Id</th>

@@ -164,7 +164,7 @@ public class OrderDaoImpl implements OrderDao {
 						                        		                root.get( "picker_user_id" ), user_id
 						                        		              ),
 							                        		   builder.equal(
-						                        		                root.get( "status" ), "PICKER_ASSIGNED"
+						                        		                root.get( "status" ), "PICKUP_ASSIGNED"
 						                        		              )
 				                        		              )
 				                         );
