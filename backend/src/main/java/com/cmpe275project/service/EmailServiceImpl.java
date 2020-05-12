@@ -193,7 +193,7 @@ public class EmailServiceImpl implements EmailService{
 			
 			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
 			
-			Template t = freeMarkerConfig.getTemplate("SelfAndPoolerOrderDetails.ftl");
+			Template t = freeMarkerConfig.getTemplate("SelfAndPoolerOrderDetailsEmail.ftl");
             String subject = "Cart Share - Information related to the orders to be delivered.";
 			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
 			
