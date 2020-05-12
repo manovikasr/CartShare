@@ -282,6 +282,9 @@ public class OrderController {
 		HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 		OrderResponse response = new OrderResponse();
 		Order order = null;
+		List<Order> ordersTobeDelivered = new ArrayList<>();
+		User picker_user = null;
+		User to_deliver_user = null;
 		
 		for(long order_id : order_ids) {
 			if(orderService.isOrderIdExists(order_id)) {
@@ -289,11 +292,13 @@ public class OrderController {
 				order.setStatus("ORDER_PICKEDUP");
 				orderService.edit(order);
 				
+				
 				//TODO Send Email order picked up
-				User picker_user = userService.getUserInfoById(order.getPicker_user_id());
-				User to_deliver_user = userService.getUserInfoById(order.getUser_id());
+				picker_user = userService.getUserInfoById(order.getPicker_user_id());
+				to_deliver_user = userService.getUserInfoById(order.getUser_id());
 				
 				if(picker_user.getId() != to_deliver_user.getId()) {
+					ordersTobeDelivered.add(order);
 					Map<String, Object> map = new HashMap<>();
 					map.put("pooler_name", to_deliver_user.getScreen_name());
 					map.put("deliverer", picker_user.getScreen_name());
@@ -309,6 +314,13 @@ public class OrderController {
 					return new ResponseEntity<>(response, httpStatus);
 			}
 		}
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("deliverer", picker_user.getScreen_name());
+		map.put("no_of_orders", order_ids.size());
+		map.put("orders", ordersTobeDelivered);
+		
+		emailService.sendEmailOfUserOrderDetails(picker_user.getEmail(), map);
 				
 		httpStatus =HttpStatus.OK;
 		response.setMessage("Orders Pickedup");
