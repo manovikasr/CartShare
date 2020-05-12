@@ -18,12 +18,9 @@ class ProductCard extends Component {
             showCartModal: false,
             purchase_quantity: 1,
             file: null,
-            fileText: "Choose image.."
+            fileText: "Choose image..",
+            disableButton: false
         };
-    }
-
-    componentDidMount() {
-
     }
 
     handleToggle = () => {
@@ -97,6 +94,9 @@ class ProductCard extends Component {
     uploadImage = (e) => {
         e.preventDefault();
 
+        this.setState({
+            disableButton: true
+        });
         const product_id = this.props.product.id;
         const formData = new FormData();
         formData.append("file", this.state.file);
@@ -110,7 +110,8 @@ class ProductCard extends Component {
                 this.setState({
                     file: null,
                     fileText: "Choose Image..",
-                    showImageModal: false
+                    showImageModal: false,
+                    disableButton: false
                 });
                 window.location.reload(true);
                 //this.props.history.replace(this.props.location.pathname);
@@ -118,13 +119,9 @@ class ProductCard extends Component {
             })
             .catch(err => {
                 console.log("Error uploading image");
-            });
-
-            // TODO Remove below code
-            this.setState({
-                file: null,
-                fileText: "Choose Image..",
-                showImageModal: false
+                this.setState({
+                    disableButton: false
+                });
             });
     };
 
@@ -163,8 +160,8 @@ class ProductCard extends Component {
             onImageClick = this.handleImageClick;
             buttons = (
                 <>
-                    <Button variant="link" onClick={this.handleToggle}>Update</Button><br />
-                    <Button variant="link" onClick={this.deleteProduct}>Delete</Button>
+                    <Button variant="link" onClick={this.handleToggle} disabled={this.state.disableButton}>Update</Button><br />
+                    <Button variant="link" onClick={this.deleteProduct} disabled={this.state.disableButton}>Delete</Button>
                 </>
             );
         } else if (user.role === 'pooler') {
