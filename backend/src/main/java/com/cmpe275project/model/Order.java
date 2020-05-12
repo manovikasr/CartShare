@@ -22,6 +22,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Range;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -74,8 +75,9 @@ public class Order {
 	@JoinColumn(name = "user_id",insertable=false,updatable=false)
 	private User user;
 	
-	@ManyToOne
-	@JoinColumn(name = "store_id",insertable=false,updatable=false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore
+	@JoinColumn(name = "store_id",nullable=false,insertable=false,updatable=false)
 	private Store store;
 	
 	public long getId() {
