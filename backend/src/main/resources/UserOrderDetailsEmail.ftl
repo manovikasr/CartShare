@@ -3,12 +3,15 @@
 
 <body>
 	<p>Hi ${deliverer},</p>
-	<p>${no_of_orders} are to be delivered. Details of such orders are as follows: </p>
+	<p>${no_of_orders} are to be delivered. Details of such orders along with user details are as follows: </p>
 	
 	<#list orders as order>
-		<b>Order Id : ${order.id}</b>
+		<h2><b>Order Id : ${order.id}</b><h2>
+		<h3><b>Order is to be delivered at - </b></h3>
+		<p><b>User Screen Name</b>: ${order.user.screen_name} </p>
+		<p><b>User Address</b>: ${order.user.address}, ${order.user.city}, ${order.user.state}, ${order.user.zip} </p>
 		<table border="1">
-			<tr>	
+			<tr>
 				<th>Product Id</th>
 				<th>Product Name</th>
 				<th>SKU</th>
