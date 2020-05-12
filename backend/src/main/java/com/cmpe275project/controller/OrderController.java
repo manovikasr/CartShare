@@ -176,6 +176,15 @@ public class OrderController {
 					map.put("store_name", store_name);
 					
 					emailService.sendEmailPoolerOrderDetails(user.getEmail(), map);
+					
+					for(Order order : ordersToBePicked) {
+						Map<String, Object> order_map = new HashMap<>();
+						User pooler = userService.getUserInfoById(order.getUser_id());
+						order_map.put("deliverer", user.getScreen_name());
+						order_map.put("order_id", order.getId());
+						order_map.put("pooler_name", pooler.getScreen_name());
+						emailService.sendEmailForPickerAssigned(user.getEmail(), order_map);
+					}
 						
 			} else {
 				response.setMessage("Pool Id does not exists");
@@ -291,6 +300,9 @@ public class OrderController {
 		HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 		OrderResponse response = new OrderResponse();
 		Order order = null;
+		List<Order> ordersTobeDelivered = new ArrayList<>();
+		User picker_user = null;
+		User to_deliver_user = null;
 		
 		for(long order_id : order_ids) {
 			if(orderService.isOrderIdExists(order_id)) {
@@ -302,11 +314,11 @@ public class OrderController {
 				}
 				orderService.edit(order);
 				
-				//TODO Send Email order picked up
-				User picker_user = userService.getUserInfoById(order.getPicker_user_id());
-				User to_deliver_user = userService.getUserInfoById(order.getUser_id());
+				picker_user = userService.getUserInfoById(order.getPicker_user_id());
+				to_deliver_user = userService.getUserInfoById(order.getUser_id());
 				
 				if(picker_user.getId() != to_deliver_user.getId()) {
+					ordersTobeDelivered.add(order);
 					Map<String, Object> map = new HashMap<>();
 					map.put("pooler_name", to_deliver_user.getScreen_name());
 					map.put("deliverer", picker_user.getScreen_name());
@@ -321,6 +333,16 @@ public class OrderController {
 					response.setMessage("Order Id Not Found");
 					return new ResponseEntity<>(response, httpStatus);
 			}
+		}
+		
+		if(order_ids.size() - 1 > 0) {
+			Map<String, Object> map = new HashMap<>();
+		
+			map.put("deliverer", picker_user.getScreen_name());
+			map.put("no_of_orders", order_ids.size() - 1);
+			map.put("orders", ordersTobeDelivered);
+	
+			emailService.sendEmailOfUserOrderDetails(picker_user.getEmail(), map);
 		}
 				
 		httpStatus =HttpStatus.OK;
