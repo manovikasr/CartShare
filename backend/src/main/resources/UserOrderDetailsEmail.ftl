@@ -7,7 +7,7 @@
 	
 	<#list orders as order>
 		<h3><b>Order Id : ${order.id}</b><h3>
-		<p><b>Name</b>: ${order.user.screen_name} </p>
+		<p><b>Name</b>: ${order.user.nick_name} </p>
 		<p><b>Address</b>: ${order.user.address}, ${order.user.city}, ${order.user.state} - ${order.user.zip} </p>
 		<table border="1">
 			<tr>

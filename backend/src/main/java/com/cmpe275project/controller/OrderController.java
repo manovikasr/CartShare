@@ -129,12 +129,14 @@ public class OrderController {
 				String user_email = user.getEmail();
 				Map<String, Object> map = new HashMap<>();
 				map.put("pooler_name", user.getScreen_name());
+				map.put("order", orderRequest);
 				emailService.sendEmailForOrderConfirmation(user_email, map);
 			 } 
 			else {
 				String user_email = user.getEmail();
 				Map<String, Object> map = new HashMap<>();
 				map.put("pooler_name", user.getScreen_name());
+				map.put("order", orderRequest);
 				emailService.sendEmailForSelfOrderConfirmation(user_email, map);
 			}
 			response.setMessage("Order Successfully Placed");
@@ -183,7 +185,8 @@ public class OrderController {
 						order_map.put("deliverer", user.getScreen_name());
 						order_map.put("order_id", order.getId());
 						order_map.put("pooler_name", pooler.getScreen_name());
-						emailService.sendEmailForPickerAssigned(user.getEmail(), order_map);
+						order_map.put("order",order);
+						emailService.sendEmailForPickerAssigned(pooler.getEmail(), order_map);
 					}
 						
 			} else {
@@ -323,8 +326,17 @@ public class OrderController {
 					map.put("pooler_name", to_deliver_user.getScreen_name());
 					map.put("deliverer", picker_user.getScreen_name());
 					map.put("order_id", order.getId());
+					map.put("order",order);
 					
 					emailService.sendEmailForPickedUpConfirmation(to_deliver_user.getEmail(), map);
+				} else {
+					Map<String, Object> map = new HashMap<>();
+					map.put("deliverer", picker_user.getScreen_name());
+					map.put("order_id", order.getId());
+					map.put("store_name", order.getStore_name());
+					map.put("order",order);
+					
+					emailService.sendEmailForSelfPickedUpConfirmation(to_deliver_user.getEmail(), map);
 				}
 				
 			}
@@ -382,8 +394,9 @@ public class OrderController {
 					String user_screen_name = order.getUser().getScreen_name();
 					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("pooler_name", user_screen_name);
+					map.put("deliverer", delivery_man.getNick_name());
 					map.put("order_id", order_id);
-					
+					map.put("order",order);					
 					emailService.sendEmailforOrderDelivered(user_email, map);
 				}
 				
@@ -402,6 +415,7 @@ public class OrderController {
 					map.put("deliverer", deliverer_screen_name);
 					map.put("pooler_screen_name", user_screen_name);
 					map.put("order_id", order_id);
+					map.put("order",order);
 					
 					emailService.sendEmailforOrderNotDelivered(deliverer_email, map);
 				}

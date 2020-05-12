@@ -2,10 +2,10 @@
 <head></head>
 
 <body>
-	<p>Hi ${pooler_name},</p>
-	<p>Your <b>Order #${order_id}</b> has been delivered to you by <b>${deliverer}</b>.</p>
+	<p>Hi ${deliverer},</p>
+	<p>You have picked up your <b>Order #${order_id}</b> at <b>${store_name}</b>.</p>
 	<br/>
-			<table border="1">
+	<table border="1">
 			<tr>
 				<th>SKU</th>
 				<th>Product Name</th>
@@ -30,7 +30,7 @@
 			</#list>
 		</table>
 	<br/>
-	<p>Please let us know if you haven't received your order.</p>
+	<p>Thank you for shopping through Cart Share.</p>
 	<p>Thanks,</p>
 	<p>Cart Share Team</p>	
 </body>

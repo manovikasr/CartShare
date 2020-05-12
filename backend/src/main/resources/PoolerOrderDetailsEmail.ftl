@@ -4,9 +4,9 @@
 <body>
 	<p>Hi ${deliverer},</p>
 	<p>${no_of_orders} order(s) to be picked up by you at <b>${store_name}</b> along with your order. Details of those orders are as follows: </p>
-	
+	<br/>
 	<#list orders as order>
-		<b>Order Id : ${order.id}</b>
+		<b>Order #${order.id}</b>
 		<br/>
 		<table border="1">
 			<tr>
@@ -32,6 +32,7 @@
 				</tr>
 			</#list>
 		</table>
+		<br/>
 	</#list>
 	<p>Thanks,</p>
 	<p>Cart Share Team</p>	

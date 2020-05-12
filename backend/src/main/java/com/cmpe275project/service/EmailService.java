@@ -29,6 +29,8 @@ public interface EmailService {
 	
 	public void sendEmailForPickedUpConfirmation(String to, Map<String, Object> map) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException;
 	
+	public void sendEmailForSelfPickedUpConfirmation(String to, Map<String, Object> map) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException;
+	
 	public void sendEmailOfUserOrderDetails(String to, Map<String, Object> map) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException;
 	
 	public void sendEmailforOrderDelivered(String to, Map<String, Object> map) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException;
