@@ -103,5 +103,18 @@ public class OrderServiceImpl implements OrderService {
 		// TODO Auto-generated method stub
 		return orderDao.getAvailableOrdersForAssignment(pool_id,store_id);
 	}
+
+	@Override
+	public boolean hasActiveOrders(Long pool_id) {
+		return orderDao.hashActiveOrders(pool_id);
+	}
+
+	@Override
+	public boolean canLeave(Long user_id) {
+		
+		return orderDao.canLeave(user_id);
+	}
+	
+	
 	
 }

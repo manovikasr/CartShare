@@ -49,4 +49,7 @@ public interface PoolService {
 	public void removePoolRequest(Long appid);
 
 	public PoolRequest getApplicationInfo(Long applicationid);
+
+	public boolean hasUserAlreadyAppliedToSamePool(Long user_id, Long pool_id);
+
 }
