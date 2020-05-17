@@ -32,6 +32,7 @@ import com.cmpe275project.responseObjects.PoolResponse;
 import com.cmpe275project.responseObjects.StoreResponse;
 import com.cmpe275project.responseObjects.UserResponse;
 import com.cmpe275project.service.EmailService;
+import com.cmpe275project.service.OrderService;
 import com.cmpe275project.service.PoolService;
 import com.cmpe275project.service.UserService;
 
@@ -52,6 +53,9 @@ public class PoolController {
 
 	@Autowired
 	EmailService emailService;
+	
+	@Autowired
+	OrderService orderService;
 
 	@PostMapping("")
 	public ResponseEntity<?> addPool(@Valid @RequestBody Pool poolRequest, Errors errors) {
@@ -186,11 +190,15 @@ public class PoolController {
 			response.setMessage("Pool Does Not exist");
 			return new ResponseEntity<>(response,status);
 		}
-		
+		if(orderService.hasActiveOrders(pool_id)) {
+			response.setMessage("Pool has active orders. Pool cannot be deleted.");
+			status = HttpStatus.CONFLICT;
+			return new ResponseEntity<>(response,status);
+		}
 		int membersCount = poolService.countMembers(pool_id);
 		if(membersCount>1) {
 			status = HttpStatus.CONFLICT;
-			response.setMessage("Pool has active members");
+			response.setMessage("Pool has active members. Pool cannot be deleted.");
 		}
 		else {
 			Long leader_id = poolService.getPoolLeaderId(pool_id);
@@ -216,7 +224,7 @@ public class PoolController {
 			return new ResponseEntity<>(response,status);
 		}
 		if(!userService.checkHasPool(userid)) {
-			response.setMessage("Not a member of any pool ");
+			response.setMessage("You are not a member of any pool ");
 			status = HttpStatus.BAD_REQUEST;
 			return new ResponseEntity<>(response,status);
 		}
@@ -224,7 +232,11 @@ public class PoolController {
 			response.setMessage("Pool Does Not exist");
 			return new ResponseEntity<>(response,status);
 		}
-		
+		if(!orderService.canLeave(userid)) {
+			response.setMessage("You have pending orders in this pool. You cannot leave this pool");
+			status = HttpStatus.CONFLICT;
+			return new ResponseEntity<>(response,status);
+		}
 		poolService.leavePool(userid,poolid);
 		response.setMessage("Left pool");
 		status = HttpStatus.OK;
@@ -258,7 +270,11 @@ public class PoolController {
 			response.setMessage("Pool does not exist");
 			return new ResponseEntity<>(response, status);
 		}
-		
+		if (poolService.hasUserAlreadyAppliedToSamePool(user_id,pool_id)) {
+			response.setMessage("User has already applied to same Pool");
+			status = HttpStatus.CONFLICT;
+			return new ResponseEntity<>(response, status);
+		}
 		int membersCount = poolService.countMembers(pool_id);
 		if (membersCount >= 4) {
 			response.setMessage("Can't add more than 4 poolers");

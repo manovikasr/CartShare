@@ -131,4 +131,10 @@ public class PoolServiceImpl implements PoolService{
 		// TODO Auto-generated method stub
 		return poolDao.getApplicationInfo(applicationid);
 	}
+
+	@Override
+	public boolean hasUserAlreadyAppliedToSamePool(Long user_id, Long pool_id) {
+		// TODO Auto-generated method stub
+		return poolDao.hasUserAlreadyAppliedToSamePool(user_id, pool_id);
+	}
 }

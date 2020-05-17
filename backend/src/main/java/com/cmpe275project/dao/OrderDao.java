@@ -23,4 +23,8 @@ public interface OrderDao {
 	 public List<Order> getOrdersForDelivery(Long user_id);
 	 
 	 public List<Order> getAvailableOrdersForAssignment(Long pool_id,Long store_id);
+
+	public boolean hashActiveOrders(Long pool_id);
+
+	boolean canLeave(Long user_id);
 }
