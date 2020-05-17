@@ -191,14 +191,14 @@ public class PoolController {
 			return new ResponseEntity<>(response,status);
 		}
 		if(orderService.hasActiveOrders(pool_id)) {
-			response.setMessage("Pool has active orders");
+			response.setMessage("Pool has active orders. Pool cannot be deleted.");
 			status = HttpStatus.CONFLICT;
 			return new ResponseEntity<>(response,status);
 		}
 		int membersCount = poolService.countMembers(pool_id);
 		if(membersCount>1) {
 			status = HttpStatus.CONFLICT;
-			response.setMessage("Pool has active members");
+			response.setMessage("Pool has active members. Pool cannot be deleted.");
 		}
 		else {
 			Long leader_id = poolService.getPoolLeaderId(pool_id);
@@ -224,7 +224,7 @@ public class PoolController {
 			return new ResponseEntity<>(response,status);
 		}
 		if(!userService.checkHasPool(userid)) {
-			response.setMessage("Not a member of any pool ");
+			response.setMessage("You are not a member of any pool ");
 			status = HttpStatus.BAD_REQUEST;
 			return new ResponseEntity<>(response,status);
 		}
@@ -233,12 +233,7 @@ public class PoolController {
 			return new ResponseEntity<>(response,status);
 		}
 		if(!orderService.canLeave(userid)) {
-			response.setMessage("You have undelivered orders or unpicked orders");
-			status = HttpStatus.CONFLICT;
-			return new ResponseEntity<>(response,status);
-		}
-		if(orderService.getOrdersForPickup(userid).size()>0) {
-			response.setMessage("You have unpicked orders");
+			response.setMessage("You have pending orders in this pool. You cannot leave this pool");
 			status = HttpStatus.CONFLICT;
 			return new ResponseEntity<>(response,status);
 		}
