@@ -59,7 +59,7 @@ class AdminStores extends Component {
   };
 
   deleteStore = (store_id) => {
-    axios.post(`store/delete/${store_id}`)
+    axios.delete(`store/${store_id}`)
       .then(res => {
         if (res.status === 200) {
           this.setState({
@@ -78,7 +78,6 @@ class AdminStores extends Component {
   }
 
   render() {
-    const { user } = this.props.auth;
     var alertMessage, stores;
     if (this.state.error_message) {
       alertMessage = (
@@ -104,7 +103,7 @@ class AdminStores extends Component {
       } else {
         stores = filteredStores.map(store => {
           return (
-            <Col sm={3}>
+            <Col sm={3} key={store.id}>
               <StoreCard store={store} deleteStore={this.deleteStore} getStores={this.getStores} />
             </Col>
           )

@@ -9,7 +9,8 @@ class PoolApplications extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            user_applications: []
+            user_applications: [],
+            disableButton: false
         };
     }
 
@@ -55,6 +56,9 @@ class PoolApplications extends Component {
 
     onClick = (e) => {
 
+        this.setState({
+            disableButton: true
+        });
         const pool_id = this.props.pool.id;
         const user_id = parseInt(e.target.name);
         const approval = e.target.value === "true";
@@ -64,6 +68,9 @@ class PoolApplications extends Component {
             .then(res => {
                 if (res.status === 200) {
                     this.props.getPoolData();
+                    this.setState({
+                        disableButton: false
+                    });
                 }
             })
             .catch(e => {
@@ -74,6 +81,9 @@ class PoolApplications extends Component {
 
     onSupportClick = (e) => {
 
+        this.setState({
+            disableButton: true
+        });
         const support = e.target.value === "true";
         const application_id = e.target.id;
 
@@ -81,6 +91,9 @@ class PoolApplications extends Component {
             .then(res => {
                 if (res.status === 200) {
                     this.props.getPoolData();
+                    this.setState({
+                        disableButton: true
+                    });
                 }
             })
             .catch(e => {
@@ -113,8 +126,8 @@ class PoolApplications extends Component {
                                     </Card.Body>
                                     <Col>
                                         <br />
-                                        <Button variant="success" id={application.id} name={application.requserid} value={true} onClick={this.onClick}>Approve</Button>&nbsp;&nbsp;&nbsp;
-                                    <Button variant="warning" id={application.id} name={application.requserid} value={false} onClick={this.onClick}>Reject</Button>
+                                        <Button variant="success" id={application.id} name={application.requserid} value={true} onClick={this.onClick} disabled={this.state.disableButton}>Approve</Button>&nbsp;&nbsp;&nbsp;
+                                    <Button variant="warning" id={application.id} name={application.requserid} value={false} onClick={this.onClick} disabled={this.state.disableButton}>Reject</Button>
                                     </Col>
                                 </Row>
                             </Card >
@@ -123,8 +136,8 @@ class PoolApplications extends Component {
                         if (!application.refsupportstatus) {
                             buttons = (
                                 <>
-                                    <Button variant="primary" id={application.id} name={application.requserid} value={true} onClick={this.onSupportClick}>Support</Button>&nbsp;&nbsp;&nbsp;
-                                    <Button variant="secondary" id={application.id} name={application.requserid} value={false} onClick={this.onSupportClick}>Reject</Button>
+                                    <Button variant="primary" id={application.id} name={application.requserid} value={true} onClick={this.onSupportClick} disabled={this.state.disableButton}>Support</Button>&nbsp;&nbsp;&nbsp;
+                                    <Button variant="secondary" id={application.id} name={application.requserid} value={false} onClick={this.onSupportClick} disabled={this.state.disableButton}>Reject</Button>
                                 </>
                             );
                         } else {

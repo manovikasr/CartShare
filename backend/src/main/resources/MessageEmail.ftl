@@ -3,7 +3,8 @@
 
 <body>
 	<p>Hi ${to_screen_name},</p>
-	<p>&nbsp;&nbsp;&nbsp;&nbsp;${text}.</p>
+	<p>${from_screen_name} sent this message to you.</p>
+	<p>${text}</p>
 	<p>Thanks,</p>
 	<p>Cart Share Team</p>	
 </body>

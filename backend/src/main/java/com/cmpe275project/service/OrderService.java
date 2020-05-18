@@ -27,5 +27,9 @@ public interface OrderService {
 	public List<Order> getOrdersForPickup(Long user_id);
 	
 	public List<Order> getOrdersForDelivery(Long user_id);
+
+	public boolean hasActiveOrders(Long pool_id);
+	
+	public boolean canLeave(Long user_id);
 	
 }

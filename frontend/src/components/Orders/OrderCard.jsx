@@ -11,12 +11,12 @@ class OrderCard extends Component {
         super(props);
         this.state = {
             showModal: false,
-            order: {}
+            order: {},
+            disableButton: false
         };
     }
 
     componentDidMount() {
-        console.log(this.props.order)
         this.setState({
             order: this.props.order
         });
@@ -30,9 +30,15 @@ class OrderCard extends Component {
 
     markNotDelivered = (e) => {
         if (window.confirm("Are you sure your order was not delivered? We will check with the assigned pooler.")) {
+            this.setState({
+                disableButton: true
+            });
             axios.put(`/order/status/${this.props.order.id}/ORDER_NOT_DELIVERED`)
                 .then(res => {
                     if (res.status === 200) {
+                        this.setState({
+                            disableButton: false
+                        });
                         this.props.getOrders();
                     }
                 })
@@ -44,9 +50,15 @@ class OrderCard extends Component {
     }
 
     markDelivered = (e) => {
+        this.setState({
+            disableButton: true
+        });
         axios.put(`/order/status/${this.props.order.id}/ORDER_DELIVERED`)
         .then(res => {
             if (res.status === 200) {
+                this.setState({
+                    disableButton: false
+                });
                 this.props.getOrders();
             }
         })
@@ -63,17 +75,18 @@ class OrderCard extends Component {
         if ((this.props.order.status === "ORDER_PICKEDUP" || this.props.order.status === "ORDER_NOT_DELIVERED") && user.id !== this.props.order.user.id) {
             address = (
                 <>
+                    <b>Name: </b>{this.props.order.user.nick_name}<br/>
                     <b>Delivery Address: </b>{this.props.order.user.address}<br />
                     {this.props.order.user.city}, {this.props.order.user.state} - {this.props.order.user.zip}
                 </>
             );
             actionButton = (
-                <Button variant="info" size="sm" onClick={this.markDelivered}>Mark Delivered</Button>
+                <Button variant="info" size="sm" onClick={this.markDelivered} disabled={this.state.disableButton}>Mark Delivered</Button>
             );
         }
-        if (this.props.order.status === "ORDER_DELIVERED") {
+        if (this.props.order.status === "ORDER_DELIVERED" && user.id === this.props.order.user.id) {
             actionButton = (
-                <Button variant="link" size="sm" onClick={this.markNotDelivered}>Order Not Received?</Button>
+                <Button variant="link" size="sm" onClick={this.markNotDelivered} disabled={this.state.disableButton}>Order Not Received?</Button>
             );
         }
         return (
@@ -87,7 +100,7 @@ class OrderCard extends Component {
                             <b>Status:</b> {this.props.order.status}<br />
                             {address}
                         </Card.Text>
-                        <Button variant="success" size="sm" onClick={this.handleToggle}>View Products</Button>
+                        <Button variant="success" size="sm" onClick={this.handleToggle} disabled={this.state.disableButton}>View Products</Button>
                     &nbsp;&nbsp;&nbsp; {actionButton}
                     </Card.Body>
                 </Card>

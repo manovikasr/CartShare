@@ -3,9 +3,9 @@
 
 <body>
 	<p>Hi ${pooler_name},</p>
-	<p>Your <b>Order #${order_id}</b> has been delivered to you by <b>${deliverer}</b>.</p>
+	<p>Your order # ${order_id} is assigned to ${deliverer} for pickup. He will pickup from store and deliver it to you shortly.</p>
 	<br/>
-			<table border="1">
+	<table border="1">
 			<tr>
 				<th>SKU</th>
 				<th>Product Name</th>
@@ -29,8 +29,7 @@
 				</tr>
 			</#list>
 		</table>
-	<br/>
-	<p>Please let us know if you haven't received your order.</p>
+		<br/>
 	<p>Thanks,</p>
 	<p>Cart Share Team</p>	
 </body>

@@ -294,4 +294,28 @@ public class PoolDaoImpl implements PoolDao {
 		return poolReq;
 	}
 
+	@Override
+	public boolean hasUserAlreadyAppliedToSamePool(Long user_id, Long pool_id) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<PoolRequest> criteriaQuery = builder.createQuery(PoolRequest.class);
+	//	criteriaQuery.select(criteriaQuery.from(PoolRequest.class));
+		Root<PoolRequest> root = criteriaQuery.from( PoolRequest.class );
+	    criteriaQuery.where(
+               builder.and(
+            		   builder.equal(
+            				   root.get( "requserid" ),user_id
+                      ), 
+            		   builder.equal(
+                               root.get( "reqpoolid" ),pool_id
+                              )
+            		   )
+                
+            );
+	    List<PoolRequest> listPoolRequests = entityManager.createQuery(criteriaQuery).getResultList();
+	    if(listPoolRequests.size()>0)
+	    	return true;
+	    else
+	    	return false;
+	}
+
 }

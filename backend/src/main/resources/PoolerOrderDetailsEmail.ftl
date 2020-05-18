@@ -2,10 +2,13 @@
 <head></head>
 
 <body>
-	<p>Hi ${pooler_name},</p>
-	<p>Your <b>Order #${order_id}</b> has been delivered to you by <b>${deliverer}</b>.</p>
+	<p>Hi ${deliverer},</p>
+	<p>${no_of_orders} order(s) to be picked up by you at <b>${store_name}</b> along with your order. Details of those orders are as follows: </p>
 	<br/>
-			<table border="1">
+	<#list orders as order>
+		<b>Order #${order.id}</b>
+		<br/>
+		<table border="1">
 			<tr>
 				<th>SKU</th>
 				<th>Product Name</th>
@@ -29,8 +32,8 @@
 				</tr>
 			</#list>
 		</table>
-	<br/>
-	<p>Please let us know if you haven't received your order.</p>
+		<br/>
+	</#list>
 	<p>Thanks,</p>
 	<p>Cart Share Team</p>	
 </body>

@@ -189,9 +189,11 @@ public class ProductController {
 		    
 			for(OrderDetail orderDetail:orderDetails) {
 				
-				if(!orderService.getOrderInfoById(orderDetail.getOrder_id()).getStatus().equals("DELIVERED")) {
+				if(!orderService.getOrderInfoById(orderDetail.getOrder_id()).getStatus().equals("ORDER_DELIVERED") 
+						&& !orderService.getOrderInfoById(orderDetail.getOrder_id()).getStatus().equals("ORDER_PICKEDUP_SELF")
+						&& !orderService.getOrderInfoById(orderDetail.getOrder_id()).getStatus().equals("ORDER_CANCELLED")) {
 					status = HttpStatus.BAD_REQUEST;
-					response.setMessage("Cannot Delete Product, Some orders are not delivered...");
+					response.setMessage("Product cannot be deleted. There are some undelivered orders with this product.");
 					return new ResponseEntity<>(response,status);
 				}
 				     

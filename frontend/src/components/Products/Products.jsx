@@ -3,9 +3,8 @@ import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import axios from "axios";
-import { Alert, Card, Row, Col, InputGroup, FormControl, Button } from "react-bootstrap";
+import { Alert, Row, Col, InputGroup, FormControl, Button } from "react-bootstrap";
 import ProductCard from "./ProductCard";
-import storeImage from "../../images/StoreImage.png";
 import AddEditProductModal from "./AddEditProductModal";
 
 class Products extends Component {
@@ -58,7 +57,7 @@ class Products extends Component {
     }
 
     deleteProduct = product_id => {
-        axios.post(`product/delete/${product_id}`)
+        axios.delete(`product/${product_id}`)
             .then(res => {
                 if (res.status === 200) {
                     this.getAllProducts();

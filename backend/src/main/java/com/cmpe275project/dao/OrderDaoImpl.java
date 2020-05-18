@@ -129,13 +129,10 @@ public class OrderDaoImpl implements OrderDao {
 		Root<Order> root = criteriaQuery.from( Order.class );
 		criteriaQuery.select(root);
 		criteriaQuery.orderBy(builder.asc(root.get("created_on")));
-		
 		criteriaQuery.where(
-				                           builder.and(
 							                        		   builder.equal(
 						                        		                root.get( "user_id" ), user_id
 						                        		              )
-				                        		              )
 				                         );
 		
 		TypedQuery<Order> query = entityManager.createQuery(criteriaQuery); 
@@ -167,7 +164,7 @@ public class OrderDaoImpl implements OrderDao {
 						                        		                root.get( "picker_user_id" ), user_id
 						                        		              ),
 							                        		   builder.equal(
-						                        		                root.get( "status" ), "PICKER_ASSIGNED"
+						                        		                root.get( "status" ), "PICKUP_ASSIGNED"
 						                        		              )
 				                        		              )
 				                         );
@@ -206,6 +203,9 @@ public class OrderDaoImpl implements OrderDao {
 						                        		              ),
 							                        				   builder.equal(
 							                        						   root.get( "status" ), "ORDER_NOT_DELIVERED"
+																	  ),
+																	  builder.equal(
+							                        						   root.get( "status" ), "ORDER_CANCELLED"
 						                        		              )
 							                        			)
 							                        		   
@@ -265,6 +265,95 @@ public class OrderDaoImpl implements OrderDao {
 		
 		return orders;
 	}
-	
+
+	@Override
+	public boolean hashActiveOrders(Long pool_id) {
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+		CriteriaQuery<Order> criteriaQuery = builder.createQuery(Order.class);
+		Root<Order> root = criteriaQuery.from( Order.class );
+		criteriaQuery.select(root);
+		//criteriaQuery.orderBy(builder.asc(root.get("created_on")));
+		
+		criteriaQuery.where(
+							builder.and(
+											builder.equal(
+		                    		                root.get( "pool_id" ), pool_id
+		                		         ),
+											builder.or(
+													builder.notEqual(
+															root.get( "status" ),"ORDER_DELIVERED"
+															),
+													builder.notEqual(root.get( "status" ),"ORDER_PICKEDUP_SELF"
+															),
+													builder.notEqual(root.get( "status" ),"ORDER_CANCELLED"
+															)
+													
+										   )
+										
+									)
+	                        		 
+                     );
+		
+		TypedQuery<Order> query = entityManager.createQuery(criteriaQuery); 
+		List<Order> orders= null;
+		
+		try{
+			orders = query.getResultList();
+			if(orders.size()>0)
+				return true;
+		}catch(Exception ex) {
+			System.out.println("Error in Order Dao Impl -Orders Picked"+ex.getMessage());
+		}
+		return false;
+	}
+	@Override
+	public boolean canLeave(Long user_id) {
+		// TODO Auto-generated method stub
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+		CriteriaQuery<Order> criteriaQuery = builder.createQuery(Order.class);
+		Root<Order> root = criteriaQuery.from( Order.class );
+		criteriaQuery.select(root);
+		criteriaQuery.orderBy(builder.asc(root.get("created_on")));
+		
+		criteriaQuery.where(
+				                           builder.and(
+				                        		   		builder.or(
+							                        		   builder.equal(
+						                        		                root.get( "user_id" ), user_id
+						                        		              ),
+							                        		   builder.equal(
+						                        		                root.get( "picker_user_id" ), user_id
+						                        		              )
+							                        		   ),
+				                        		   		builder.or(
+								                        		   builder.notEqual(
+							                        		                root.get( "status" ), "ORDER_DELIVERED"
+							                        		              ),
+								                        		   builder.notEqual(
+							                        		                root.get( "status" ), "ORDER_PICKEDUP_SELF"
+																		  ),
+																	builder.notEqual(
+							                        		                root.get( "status" ), "ORDER_CANCELLED"
+							                        		              )
+								                        		   )
+				                        		   		)
+				                           );
+		
+		TypedQuery<Order> query = entityManager.createQuery(criteriaQuery); 
+		
+		List<Order> orders= null;
+		
+		try{
+			orders = query.getResultList();
+		}catch(Exception ex) {
+			System.out.println("Error in Order Dao Impl Available Orders For Assignment"+ex.getMessage());
+		}
+		if(orders.size()>0)
+			return false;
+		
+		return true;
+	}
 
 }

@@ -10,11 +10,15 @@ class QRCodeModal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            order_ids: []
+            order_ids: [],
+            disableButton: false
         };
     }
 
     confirmPickup = (e) => {
+        this.setState({
+            disableButton: true
+        });
         const order_ids = this.props.orders.map(order => order.id);
         var order_id_string = "";
         order_ids.forEach(id => {
@@ -25,6 +29,9 @@ class QRCodeModal extends Component {
         axios.put(`/order/pickup?order_ids=${order_id_string}`)
             .then(res => {
                 if (res.status === 200) {
+                    this.setState({
+                        disableButton: false
+                    });
                     this.props.onHide();
                     this.props.history.push("/orders/deliver");
                 }
@@ -57,10 +64,10 @@ class QRCodeModal extends Component {
                     <center>
                         {qrcode}
                         <br /><br />
-                        <Button variant="success" onClick={this.confirmPickup}>
+                        <Button variant="success" onClick={this.confirmPickup} disabled={this.state.disableButton}>
                             <b>Checkout</b>
                         </Button>&nbsp;&nbsp;
-                            <Button variant="secondary" onClick={this.props.onHide}>
+                            <Button variant="secondary" onClick={this.props.onHide} disabled={this.state.disableButton}>
                             <b>Close</b>
                         </Button>
                     </center>

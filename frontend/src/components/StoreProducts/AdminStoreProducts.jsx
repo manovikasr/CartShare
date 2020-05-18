@@ -62,7 +62,7 @@ class AdminStoreProducts extends Component {
     }
 
     deleteProduct = product_id => {
-        axios.post(`/product/delete/${product_id}`)
+        axios.delete(`/product/${product_id}`)
             .then(res => {
                 if (res.status === 200) {
                     this.getStoreProducts();

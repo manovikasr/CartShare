@@ -14,7 +14,8 @@ class AddEditPoolModal extends Component {
             neighbourhood_name: "",
             pool_desc: "",
             pool_zip: "",
-            error_message: ""
+            error_message: "",
+            disableButton: false
         };
     }
 
@@ -35,6 +36,10 @@ class AddEditPoolModal extends Component {
         e.preventDefault();
         const { user } = this.props.auth;
 
+        this.setState({
+            disableButton: true
+        });
+
         const poolData = {
             pool_leader_id: user.id,
             pool_id: this.state.pool_id,
@@ -47,6 +52,9 @@ class AddEditPoolModal extends Component {
         axios.post("/pool", poolData)
             .then(res => {
                 if (res.status === 200) {
+                    this.setState({
+                        disableButton: false
+                    });
                     this.props.onHide();
                     this.props.getPoolData();
                 }
@@ -63,6 +71,9 @@ class AddEditPoolModal extends Component {
     updatePool = (e) => {
         e.preventDefault();
         var id, pool_id, pool_name, neighbourhood_name, pool_desc;
+        this.setState({
+            disableButton: true
+        });
         if (this.props.pool) {
             id = this.props.pool.id;
             pool_id = this.props.pool.pool_id;
@@ -79,6 +90,9 @@ class AddEditPoolModal extends Component {
                 if (res.status === 200) {
                     this.props.onHide();
                     this.props.getPoolData();
+                    this.setState({
+                        disableButton: false
+                    });
                 }
             })
             .catch(e => {
@@ -93,7 +107,7 @@ class AddEditPoolModal extends Component {
 
     render() {
         var title = "Add Pool", onSubmit = this.addPool, updateMode = false;
-        var errorMessage, pool_id, pool_name, neighbourhood_name, pool_desc, state, pool_zip;
+        var errorMessage, pool_id, pool_name, neighbourhood_name, pool_desc, pool_zip;
         if (this.state.error_message) {
             errorMessage = (
                 <Alert variant="warning">{this.state.error_message}</Alert>
@@ -185,7 +199,7 @@ class AddEditPoolModal extends Component {
                             </Form.Group>
                         </Form.Row>
                         <center>
-                            <Button variant="primary" type="submit">
+                            <Button variant="primary" type="submit" disabled={this.state.disableButton}>
                                 <b>{title}</b>
                             </Button> &nbsp; &nbsp;
                             <Button variant="secondary" onClick={this.onHide}>

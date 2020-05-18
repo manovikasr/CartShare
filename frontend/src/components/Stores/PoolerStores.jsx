@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import axios from "axios";
-import { Alert, Button, Col, Row, InputGroup, FormControl } from "react-bootstrap";
+import { Alert, Col, Row, InputGroup, FormControl } from "react-bootstrap";
 import StoreCard from "./StoreCard";
 
 class PoolerStores extends Component {
@@ -47,7 +47,6 @@ class PoolerStores extends Component {
   };
 
   render() {
-    const { user } = this.props.auth;
     var stores;
 
     if (this.state.stores.length) {

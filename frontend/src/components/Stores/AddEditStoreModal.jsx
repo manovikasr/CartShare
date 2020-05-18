@@ -11,7 +11,8 @@ class AddEditStoreModal extends Component {
             city: "",
             state: "",
             zip: "",
-            error_message: ""
+            error_message: "",
+            disableButton: false
         };
     }
 
@@ -23,6 +24,9 @@ class AddEditStoreModal extends Component {
 
     addStore = (e) => {
         e.preventDefault();
+        this.setState({
+            disableButton: true
+        });
 
         const storeData = {
             store_name: this.state.store_name,
@@ -34,6 +38,9 @@ class AddEditStoreModal extends Component {
 
         axios.post("store", storeData)
             .then(res => {
+                this.setState({
+                    disableButton: false
+                });
                 this.props.onHide();
                 this.props.getStores();
             })
@@ -48,6 +55,9 @@ class AddEditStoreModal extends Component {
 
     updateStore = (e) => {
         e.preventDefault();
+        this.setState({
+            disableButton: true
+        });
         var store_id, store_name, address, city, state, zip;
         if (this.props.store) {
             store_id = this.props.store.id;
@@ -64,6 +74,9 @@ class AddEditStoreModal extends Component {
         axios.put(`store/${store_id}`, storeData)
             .then(res => {
                 if (res.status === 200) {
+                    this.setState({
+                        disableButton: false
+                    });
                     this.props.onHide();
                     this.props.getStores();
                 }
@@ -167,10 +180,10 @@ class AddEditStoreModal extends Component {
                             </Form.Group>
                         </Form.Row>
                         <center>
-                            <Button variant="primary" type="submit">
+                            <Button variant="primary" type="submit" disabled={this.state.disableButton}>
                                 <b>{title}</b>
                             </Button> &nbsp; &nbsp;
-                            <Button variant="secondary" onClick={this.props.onHide}>
+                            <Button variant="secondary" onClick={this.props.onHide} disabled={this.state.disableButton}>
                                 <b>Cancel</b>
                             </Button>
                         </center>

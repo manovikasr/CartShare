@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { withRouter, BrowserRouter, NavLink, Route } from "react-router-dom";
-import { Nav, Container, Row, Col, Alert, Table, Form, Button } from "react-bootstrap";
+import { withRouter } from "react-router-dom";
+import { Row, Col, Alert } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import OrderCard from "./OrderCard";
@@ -30,18 +30,9 @@ class MyOrders extends Component {
         axios.get("/order/myorders")
             .then(res => {
                 if (res.data.orders) {
-                    var orders = res.data.orders;
-                    var cancelled_orders = [];
-                    orders.forEach(order => {
-                        if(Math.ceil((new Date() - new Date(order.created_on))/(1000*60*60*24)) > 2){
-                            order.status = "ORDER_CANCELLED";
-                            cancelled_orders.push(order.id);
-                        }
-                    });
                     this.setState({
-                        orders
+                        orders: res.data.orders
                     });
-                    this.cancelOrders(cancelled_orders);
                 }
             })
             .catch(e => {
@@ -51,25 +42,13 @@ class MyOrders extends Component {
             })
     }
 
-    cancelOrders = async orders => {
-        orders.forEach(async order_id => {
-            await axios.put(`/order/status/${order_id}/ORDER_CANCELLED`)
-                .then(res => {
-                })
-                .catch(e => {
-                    if (e.response && e.response.data)
-                        console.log(e.response);
-                });
-        });
-    }
-
     render() {
         var orders_list, message;
         if (this.state.orders.length) {
             orders_list = this.state.orders.map(order => {
                 return (
-                    <Col sm={3}>
-                        <OrderCard order={order} />
+                    <Col sm={3} key={order.id}>
+                        <OrderCard order={order} getOrders={this.getMyOrders}/>
                     </Col>
                 )
             });
