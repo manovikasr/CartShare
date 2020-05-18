@@ -184,7 +184,8 @@ public class StoreController {
 			
 			for(Order order:orders) {
 				
-				if(!order.getStatus().equals("ORDER_DELIVERED") && !order.getStatus().equals("ORDER_PICKEDUP_SELF")) {
+				if(!order.getStatus().equals("ORDER_DELIVERED") && !order.getStatus().equals("ORDER_PICKEDUP_SELF")
+				&& !order.getStatus().equals("ORDER_CANCELLED")) {
 					status = HttpStatus.BAD_REQUEST;
 					response.setMessage("Cannot Delete Store. There are some undelivered orders.");
 					return new ResponseEntity<>(response,status);

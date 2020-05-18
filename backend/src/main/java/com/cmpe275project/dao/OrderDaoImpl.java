@@ -203,6 +203,9 @@ public class OrderDaoImpl implements OrderDao {
 						                        		              ),
 							                        				   builder.equal(
 							                        						   root.get( "status" ), "ORDER_NOT_DELIVERED"
+																	  ),
+																	  builder.equal(
+							                        						   root.get( "status" ), "ORDER_CANCELLED"
 						                        		              )
 							                        			)
 							                        		   
@@ -282,6 +285,8 @@ public class OrderDaoImpl implements OrderDao {
 															root.get( "status" ),"ORDER_DELIVERED"
 															),
 													builder.notEqual(root.get( "status" ),"ORDER_PICKEDUP_SELF"
+															),
+													builder.notEqual(root.get( "status" ),"ORDER_CANCELLED"
 															)
 													
 										   )
@@ -328,6 +333,9 @@ public class OrderDaoImpl implements OrderDao {
 							                        		              ),
 								                        		   builder.notEqual(
 							                        		                root.get( "status" ), "ORDER_PICKEDUP_SELF"
+																		  ),
+																	builder.notEqual(
+							                        		                root.get( "status" ), "ORDER_CANCELLED"
 							                        		              )
 								                        		   )
 				                        		   		)
