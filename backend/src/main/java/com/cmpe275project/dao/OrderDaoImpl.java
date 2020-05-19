@@ -280,7 +280,7 @@ public class OrderDaoImpl implements OrderDao {
 											builder.equal(
 		                    		                root.get( "pool_id" ), pool_id
 		                		         ),
-											builder.or(
+											builder.and(
 													builder.notEqual(
 															root.get( "status" ),"ORDER_DELIVERED"
 															),
@@ -327,7 +327,7 @@ public class OrderDaoImpl implements OrderDao {
 						                        		                root.get( "picker_user_id" ), user_id
 						                        		              )
 							                        		   ),
-				                        		   		builder.or(
+				                        		   		builder.and(
 								                        		   builder.notEqual(
 							                        		                root.get( "status" ), "ORDER_DELIVERED"
 							                        		              ),
@@ -350,6 +350,7 @@ public class OrderDaoImpl implements OrderDao {
 		}catch(Exception ex) {
 			System.out.println("Error in Order Dao Impl Available Orders For Assignment"+ex.getMessage());
 		}
+		
 		if(orders.size()>0)
 			return false;
 		

@@ -19,7 +19,7 @@ class OrderProductsModal extends Component {
 
         if (this.props.order.order_details && this.props.order.order_details.length) {
             products_list = this.props.order.order_details.map(product => {
-                product_image = product.product_img != null ? `${config.api_host}/image/product/${product.id}` : productImage;
+                product_image = product.product_img != null ? `${config.api_host}/image/product/${product.product_id}` : productImage;
                 return (
                     <tr>
                         <td align="center"><img src={product_image} width="50" onError={productImage}/></td>

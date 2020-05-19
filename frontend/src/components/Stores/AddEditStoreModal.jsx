@@ -48,7 +48,8 @@ class AddEditStoreModal extends Component {
                 console.log(e.response);
                 if (e.response && e.response.data)
                     this.setState({
-                        error_message: e.response.data.message
+                        error_message: e.response.data.message,
+                        disableButton: false
                     });
             })
     }
@@ -175,7 +176,7 @@ class AddEditStoreModal extends Component {
                                     onChange={this.onChange}
                                     defaultValue={zip}
                                     placeholder="Enter the zip code"
-                                    pattern="^[0-9]{5}(?:-[0-9]{4})?$"
+                                    pattern="^[0-9]{5}$"
                                     required />
                             </Form.Group>
                         </Form.Row>

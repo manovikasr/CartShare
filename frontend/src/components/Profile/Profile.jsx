@@ -247,7 +247,7 @@ class Profile extends Component {
                                                 onChange={this.onChange}
                                                 defaultValue={user.zip}
                                                 placeholder="Enter your zip code"
-                                                pattern="^[0-9]{5}(?:-[0-9]{4})?$"
+                                                pattern="^[0-9]{5}$"
                                                 required />
                                         </Form.Group>
                                     </Form.Row>

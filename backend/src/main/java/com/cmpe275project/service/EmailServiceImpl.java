@@ -298,7 +298,7 @@ public class EmailServiceImpl implements EmailService{
 			freeMarkerConfig.setClassForTemplateLoading(this.getClass(), "/");
 			
 			Template t = freeMarkerConfig.getTemplate("SelfPickedUpConfirmation.ftl");
-            String subject = "Cart Share - Order picked up";
+            String subject = "Cart Share - Order Picked up";
 			String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, map);
 			
 			helper.setTo(to);

@@ -68,7 +68,7 @@ class ProductCard extends Component {
         let index = cart_items.findIndex((cart_item => cart_item.id === item_id));
         if (index === -1) {
             var total_price = this.state.purchase_quantity * item.price
-            cart_items.push({ ...item, quantity: this.state.purchase_quantity, total_price});
+            cart_items.push({ ...item, quantity: this.state.purchase_quantity, total_price });
             localStorage.setItem("cart_store_id", this.props.store.id);
             localStorage.setItem("cart_items", JSON.stringify(cart_items));
             this.setState({
@@ -115,7 +115,7 @@ class ProductCard extends Component {
                 });
                 window.location.reload(true);
                 //this.props.history.replace(this.props.location.pathname);
-                this.props.getProducts();  
+                this.props.getProducts();
             })
             .catch(err => {
                 console.log("Error uploading image");
@@ -154,8 +154,8 @@ class ProductCard extends Component {
         var buttons, store_name, onImageClick;
         var imageSrc;
         // TODO
-        imageSrc = product.product_img!=null ? `${config.api_host}/image/product/${product.id}` :  productImage;
-        
+        imageSrc = product.product_img != null ? `${config.api_host}/image/product/${product.id}` : productImage;
+
         if (user.role === 'admin') {
             onImageClick = this.handleImageClick;
             buttons = (
@@ -200,7 +200,7 @@ class ProductCard extends Component {
                 <Card bg="white" style={{ width: "55rem", margin: "10%" }}>
                     <Row>
                         <Col>
-                            <Card.Img style={{ width: "12rem", height: "12rem" }} alt="" src={imageSrc} onClick={onImageClick} onError={productImage}  alt="Image Not Available on Server" />
+                            <Card.Img style={{ width: "12rem", height: "12rem" }} alt="" src={imageSrc} onClick={onImageClick} onError={productImage} alt="Image Not Available on Server" />
                         </Col>
                         <Card.Body>
                             <Card.Title>{product.product_name}</Card.Title>
@@ -226,7 +226,7 @@ class ProductCard extends Component {
                     </Modal.Header>
                     <Modal.Body>
                         <center>
-                            <img src={imageSrc} width="100%" alt="" height="350"/>
+                            <img src={imageSrc} width="100%" height="350" alt="Image Not Available on Server" />
                             <p>{this.props.product.product_desc}</p>
                             Quantity: <input type="number" name={this.props.product.id} min="1" max="10" width="10%" onChange={this.onQuantityChange} defaultValue="1" autofocus></input>
                         </center>
@@ -246,14 +246,14 @@ class ProductCard extends Component {
                     </Modal.Header>
                     <Modal.Body>
                         <center>
-                            <img src={imageSrc} width="100%" alt="" height="350"/>
+                            <img src={imageSrc} width="100%" alt="" height="350" />
                             <form onSubmit={this.uploadImage}><br /><br /><br />
-                                    <div class="custom-file" style={{width: "80%"}}>
-                                        <input type="file" class="custom-file-input" name="image" accept="image/*" onChange={this.onImageChange} required/>
-                                        <label class="custom-file-label" for="image">{this.state.fileText}</label>
-                                    </div><br/><br/>
-                                    <Button type="submit" variant="primary">Upload</Button>
-                                </form>
+                                <div class="custom-file" style={{ width: "80%" }}>
+                                    <input type="file" class="custom-file-input" name="image" accept="image/*" onChange={this.onImageChange} required />
+                                    <label class="custom-file-label" for="image">{this.state.fileText}</label>
+                                </div><br /><br />
+                                <Button type="submit" variant="primary">Upload</Button>
+                            </form>
                         </center>
                     </Modal.Body>
                 </Modal>

@@ -394,7 +394,7 @@ public class OrderController {
 					String user_screen_name = order.getUser().getScreen_name();
 					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("pooler_name", user_screen_name);
-					map.put("deliverer", delivery_man.getNick_name());
+					map.put("deliverer", delivery_man.getScreen_name());
 					map.put("order_id", order_id);
 					map.put("order",order);					
 					emailService.sendEmailforOrderDelivered(user_email, map);

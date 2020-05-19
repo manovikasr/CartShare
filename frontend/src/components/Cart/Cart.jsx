@@ -97,7 +97,7 @@ class Cart extends Component {
         let cart_items = this.state.cart_items;
         let index = cart_items.findIndex((item => item.id === product_id));
         cart_items[index].quantity = newQuantity;
-        cart_items[index].total_price = cart_items[index].price * newQuantity
+        cart_items[index].total_price = (cart_items[index].price * newQuantity).toFixed(2);
         await this.setState({
             cart_items
         });

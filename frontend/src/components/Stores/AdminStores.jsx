@@ -49,7 +49,9 @@ class AdminStores extends Component {
       .then(res => {
         if (res.data) {
           this.setState({
-            stores: res.data.stores
+            stores: res.data.stores,
+            message: "",
+            error_message: ""
           });
         }
       })
@@ -62,10 +64,10 @@ class AdminStores extends Component {
     axios.delete(`store/${store_id}`)
       .then(res => {
         if (res.status === 200) {
+          this.getStores();
           this.setState({
             message: res.data.message
-          })
-          this.getStores();
+          });
         }
       })
       .catch(e => {

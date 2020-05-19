@@ -432,8 +432,8 @@ public class PoolController {
 			response.setMessage("User does not exist");
 			return new ResponseEntity<>(response, status);
 		}
-		if (userService.checkHasPool(user_id)) {
-			response.setMessage("Already joined pool ");
+		if (approval && userService.checkHasPool(user_id)) {
+			response.setMessage("User joined another pool. You can reject the request.");
 			status = HttpStatus.BAD_REQUEST;
 			return new ResponseEntity<>(response, status);
 		}

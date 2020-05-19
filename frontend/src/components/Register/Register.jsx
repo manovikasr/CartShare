@@ -179,7 +179,7 @@ class Register extends Component {
                         type="text"
                         onChange={this.onChange}
                         placeholder="Enter your zip code"
-                        pattern="^[0-9]{5}(?:-[0-9]{4})?$"
+                        pattern="^[0-9]{5}$"
                         required />
                     </Form.Group>
                   </Form.Row>

@@ -38,6 +38,7 @@ class AdminStoreProducts extends Component {
                 if (res.data) {
                     this.setState({
                         store: res.data.store,
+                        error_message: "",
                         products: res.data.store.products
                     });
                 }
@@ -65,6 +66,9 @@ class AdminStoreProducts extends Component {
         axios.delete(`/product/${product_id}`)
             .then(res => {
                 if (res.status === 200) {
+                    this.setState({
+                        error_message: ""
+                    });
                     this.getStoreProducts();
                 }
             })

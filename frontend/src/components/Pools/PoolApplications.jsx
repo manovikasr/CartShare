@@ -10,7 +10,8 @@ class PoolApplications extends Component {
         super(props);
         this.state = {
             user_applications: [],
-            disableButton: false
+            disableButton: false,
+            error_message: ""
         };
     }
 
@@ -30,7 +31,8 @@ class PoolApplications extends Component {
                 .then(res => {
                     if (res.data) {
                         this.setState({
-                            user_applications: res.data.pool_Applications_List
+                            user_applications: res.data.pool_Applications_List,
+                            error_message: ""
                         });
                     }
                 })
@@ -43,7 +45,8 @@ class PoolApplications extends Component {
                 .then(res => {
                     if (res.data) {
                         this.setState({
-                            user_applications: res.data.pool_Applications_List
+                            user_applications: res.data.pool_Applications_List,
+                            error_message: ""
                         });
                     }
                 })
@@ -74,8 +77,13 @@ class PoolApplications extends Component {
                 }
             })
             .catch(e => {
-                if (e.response)
+                if (e.response && e.response.status === 400){
+                    this.setState({
+                        disableButton: false,
+                        error_message: e.response.data.message
+                    })
                     console.log(e.response.data);
+                }
             });
     };
 
@@ -97,18 +105,28 @@ class PoolApplications extends Component {
                 }
             })
             .catch(e => {
-                if (e.response)
+                if (e.response && e.response.status === 400){
+                    this.setState({
+                        disableButton: false,
+                        error_message: e.response.data.message
+                    })
                     console.log(e.response.data);
+                }
             });
     };
 
     render() {
         const { user } = this.props.auth;
         const pool = this.props.pool;
-        var isPoolLeader, applicationCard;
+        var isPoolLeader, applicationCard, message;
         if (user.id === pool.pool_leader_id)
             isPoolLeader = true;
         var applications = [], buttons;
+        if(this.state.error_message){
+            message = (
+                <Alert variant="warning">{this.state.error_message}</Alert>
+            )
+        }
         if (pool.user.length < 4) {
             if (this.state.user_applications.length) {
                 this.state.user_applications.forEach(application => {
@@ -121,7 +139,8 @@ class PoolApplications extends Component {
                                         <Card.Title>{application.requserscreenname}</Card.Title>
                                         <Card.Text>
                                             <b>Reference Name: </b>{application.refusername}<br />
-                                            <b>Status: </b>Supported<br />
+                                            {application.refusername !== user.screen_name
+                                                && <b>Status: Supported<br /></b>}
                                         </Card.Text>
                                     </Card.Body>
                                     <Col>
@@ -185,6 +204,7 @@ class PoolApplications extends Component {
         return (
             <div>
                 <h3>Pool Applications</h3>
+                {message}
                 {applications}
             </div>
         );
